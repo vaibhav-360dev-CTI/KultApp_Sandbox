@@ -24,7 +24,7 @@ public without sharing class moveToWarehouseController {
                                        Order_Image__c, Invoice_Image__c, Order_SKU_details__c, SKU__c, Expiry_Date__c, Expected_RVP_date__c, Customer_s_Availability__c, 
                                        Required_PIN_code__c, CSE_Name__c, Order__c, Product_Image__c, RVP_Date__c, Stage__c, Refund_Reason__c, Refund_Type__c, Coupon__c, OrderId__c, 
                                        Opportunity__c, Date_Of_Order__c, Shipping_Mobile_No__c, Item__c, Courier_Issue__c, Marketing_Team__c, Reason_For_Dealy__c, Courier_Partner__c, 
-                                       AWB_Number__c, Disposition__c, Current_PIN_Code__c, City_Name__c, OOS_Quantity__c, OOS_SKU_Code__c, Marketing__c, Case_Reason_Description__c, 
+                                       AWB_Number__c, Disposition__c, Current_PIN_Code__c, City_Name__c, OOS_Quantity__c, Marketing__c, Case_Reason_Description__c, 
                                        Email_Replied__c, Communication_Mode__c, Channel_Case__c, RefundTeamMember__c, Parent_Case__c, Approval_Step__c, Re_Opening_Reason__c, 
                                        Profile_Name__c, UTR_Number__c, Product2_Name__c, UTRNo__c, Refund_Amount__c, Inital_Commented_Date__c, Rejection_Remarks__c, 
                                        Rejection_Reason__c, Describe_Information_Needed__c, Order_Date__c, Post_Attachment_Url__c, Inbound_Dealy_In_Delivery__c, 

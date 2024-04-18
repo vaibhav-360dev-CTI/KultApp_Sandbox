@@ -14,4 +14,7 @@ trigger TriggerOnCase on Case (before insert, before update, after update, after
     if(trigger.isInsert && trigger.isBefore){
         caseTriggerHelper.modifyEmailCases(trigger.new);
     }
+    if(trigger.isAfter && trigger.isInsert){
+        caseTriggerHelper.createdAffectedSKUs(trigger.new);
+    }
 }

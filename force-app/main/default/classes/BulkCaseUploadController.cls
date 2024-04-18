@@ -107,7 +107,7 @@ public class BulkCaseUploadController {
                         caseRec.OOS_Quantity__c	 = (String)record.get('OOS_Quantity__c');
                     }
                     if(record.get('OOS_SKU_Code__c') !=null){
-                        caseRec.OOS_SKU_Code__c	 = (String)record.get('OOS_SKU_Code__c');
+                        caseRec.SKU_Details__c	 = (String)record.get('OOS_SKU_Code__c');
                     }
                     if(record.get('Remarks_mentioned__c') !=null){
                         caseRec.Remarks_mentioned__c = (String)record.get('Remarks_mentioned__c');

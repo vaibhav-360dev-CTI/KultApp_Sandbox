@@ -2,7 +2,14 @@
     margin: 1rem;
 }
 .THIS .slds-button {
-    width: 90%;
+    width: 80%;
     margin-bottom: 0.5rem;
     margin-top: 0.5rem;
+}
+
+.THIS .colorBtn{
+    background-color: #AC8FF7;
+    border-color: #453383;
+    font-weight: 700;
+    font-size: 19px;
 }

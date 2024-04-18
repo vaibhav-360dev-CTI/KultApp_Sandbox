@@ -41,7 +41,7 @@
     <aura:attribute name="tempNameToDownload" type="String"/>
     <aura:attribute name="docTempName" type="string"/>
     
-    <div style="background: aquamarine;">
+    <div style="background: white;">
         
         <aura:if isTrue="{!v.showMain}">
             
@@ -65,26 +65,26 @@
             <div class="slds-grid slds-gutters">
                 <!-- Row 1 -->
                 <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
-                    <lightning:button variant="brand" class="slds-p-around_small" label="Out of Stock" onclick="{!c.handleClickOutOfStock}" />
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Out of Stock" onclick="{!c.handleClickOutOfStock}" />
                 </div>
                 <div class="slds-col slds-size_1-of-3">
-                    <lightning:button variant="brand" class="slds-p-around_small" label="Pin Code Not Servciable" onclick="{!c.handleClickPincodeNotservice}" />
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Pin Code Not Servicable" onclick="{!c.handleClickPincodeNotservice}" />
                 </div>
                 <div class="slds-col slds-size_1-of-3">
-                    <lightning:button variant="brand" class="slds-p-around_small" label="Courier/Delivery Issues" onclick="{!c.handleClickCourierDeliveryIssue}" />
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Courier/Delivery Issues" onclick="{!c.handleClickCourierDeliveryIssue}" />
                 </div>
                 
             </div>
             <div class="slds-grid slds-gutters">
                 <!-- Row 1 -->
                 <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
-                    <lightning:button variant="brand" class="slds-p-around_small" label="Lost In Transit"  onclick="{!c.handleClickLostInTransit}" />
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Lost In Transit"  onclick="{!c.handleClickLostInTransit}" />
                 </div>
                 <div class="slds-col slds-size_1-of-3">
-                    <lightning:button variant="brand" class="slds-p-around_small" label="Delay In Delivery" onclick="{!c.handleClickDelayInDelivery}"  />
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Delay In Delivery" onclick="{!c.handleClickDelayInDelivery}"  />
                 </div>
                 <div class="slds-col slds-size_1-of-3">
-                    <lightning:button variant="brand" class="slds-p-around_small" label="RTO Orders" onclick="{!c.handleClickRToOrders}" />
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="RTO Orders" onclick="{!c.handleClickRToOrders}" />
                 </div>
                 
             </div>

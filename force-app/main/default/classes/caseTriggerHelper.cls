@@ -73,6 +73,68 @@ public class caseTriggerHelper {
             System.debug('recordToUpdate ==> ' + recordToUpdate);
         } 
     }
+
+    public static void createdAffectedSKUs(List<Case> caseList){
+        try{
+            List<Affected_SKU__c> affectedSKUsToInsert = new List<Affected_SKU__c>();
+            //Map<Id, List<String>> skuListByCaseId = new Map<Id, List<String>>();
+            Map<Id, Id> caseIdByOrderId = new Map<Id, Id>();
+            List<String> skuListToIterate = new List<String>();
+            Set<Id> orderIds = new Set<Id>();
+            Map<Id, Map<String,OrderItem>> oliBySKUByCaseId = new Map<Id, Map<String,OrderItem>>();
+            for(Case caseRec : caseList){
+                if(caseRec.OrderId__c != null){
+                    System.debug('caseRec.OrderId__c==> ' + caseRec.OrderId__c);
+                    orderIds.add(caseRec.OrderId__c);
+                    if(!caseIdByOrderId.containsKey(caseRec.OrderId__c)){
+                        caseIdByOrderId.put(caseRec.OrderId__c, caseRec.Id);
+                    }
+                }
+                if(caseRec.SKU_Details__c != null){
+                    List<String> skuList = new List<String>();
+                    String SKUDetails = caseRec.SKU_Details__c.replaceAll('; ', ';');
+                    skuList = SKUDetails.split(';');
+                    skuListToIterate.addAll(skuList);
+                    // if(!skuListByCaseId.containsKey(caseRec.Id)){
+                    //     skuListByCaseId.put(caseRec.Id).addAll(skuList);
+                    // }
+                }
+            }
+            System.debug('orderIds==> ' + orderIds);
+            System.debug('caseIdByOrderId==> ' + caseIdByOrderId);
+            List<OrderItem> oliList = [SELECT Id, OrderId, UnitPrice, ListPrice, TotalPrice, Selling_Price__c, SKU__c, Refunded_Price__c, 
+            Brand__c, Product_Name__c, Total_Selling_Price__c, Is_Already_Utilized__c FROM OrderItem WHERE OrderId IN: orderIds AND OrderId != null AND SKU__c IN: skuListToIterate];
+            System.debug('oliList==> ' + oliList);
+            for(OrderItem oliRec : oliList){
+                if(caseIdByOrderId.containsKey(oliRec.OrderId)){
+                    String caseId = caseIdByOrderId.get(oliRec.OrderId);
+                if(oliBySKUByCaseId.containsKey(caseId)){
+                    oliBySKUByCaseId.get(caseId).put(oliRec.SKU__c, oliRec);
+                }else{
+                    oliBySKUByCaseId.put(caseId, new Map<String, OrderItem> {oliRec.SKU__c => oliRec});
+                }
+            }
+            }
+            System.debug('oliBySKUByCaseId==> ' + oliBySKUByCaseId);
+
+            for(Id caseId : oliBySKUByCaseId.keySet()){
+                for(String sku : oliBySKUByCaseId.get(caseId).keySet()){
+                    Affected_SKU__c affRec = new Affected_SKU__c();
+                    affRec.Case__c = caseId;
+                    affRec.Brand_Name__c = oliBySKUByCaseId.get(caseId).get(sku).Brand__c;
+                    affRec.MRP__c = oliBySKUByCaseId.get(caseId).get(sku).UnitPrice;
+                    affRec.Product_Name__c = oliBySKUByCaseId.get(caseId).get(sku).Product_Name__c;
+                    affRec.Name = sku;
+                    affectedSKUsToInsert.add(affRec);
+                }
+            }
+            if(!affectedSKUsToInsert.isEmpty()){
+                insert affectedSKUsToInsert;
+            }
+        }catch(exception e){
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+        }
+    }
     
     public static void updateUserFieldsOnReassignment(List<case> caseList, Map<Id, Case> oldMap){
         try{

@@ -49,8 +49,13 @@ export default class DynamicPageGenerator extends LightningElement {
                     if (result) {
                          this.data = result;
                          var TempArray = [];
-                         for (var key in this.data) {           
-                              TempArray.push({ key: key, value:(this.data)[key] });             
+                         for (var key in this.data) {    
+                            if((this.data)[key] == 'Subject'){
+                                TempArray.push({ key: key, value:(this.data)[key],  disabled:true});  
+                            }else{
+                                TempArray.push({ key: key, value:(this.data)[key],  disabled:false});
+                            }       
+                                         
                          }  
                          this.caseFieldSet = TempArray;
                          console.log('key', this.caseFieldSet); 
