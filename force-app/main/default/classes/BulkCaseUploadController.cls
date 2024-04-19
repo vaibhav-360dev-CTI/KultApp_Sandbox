@@ -1,3 +1,11 @@
+/**
+ * @author [Dinesh Baddawar]
+ * @email dinesh.b@utilitarianLab.com
+ * @create date 2024-04-18 16:48:55
+ * @modify date 2024-04-18 16:48:55
+ * @desc [Method bulk case upload using CSV and XLSX File]
+ */
+
 public class BulkCaseUploadController {
     @AuraEnabled
     public static void processData(String fileData,String sobjectName,List<String> fields, String typeOfCase){
@@ -74,8 +82,6 @@ public class BulkCaseUploadController {
                         orderByOrderNo.put(orRec.Name, orRec);
                     }
                 }
-
-
                 for(sObject record : recordList){
                     Case caseRec = new case();   
                     if(record.get('Date_Of_Order__c') !=null){
@@ -89,8 +95,6 @@ public class BulkCaseUploadController {
                             if(orderRec.AccountId != null){
                                 caseRec.AccountId = orderRec.AccountId;
                             }
-                            System.debug('caseRec.OrderId__c==> ' + caseRec.OrderId__c);
-
                         }
                         
                     }
@@ -146,7 +150,6 @@ public class BulkCaseUploadController {
                         caseRec.RecordTypeId = orderRelatedRecordTypeId;
                         caseRec.Subject = 'RTO Orders';
                     }
-                    
                     caseRec.Status	 = 'New';
                     caseRec.Origin	 = 'Bulk Upload';
                     CaseListToRecord.add(caseRec);
@@ -169,10 +172,7 @@ public class BulkCaseUploadController {
     public static void sendingCustomNotification(String OwnerId, String caseId, String notificationTitle, String notificationBody){
 
         System.debug('caseId====>'+caseId);
-        CustomNotificationType notificationType = [SELECT Id, DeveloperName FROM CustomNotificationType 
-                                                     WHERE DeveloperName='Refund_Team_Member'];
-
-                                                                                           
+        CustomNotificationType notificationType = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='Refund_Team_Member'];                                                                       
             Messaging.CustomNotification notification = new Messaging.CustomNotification();
             notification.setTitle(notificationTitle);
             notification.setBody(notificationBody);
@@ -186,7 +186,35 @@ public class BulkCaseUploadController {
             catch (Exception e) {
                 System.debug('Problem sending notification: ' + e.getMessage());
             }
-         
+    }
+
+    // =============================================================================================================================================================================================================
+    // Method for Create Bulk Case Upload using XLSX File
+    @AuraEnabled 
+    public static String insertBulkCaseXlsxFiel(String jsonString){
+        try{
+            List<caseJSONData> caseList = (List<caseJSONData>) JSON.deserialize(jsonString, List<caseJSONData>.class);
+           // System.debug('caseList == >'+caseList);
+            List<Case> caseListToInsert = new List<Case>();
+            List<Object> jsonData = (List<Object>) JSON.deserializeUntyped(jsonString);
+            System.debug('jsonData == >'+jsonData);
+            for (Object obj : jsonData) {
+                Map<String, Object> caseMap = (Map<String, Object>) obj;
+                System.debug('caseMap == >'+caseMap);
+                Case caseRec = new case(); 
+                if(caseMap.get('Date Of Order') !=null){
+                    System.debug('Date Value == >'+caseMap.get('Date Of Order'));
+                    caseRec.Date_Of_Order__c =Date.valueOf((Date)caseMap.get('Date Of Order'));
+                    System.debug('caseRec.Date_Of_Order__c === >'+caseRec.Date_Of_Order__c);
+                }
+
+                return 'SUCCESS';
+            }
+
+        }catch(Exception e){
+            System.debug('The Error ::'+e.getMessage() +' AND Error Line No :'+e.getLineNumber());
+        }
+        return null;
     }
     
 }

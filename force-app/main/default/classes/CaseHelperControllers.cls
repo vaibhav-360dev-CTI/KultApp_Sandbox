@@ -1,4 +1,4 @@
-public without sharing class CaseHelperControllers {
+public class CaseHelperControllers {
     
     @AuraEnabled(cacheable = true)
     public static List<String> getAllProfileNames() {
@@ -33,7 +33,7 @@ public without sharing class CaseHelperControllers {
             }
         }
     }
-
+    
     @AuraEnabled
     public static Case getCaseRec(String caseId){
         try{
@@ -127,14 +127,14 @@ public without sharing class CaseHelperControllers {
     @AuraEnabled
     public static Id getRecrdTypeId(String recordId){
         
-        return [SELECT Id,RecordTypeId FROM Case where Id =: recordId].RecordTypeId;
+        return [SELECT Id,RecordTypeId FROM Case where Id =: recordId LIMIT 1].RecordTypeId;
     }
     @AuraEnabled
     public static Id getRecrdTypeIdChat(){
         
-        return [SELECT Id,RecordTypeId FROM Case ].RecordTypeId;
+        return [SELECT Id,RecordTypeId FROM Case LIMIT 1].RecordTypeId;
     }
-
+    
     @AuraEnabled
     public static Case caseRecord(String caseId){
         system.debug('recordId::::::::>'+caseId);
@@ -151,7 +151,7 @@ public without sharing class CaseHelperControllers {
         return cs;
         
     }
-
+    
     @AuraEnabled
     public static Case getCaseRecords(){
         case cs =  [SELECT Id,RecordTypeId,Parent_Case__c,Sub_Type__c,Sub_Sub_Type__c,OwnerId,Subject,Status,Origin,AccountId,Contact_Number__c,ContactId,Owner.Name FROM Case LIMIT 1];
@@ -159,7 +159,7 @@ public without sharing class CaseHelperControllers {
         return cs;
         
     }
-
+    
     @AuraEnabled(cacheable=true)
     public static List<ObjectType> getCaseRecordTypes() {
         List<ObjectType> recordTypes = new List<ObjectType>();
@@ -403,10 +403,10 @@ public without sharing class CaseHelperControllers {
                 Set<Id> setOfOwnerId = new Set<Id>();
                 List<Case> cseList = new List<Case>();
                 RecordType rt = [SELECT Id FROM RecordType WHERE Name = :RecordTypeName LIMIT 1];
-               
-                    newCase.RecordTypeId = rt.Id;
-                    newCase.Sub_Type__c = Type;
-                    newCase.Sub_Sub_Type__c = SubType;
+                
+                newCase.RecordTypeId = rt.Id;
+                newCase.Sub_Type__c = Type;
+                newCase.Sub_Sub_Type__c = SubType;
                 
                 if(AccId != null){
                     newCase.AccountId = AccId;
@@ -466,7 +466,7 @@ public without sharing class CaseHelperControllers {
                 
                 System.debug('notification:::::::::::>' + notification);
                 notification.send(new Set<String> { newCase.OwnerId });
-                Messaging.sendEmail(mailList);
+                // Messaging.sendEmail(mailList);
                 
             }
             return 'SUCCESS';
@@ -531,9 +531,9 @@ public without sharing class CaseHelperControllers {
         return casesToUpdate;
     }
     
-    //Pincode is not servicesable.
-    
-    public static void sendEmailToUserAndNotificationToUserPincodeNotServiceable(List<Case> caseList,  map<Id,Case> oldMapCase) {
+  
+    //this method is not used anywhere
+  /*  public static void sendEmailToUserAndNotificationToUserPincodeNotServiceable(List<Case> caseList,  map<Id,Case> oldMapCase) {
         EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Order_Issue_Pin_Code_Unserviceable_Refund_Initiated'];
         List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_pincode_not_serviceable'];
         Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
@@ -701,17 +701,18 @@ public without sharing class CaseHelperControllers {
         }
         
         if (!mailList.isEmpty()) {
-            Messaging.sendEmail(mailList);
+            //Messaging.sendEmail(mailList);
         }
         Insert taskList;
         system.debug('taskList:::::::::>' + taskList);
         
-    }
+    } */
     
     
-    //Delay in Delivery sending Email And Custom Notification!
+   
     
-    public static void sendEmailToUserAndNotificationToUserDelayInDelivery(List<Case> caseList, map<Id,Case> oldMapCase) {
+    //this method is not used anywhere
+  /*  public static void sendEmailToUserAndNotificationToUserDelayInDelivery(List<Case> caseList, map<Id,Case> oldMapCase) {
         EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Urgent_Customer_Unresponsive_After_3_Attempted_Calls_Regarding_Delayed_Order'];
         List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_dealy_delivery'];
         Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
@@ -878,16 +879,16 @@ public without sharing class CaseHelperControllers {
         }
         
         if (!mailList.isEmpty()) {
-            Messaging.sendEmail(mailList);
+            //  Messaging.sendEmail(mailList);
         }
         Insert taskList;
         system.debug('taskList:::::::::>' + taskList);
         
-    }
+    } */
     
     
-    
-    public static void sendEmailToContactOwnerAndSendNotificationToOMSTeam(List<Case> caseList, map<Id,Case> oldMapCase){
+    //this method is not used anywhere
+ /*   public static void sendEmailToContactOwnerAndSendNotificationToOMSTeam(List<Case> caseList, map<Id,Case> oldMapCase){
         EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Order_Issue_Pin_Code_Unserviceable_Refund_Initiated'];
         List<CustomNotificationType> TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_pincode_not_serviceable'];
         Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
@@ -994,19 +995,19 @@ public without sharing class CaseHelperControllers {
         }
         
         if (!mailList.isEmpty()) {
-            Messaging.sendEmail(mailList);
+            // Messaging.sendEmail(mailList);
         }
         Insert taskList;
         System.debug('taskList:::::::::>' + taskList);
-    }
+    } */
     @AuraEnabled
     public static Case courierRelatedCase(String recId) {
         System.debug('recId ==>' + recId);
         try {
             // Use Database.queryById to handle potential exceptions if record not found
             Case cse = [SELECT Id, Address_With_Pin_Code__PostalCode__s, Address_With_Pin_Code__Street__s, Address_With_Pin_Code__City__s, Address_With_Pin_Code__StateCode__s, 
-            Address_With_Pin_Code__CountryCode__s, Address_With_Pin_Code__Latitude__s, Address_With_Pin_Code__Longitude__s, Address_With_Pin_Code__GeocodeAccuracy__s, 
-            Address_With_Pin_Code__c FROM Case where Id =:recId];
+                        Address_With_Pin_Code__CountryCode__s, Address_With_Pin_Code__Latitude__s, Address_With_Pin_Code__Longitude__s, Address_With_Pin_Code__GeocodeAccuracy__s, 
+                        Address_With_Pin_Code__c FROM Case where Id =:recId];
             if (cse != null) {
                 return cse;
             }
@@ -1018,39 +1019,39 @@ public without sharing class CaseHelperControllers {
     
     
     @AuraEnabled
-public static String updateCaseAndOrder(String recId) {
-   system.debug('recId=======>'+ recId);
-    Case cse = [SELECT Id, ContactId, OrderId__c,Address_With_Pin_Code__Street__s,Address_With_Pin_Code__City__s,Contact_Number__c,
-    Address_With_Pin_Code__PostalCode__s,Address_With_Pin_Code__CountryCode__s,Address_With_Pin_Code__StateCode__s FROM Case WHERE Id = :recId LIMIT 1];
-    if (cse != null) {
-        if(cse.ContactId != null){
-            Contact conRec = [SELECT Id FROM Contact WHERE Id = :cse.ContactId LIMIT 1];
-            if (conRec != null) {
-                conRec.Phone = cse.Contact_Number__c;
-                update conRec;
+    public static String updateCaseAndOrder(String recId) {
+        system.debug('recId=======>'+ recId);
+        Case cse = [SELECT Id, ContactId, OrderId__c,Address_With_Pin_Code__Street__s,Address_With_Pin_Code__City__s,Contact_Number__c,
+                    Address_With_Pin_Code__PostalCode__s,Address_With_Pin_Code__CountryCode__s,Address_With_Pin_Code__StateCode__s FROM Case WHERE Id = :recId LIMIT 1];
+        if (cse != null) {
+            if(cse.ContactId != null){
+                Contact conRec = [SELECT Id FROM Contact WHERE Id = :cse.ContactId LIMIT 1];
+                if (conRec != null) {
+                    conRec.Phone = cse.Contact_Number__c;
+                    update conRec;
+                }
             }
-        }
-        
-       
-        if(cse.OrderId__c != null){
-            Order ordRec = [SELECT Id FROM Order WHERE Id = :cse.OrderId__c LIMIT 1];
-            if (ordRec != null) {
-                ordRec.ShippingStreet = cse.Address_With_Pin_Code__Street__s;
-                ordRec.ShippingState = cse.Address_With_Pin_Code__StateCode__s;
-                ordRec.ShippingCity = cse.Address_With_Pin_Code__City__s;
-                ordRec.ShippingCountry = cse.Address_With_Pin_Code__CountryCode__s;
-                ordRec.ShippingPostalCode =  cse.Address_With_Pin_Code__PostalCode__s;
-                update ordRec;
+            
+            
+            if(cse.OrderId__c != null){
+                Order ordRec = [SELECT Id FROM Order WHERE Id = :cse.OrderId__c LIMIT 1];
+                if (ordRec != null) {
+                    ordRec.ShippingStreet = cse.Address_With_Pin_Code__Street__s;
+                    ordRec.ShippingState = cse.Address_With_Pin_Code__StateCode__s;
+                    ordRec.ShippingCity = cse.Address_With_Pin_Code__City__s;
+                    ordRec.ShippingCountry = cse.Address_With_Pin_Code__CountryCode__s;
+                    ordRec.ShippingPostalCode =  cse.Address_With_Pin_Code__PostalCode__s;
+                    update ordRec;
+                }
             }
+            
+            
+            return 'SUCCESS';
+        } else {
+            return 'ERROR: Case not found';
         }
-        
-
-        return 'SUCCESS';
-    } else {
-        return 'ERROR: Case not found';
     }
-}
-
+    
     @AuraEnabled
     public static String sendNotificationToOrderManagementTeam(String recId){
         try{
@@ -1148,7 +1149,7 @@ public static String updateCaseAndOrder(String recId) {
             update cs;
             System.debug('Update CS   ==>'+cs );
             
-            List<Case> csList = [SELECT Id,OrderId__c,ContactId,CreatedDate,OwnerId,AccountId,Reason_for_RTO__c From Case Where Id=: recId];
+            List<Case> csList = [SELECT Id,OrderId__c,ContactId,CreatedDate,OwnerId,AccountId,Reason_for_RTO__c From Case Where Id=: recId LIMIT 1];
             System.debug('csList 1  ==>'+csList );
             
             set<Id> setOfOrderId = new set<Id>();
@@ -1165,7 +1166,7 @@ public static String updateCaseAndOrder(String recId) {
                 }
             }
             
-            List<Order> ListOfOrder = [SELECT Id,OrderNumber,Total_Amount__c,Refund_Amount__c,TotalAmount,Reason_for_RTO__c From Order Where Id IN: setOfOrderId];
+            List<Order> ListOfOrder = [SELECT Id,OrderNumber,Total_Amount__c,Refund_Amount__c,TotalAmount,Reason_for_RTO__c From Order Where Id IN: setOfOrderId LIMIT 1];
             
             List<Order> ordList = new List<Order>();
             for(Order ord : ListOfOrder){
@@ -1390,105 +1391,25 @@ public static String updateCaseAndOrder(String recId) {
             return null;
         }
     }
-//     @AuraEnabled(cacheable=true)
-// public static Map<String, List<String>> getAllPickListVal(Map<String, String> ObjectByField){
-//     Map<String, List<String>> picklistValByField = new Map<String, List<String>>();
-//     for(String field : ObjectByField.keySet()){
-//         String objName = ObjectByField.get(field);
-//         System.debug('Object Name: ' + objName);
-//         List<String> picklistValues = getPicklistValuesList(objName, field);
-//         System.debug('Picklist Values for ' + field + ': ' + picklistValues);
-//         picklistValByField.put(field, picklistValues);
-//     }
-//     return picklistValByField;
-// }
-
-@AuraEnabled
-    public static Map<String, List<String>> getAllPickListVal(){
-        Map<String, List<String>> controllingInfo = new Map<String, List<String>>();
-        
-        Schema.SObjectType objType = Schema.getGlobalDescribe().get('Case');
-        
-        Schema.DescribeSObjectResult describeResult = objType.getDescribe();
-        Schema.DescribeFieldResult controllingFieldInfo = describeResult.fields.getMap().get('Address_With_Pin_Code__CountryCode__s').getDescribe();
-        Schema.DescribeFieldResult dependentFieldInfo = describeResult.fields.getMap().get('Address_With_Pin_Code__StateCode__s').getDescribe();
-        
-        List<Schema.PicklistEntry> controllingValues = controllingFieldInfo.getPicklistValues();
-        List<Schema.PicklistEntry> dependentValues = dependentFieldInfo.getPicklistValues();
-        
-        for(Schema.PicklistEntry currControllingValue : controllingValues)
-        {
-            System.debug('ControllingField: Label:' + currControllingValue.getLabel());
-            controllingInfo.put(currControllingValue.getLabel(), new List<String>());
-        }
-        
-        for(Schema.PicklistEntry currDependentValue : dependentValues)
-        {
-            String jsonString = JSON.serialize(currDependentValue);
-            
-            MyPickListInfos info = (MyPickListInfos) JSON.deserialize(jsonString, MyPickListInfos.class);
-            
-            String hexString = EncodingUtil.convertToHex(EncodingUtil.base64Decode(info.validFor)).toUpperCase();
-            
-            System.debug('DependentField: Label:' + currDependentValue.getLabel() + ' ValidForInHex:' + hexString + ' JsonString:' + jsonString);
-            
-            Integer baseCount = 0;
-            
-            for(Integer curr : hexString.getChars())
-            {
-                Integer val = 0;
-                
-                if(curr >= 65)
-                {
-                    val = curr - 65 + 10;
-                }
-                else
-                {
-                    val = curr - 48;
-                }
-                
-                if((val & 8) == 8)
-                {
-                    System.debug('Dependent Field: ' + currDependentValue.getLabel() + ' Partof ControllingField:' + controllingValues[baseCount + 0].getLabel());
-                    controllingInfo.get(controllingValues[baseCount + 0].getLabel()).add(currDependentValue.getLabel());
-                }
-                if((val & 4) == 4)
-                {
-                    System.debug('Dependent Field: ' + currDependentValue.getLabel() + ' Partof ControllingField:' + controllingValues[baseCount + 1].getLabel());
-                    controllingInfo.get(controllingValues[baseCount + 1].getLabel()).add(currDependentValue.getLabel());                    
-                }
-                if((val & 2) == 2)
-                {
-                    System.debug('Dependent Field: ' + currDependentValue.getLabel() + ' Partof ControllingField:' + controllingValues[baseCount + 2].getLabel());
-                    controllingInfo.get(controllingValues[baseCount + 2].getLabel()).add(currDependentValue.getLabel());                    
-                }
-                if((val & 1) == 1)
-                {
-                    System.debug('Dependent Field: ' + currDependentValue.getLabel() + ' Partof ControllingField:' + controllingValues[baseCount + 3].getLabel());
-                    controllingInfo.get(controllingValues[baseCount + 3].getLabel()).add(currDependentValue.getLabel());                    
-                }
-                
-                baseCount += 4;
-            }            
-        }
-        
-        System.debug('ControllingInfo: ' + controllingInfo);
-        
-        return controllingInfo;
-    }
-    class MyPickListInfos {
-        public String active {get; set;}
-        public String defaultValue {get; set;}
-        public String label {get; set;}
-        public String value {get; set;}
-        public String validFor {get; set;}
-    }
-
+    //     @AuraEnabled(cacheable=true)
+    // public static Map<String, List<String>> getAllPickListVal(Map<String, String> ObjectByField){
+    //     Map<String, List<String>> picklistValByField = new Map<String, List<String>>();
+    //     for(String field : ObjectByField.keySet()){
+    //         String objName = ObjectByField.get(field);
+    //         System.debug('Object Name: ' + objName);
+    //         List<String> picklistValues = getPicklistValuesList(objName, field);
+    //         System.debug('Picklist Values for ' + field + ': ' + picklistValues);
+    //         picklistValByField.put(field, picklistValues);
+    //     }
+    //     return picklistValByField;
+    // }
+    
+      
     @AuraEnabled
     public static List<OrderItem> getOrderItems(String OrdId){
         system.debug('OrdId ===========>' +OrdId);
         List<OrderItem> orderItems = new List<OrderItem>(); // Define the list outside the try-catch block
-    
+        
         try {
             if (OrdId != null) {
                 orderItems = [SELECT Id, Product2.Name, Quantity, Refund_Quantity__c, TotalPrice, Refund_Price__c, Refund_Reason__c, Refund_Reasons__c, Refund_Type__c, SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem WHERE OrderId = :OrdId];
@@ -1497,11 +1418,11 @@ public static String updateCaseAndOrder(String recId) {
             System.debug('Error Message==> ' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
             return null; // Return null if an exception occurs
         }
-    
+        
         return orderItems; // Return the list outside the try-catch block
     }
     
-
+    
     @AuraEnabled
     public static String createCaseInLiveChatTranscript(String RecordTypeName, String Type, String SubType, String AccId, String conId, String Subjt, String conNumber, String recId, Id ownId) {
         system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'AccId===>'+AccId+ 'conId===>'+conId+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId+ 'ownId===>'+ownId);
@@ -1511,10 +1432,10 @@ public static String updateCaseAndOrder(String recId) {
                 Set<Id> setOfOwnerId = new Set<Id>();
                 List<Case> cseList = new List<Case>();
                 RecordType rt = [SELECT Id FROM RecordType WHERE DeveloperName = :RecordTypeName LIMIT 1];
-               
-                    newCase.RecordTypeId = rt.Id;
-                    newCase.Sub_Type__c = Type;
-                    newCase.Sub_Sub_Type__c = SubType;
+                
+                newCase.RecordTypeId = rt.Id;
+                newCase.Sub_Type__c = Type;
+                newCase.Sub_Sub_Type__c = SubType;
                 
                 if(AccId != null){
                     newCase.AccountId = AccId;
@@ -1543,7 +1464,7 @@ public static String updateCaseAndOrder(String recId) {
                 LiveChatTranscript LCTRec = new LiveChatTranscript(Id = recId, CaseId = newCase.Id);
                 update LCTRec;
                 System.debug('LCTRec:::::::::::>' + LCTRec);
-
+                
                 
                 Set<String> setOfUserId = new Set<String>();
                 Messaging.CustomNotification notification = new Messaging.CustomNotification();

@@ -83,7 +83,7 @@ public without sharing class moveToWarehouseController {
                 update caseRec;
                 List<CaseShare> existingShares = [SELECT Id FROM CaseShare WHERE CaseId = :caseRec.Id AND UserOrGroupId = :caseRec.CS_Team_Member__c];
                 System.debug('existingShares======>'+existingShares);
-
+                
                 if(!existingShares.isEmpty()){
                     //delete existingShares;
                     System.debug('existingShares delete records======>'+existingShares);
@@ -105,30 +105,30 @@ public without sharing class moveToWarehouseController {
             return null;
         }
     }
-
+    
     @AuraEnabled
     public static void sendingCustomNotification(String refundTeamMemberId,String caseId,String notificationTitle, String notificationBody){
-
+        
         System.debug('refundTeamMemberId====>'+refundTeamMemberId);
         System.debug('caseId====>'+caseId);
         CustomNotificationType notificationType = [SELECT Id, DeveloperName FROM CustomNotificationType 
-                                                     WHERE DeveloperName='Refund_Team_Member'];
-
-                                                                                           
-            Messaging.CustomNotification notification = new Messaging.CustomNotification();
-            notification.setTitle(notificationTitle);
-            notification.setBody(notificationBody);
-            notification.setNotificationTypeId(notificationType.Id);
-            notification.setTargetId(caseId);                         
-            Set<String> addressee = new Set<String>();
-            addressee.add(refundTeamMemberId);                         
-            try {
-                notification.send(addressee);
-            }
-            catch (Exception e) {
-                System.debug('Problem sending notification: ' + e.getMessage());
-            }
-         
+                                                   WHERE DeveloperName='Refund_Team_Member'];
+        
+        
+        Messaging.CustomNotification notification = new Messaging.CustomNotification();
+        notification.setTitle(notificationTitle);
+        notification.setBody(notificationBody);
+        notification.setNotificationTypeId(notificationType.Id);
+        notification.setTargetId(caseId);                         
+        Set<String> addressee = new Set<String>();
+        addressee.add(refundTeamMemberId);                         
+        try {
+            notification.send(addressee);
+        }
+        catch (Exception e) {
+            System.debug('Problem sending notification: ' + e.getMessage());
+        }
+        
     }
     
     public class wareHouseWrapper{
@@ -176,11 +176,11 @@ public without sharing class moveToWarehouseController {
         return options;
     }
     
-        public class Country {
-            @AuraEnabled
-    public String label;
-    @AuraEnabled
-    public String value;
-}
+    public class Country {
+        @AuraEnabled
+        public String label;
+        @AuraEnabled
+        public String value;
+    }
     
 }

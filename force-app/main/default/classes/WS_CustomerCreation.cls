@@ -24,15 +24,15 @@ global class WS_CustomerCreation {
                 OMSToSFDCAccount requestBody = (OMSToSFDCAccount)JSON.deserialize(req.requestBody.toString(), OMSToSFDCAccount.class);
 				
                 Account newAccount = new Account();
-                //newAccount.UUID__c = requestBody.uuid;
+                newAccount.UUID__c = requestBody.uuid;
                 newAccount.Phone = requestBody.mobile_number;
-                //newAccount.Email = requestBody.email_id;
+                newAccount.Email__c = requestBody.email_id;
                 newAccount.Name = requestBody.name;
                 
                 insert newAccount;
                 //jsonResponse = '{"status":"success", "message":"Account created successfully."}';
                  res.status = 'Success';
-                res.message = 'Account has been inserted successfully.';
+                res.message = 'User created successfully';
                 res.accountId = newAccount.Id;
             }
             catch (Exception e) {

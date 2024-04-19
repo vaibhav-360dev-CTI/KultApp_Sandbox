@@ -14,7 +14,7 @@ public class CaseHelperController {
     @AuraEnabled(cacheable=true)
     public static List<String> getUsersByProfile(String profileName) {
         List<String> userList = new List<String>();
-        for (User user : [SELECT Id,Name FROM User WHERE Profile.Name = :profileName]) {
+        for (User user : [SELECT Id,Name,Profile.Name FROM User WHERE Profile.Name = :profileName]) {
             userList.add(user.Name);
         }
         return userList;
@@ -187,7 +187,7 @@ public class CaseHelperController {
     
     // @AuraEnabled
     // public static String getOrderDetailsFromCa(String recId){
-        
+    
     //     String orderName;
     //     String orderId;
     //     if(recId !=null){
@@ -200,35 +200,35 @@ public class CaseHelperController {
     //         }
     //     } 
     // }
-
+    
     @AuraEnabled
     public static String getOrderDetailsFromCaseRecord(String recId){
         String orderName;
         String orderId;
-    try{
-        if(recId !=null){
-            orderId = [Select Id,Account.Name,OrderId__c,Refund_Reason__c FROM Case WHERE Id=: recId].OrderId__c;
-            if(orderId !=null){
-                orderName = [Select Id,OrderNumber from Order where Id=:orderId].OrderNumber;
-                if(orderName !=null){
-                    return orderName;
+        try{
+            if(recId !=null){
+                orderId = [Select Id,Account.Name,OrderId__c,Refund_Reason__c FROM Case WHERE Id=: recId].OrderId__c;
+                if(orderId !=null){
+                    orderName = [Select Id,OrderNumber from Order where Id=:orderId].OrderNumber;
+                    if(orderName !=null){
+                        return orderName;
+                    }else{
+                        return 'Blank or Null orderName ';
+                    }
                 }else{
-                    return 'Blank or Null orderName ';
+                    return 'Blank or Null orderId ';
                 }
             }else{
-                return 'Blank or Null orderId ';
+                return 'Blank or Null recId ';
             }
-        }else{
-            return 'Blank or Null recId ';
+        }catch(Exception e){
+            system.debug('ERROR == >'+e.getMessage()+' && Error Line === >'+e.getLineNumber());
         }
-    }catch(Exception e){
-        system.debug('ERROR == >'+e.getMessage()+' && Error Line === >'+e.getLineNumber());
+        return null;
     }
-    return null;
-    }
-
-
-
+    
+    
+    
     @AuraEnabled
     public static List<Order> getOrder(String recId){
         
@@ -241,32 +241,34 @@ public class CaseHelperController {
     //EmailTemplate Code - Tushar
     
     public static List<Case> getCasesByOrder(Id caseId) {
+        system.debug('caseId=====>'+caseId);
         List<Case> relatedCases = [SELECT Id,Contact.Name,Contact.Email,Subject,OrderId__r.OrderNumber,OrderId__r.UTR_Number__c,Inital_Commented_Date__c,OrderId__c, Description, Status,Product.Name,Owner.Name FROM Case WHERE Id =:caseId];
         system.debug('relatedCases::::'+relatedCases);
         List<OrderItem> orderItems = new List<OrderItem>();
         if (!relatedCases.isEmpty()) {
             // Id relorderId = relatedCases[0].OrderId__c;
             orderItems = [SELECT Id,OrderId, Product2.Name FROM OrderItem WHERE OrderId = :relatedCases[0].OrderId__c];
+            system.debug('orderItems::::'+orderItems);
         }
         
         sendEmailWithTemplate(relatedCases,orderItems);
-       // sendEmailWithTemplate(relatedCases,orderItems,'Wrong Missing Order or Product');
+        // sendEmailWithTemplate(relatedCases,orderItems,'Wrong Missing Order or Product');
         return relatedCases;
     }
     
     @AuraEnabled
     public static string sendEmailWithTemplate(List<Case> caseList, List<OrderItem> orderItemsList) {
         List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-        EmailTemplate temp = [SELECT Id,Subject,Body,HTMLValue FROM EmailTemplate WHERE Name ='Notification About Refund Processing'];
+        EmailTemplate temp = [SELECT Id,Subject,Body,HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Notification_About_Refund_Processing'];
         system.debug('temp:::'+temp);
-            
-                
+        
+        
         try{
             if(!orderItemsList.isEmpty() && !caseList.isEmpty()){
                 String htmlBody = temp.HTMLValue;
                 String plainTextBody = temp.body;
                 String CaseURL = System.label.CaseURL;                
-               
+                
                 
                 for (Case caseRec : caseList) {
                     
@@ -277,8 +279,8 @@ public class CaseHelperController {
                     
                     
                     if (caseRec.Contact.Name != null && caseRec.OrderId__r.OrderNumber !=null && caseRec.Inital_Commented_Date__c != null && caseRec.Subject != null && caseRec.OrderId__r.UTR_Number__c != null && caseRec.Owner.Name !=null ) {
-                    List<String> commDateSplit = String.valueOf(caseRec.Inital_Commented_Date__c).split('-');
-                    String commDate = commDateSplit[2] + '-' + commDateSplit[1] + '-' + commDateSplit[0];
+                        List<String> commDateSplit = String.valueOf(caseRec.Inital_Commented_Date__c).split('-');
+                        String commDate = commDateSplit[2] + '-' + commDateSplit[1] + '-' + commDateSplit[0];
                         
                         htmlBody = htmlBody.replace('{!Case.Contact}', caseRec.Contact.Name);
                         htmlBody = htmlBody.replace('{!Case.OrderId__c}', caseRec.OrderId__r.OrderNumber);
@@ -321,13 +323,13 @@ public class CaseHelperController {
                     mail.setSubject(subject);
                     mail.setPlainTextBody(plainTextBody);
                     mail.toAddresses = new String[] {caseRec.Contact.Email};
-                    mailList.add(mail);                  
+                        mailList.add(mail);                  
                 }
                 
                 if(!mailList.isEmpty()){
-                        Messaging.sendEmail(mailList);
-                        return 'SUCCESS';
-                  }  
+                    Messaging.sendEmail(mailList);
+                    return 'SUCCESS';
+                }  
             }
         }catch(Exception e){
             System.debug('The Error ::'+e.getMessage() +' AND Error Line No :'+e.getLineNumber());

@@ -3,8 +3,10 @@
         debugger;
         if (!file) return;
         console.log('file'+file.name);
-        if(!file.name.match(/\.(csv||CSV)$/)){
-            return alert('only support csv files');
+        if (!file.name.match(/\.(csv||CSV)$/)) {
+            component.set("v.HideUploadSixscreen", false);
+            //  return alert('only support csv files');
+            return alert('Uploading XlSX files');
         }else{
             reader = new FileReader();
             reader.onerror =function errorHandler(evt) {

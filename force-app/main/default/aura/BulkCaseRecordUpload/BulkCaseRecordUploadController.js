@@ -6,8 +6,12 @@
         debugger;
         var fileName = 'No File Selected.';
         if (event.getSource().get("v.files").length > 0) { 
-            fileName = event.getSource().get("v.files")[0];//['name'];
+            fileName = event.getSource().get("v.files")[0];
         }
+
+        var lwcComponent = component.find("lwcComponent");
+        lwcComponent.handleFileUpload(event);
+
         component.set("v.FileNameRecord", fileName['name']);
         helper.readFile(component,helper,fileName);
     },
@@ -25,7 +29,8 @@
         var tempName = 'OutOfStock';
         component.set("v.tempNameToDownload",tempName); 
         component.set("v.showScondScreen",true);
-        component.set("v.showFirstScreen",false);
+        component.set("v.showFirstScreen", false);
+      //  component.set("v.showFourthscreen",true);
     },
     handleClickPincodeNotservice : function(component,event,helper){
         debugger;
@@ -62,5 +67,22 @@
         component.set("v.showScondScreen",true);
         component.set("v.showFirstScreen",false);
     },
+
+    onChangeFileType: function (component, event, helper) {
+        debugger;
+        var selectedFileType = component.find('select').get('v.value');
+        if (selectedFileType == 'csv') {
+            component.set("v.showScondScreen", true); 
+            component.set("v.showFourthscreen",false);
+        } else {
+            component.set("v.showScondScreen",false);
+        }
+        if (selectedFileType == 'xls') {
+            component.set("v.showFifthscreen", true); 
+            component.set("v.showFourthscreen",false);
+        } else {
+            component.set("v.showFifthscreen", false); 
+        }
+    }
     
 })

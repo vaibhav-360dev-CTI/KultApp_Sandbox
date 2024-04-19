@@ -19,32 +19,35 @@ public class WS_OrderCreation {
     
     public class CustomerDetails {
         public String name;
-        public String mobile_number;
+        //public String mobile_number;
         public String email;
         public String phone_number;
     }
     
     public class AddressDetails {
         public ShippingAddress shipping_address;
-        public DeliveryAddress delivery_address;
+        public DeliveryAddress billing_address;
     }
     
     public class ShippingAddress {
+        public String complete_address;
         public String house_number;
+        public String phone_number;
         public String street;
         public String pin_code;
     }
     
     public class DeliveryAddress {
-        public String mobile_number;
+        public String complete_address;
+        public String phone_number;
         public String house_number;
         public String pin_code;
         public String state;
     }
     
     public class OrderDetails {
-        public String Suborder_Number;
-        public String Suborder_level_seller_name;
+        public String sub_order_id;
+        public String sub_order_seller_name;
         public String awb_number;
         public String courier;
         public String expected_delivery_date;
@@ -56,11 +59,11 @@ public class WS_OrderCreation {
     public class ItemDetails {
         public String brand;
         public String mrp;
-        public Decimal item_level_selling_price;
+        public Decimal selling_price;
         public Integer quantity;
         public String refunded_price;
         public String sku;
-        public String item_level_status;
+        public String status;
         public String variant_name;
     }
 }
