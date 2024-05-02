@@ -30,19 +30,21 @@ public class WS_OrderCreation {
     }
     
     public class ShippingAddress {
-        public String complete_address;
-        public String house_number;
-        public String phone_number;
         public String street;
+        public String city;
+        public String state;
+        public String country_code;
+        public String phone_number;
         public String pin_code;
     }
     
     public class DeliveryAddress {
-        public String complete_address;
-        public String phone_number;
-        public String house_number;
-        public String pin_code;
+        public String street;
+        public String city;
         public String state;
+        public String country_code;
+        public String phone_number;
+        public String pin_code;
     }
     
     public class OrderDetails {

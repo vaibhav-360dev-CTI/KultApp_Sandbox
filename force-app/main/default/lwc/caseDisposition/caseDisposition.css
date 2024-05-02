@@ -6,3 +6,7 @@ h1{
 label{
     font-weight: 600;
 }
+
+.comboBoxSize{
+    width: 43vh;
+}

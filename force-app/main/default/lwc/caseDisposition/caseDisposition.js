@@ -3,6 +3,9 @@ import getCaseFieldSetList from '@salesforce/apex/CaseHelperControllers.getCaseF
 import getAllCaseFields from '@salesforce/apex/CaseHelperControllers.getAllCaseFields';
 import getRecrdTypeId from '@salesforce/apex/CaseHelperControllers.getRecrdTypeId';
 import getCaseRecord from '@salesforce/apex/CaseHelperControllers.getCaseRec';
+import updateStatusfield from '@salesforce/apex/CaseHelperControllers.updateStatusfield';
+import loadcasestatus from '@salesforce/apex/CaseHelperControllers.loadcasestatus';
+
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { getRecordNotifyChange } from "lightning/uiRecordApi";
@@ -13,12 +16,14 @@ export default class DynamicPageGenerator extends LightningElement {
     caseFieldSet = [];
     caseField = [];
     sendCaseField = [];
+    showDispostionField = [];
     data;
     data1;
     error1;
     error;
     selectedSubType;
     selectedSubSubType;
+    selectedStatus;
     showSubFields = false;
     @track showCaseRecordPage = true
     @api objectName;
@@ -31,17 +36,36 @@ export default class DynamicPageGenerator extends LightningElement {
     @track CaseDataAvail = false;
     @track caseType;
     @track caseSubType;
+    selectedDisposition;
+    StatusValue;
+
+    get Statusoptions() {
+        return [
+            { label: 'In Progress', value: 'In Progress' },
+            { label: 'Closed', value: 'Closed' },
+            { label: 'Re Assigned', value: 'Re Assigned' },
+        ];
+    } 
+
+    handleChange(event){
+        debugger;
+        this.StatusValue = event.detail.value;
+    }
 
     connectedCallback() {
           setTimeout(() => {
                this.callApexMethod();
                this.callApexMethod2();
                this.callApexMethod3();
+               this.callApexMethod5();
+               this.updateStatusfield();
           }, 300);
           setTimeout(() => {
             this.callApexMethod4();
        }, 600);
      }
+
+     
      callApexMethod() {
           debugger;
           getCaseFieldSetList()
@@ -108,15 +132,43 @@ export default class DynamicPageGenerator extends LightningElement {
                   if (result) {
                     this.selectedSubType = result.Sub_Type__c;
                     this.selectedSubSubType = result.Sub_Sub_Type__c;
+                    if(result.Status != 'Un Assigned' || result.Status != 'New' || result.Status != 'In Progress'){
+                    this.selectedStatus = result.Status;
+                    }
+                    this.selectedDisposition = result.Disposition__c;
                     this.handleShowSubFields();  
              }
              })
              .catch(error => {
                   this.error1 = error;
-        })
-        
-
+        })      
    }
+
+   callApexMethod5(){
+    debugger;
+    loadcasestatus({recordId: this.recordId})
+    .then(result => {
+        this.StatusValue = result.Status; 
+        console.log('Apex method executed successfully');
+    })
+    .catch(error => {
+        console.error('Error in Apex method:', error);
+    });
+   }
+
+
+   updateStatusfield(){
+    debugger;
+    updateStatusfield({recId: this.recordId , Status: this.StatusValue })
+    .then(result => {
+        this.StatusValue = result.Status;
+        console.log('Apex method executed successfully');
+    })
+    .catch(error => {
+        console.error('Error in Apex method:', error);
+    });
+   }
+
      
     onchageInputOpp(event) {
         debugger;
@@ -126,11 +178,31 @@ export default class DynamicPageGenerator extends LightningElement {
     if (event.target.fieldName == 'Sub_Sub_Type__c') {
         this.selectedSubSubType = event.target.value;
     }
+    if (event.target.fieldName == 'Status') {
+        this.selectedStatus = event.target.value;
+    }
+    if(event.target.fieldName == 'Disposition__c'){
+        this.selectedDisposition = event.target.value;
+    }
     this.handleShowSubFields();
 }
 
     handleShowSubFields(){
         debugger;
+        
+        if(this.selectedStatus === 'Closed'){
+            this.showDispostionField = [];
+            for (var i = 0; i < this.caseField.length; i++) {
+                if (this.caseField[i].value== "Disposition__c") {
+                    this.showDispostionField.push(this.caseField[i]);
+                }
+            }
+            this.showSubFields = true;
+        }
+        if(this.selectedStatus !== 'Closed'){
+            this.showDispostionField = [];
+            
+        }
         if (this.selectedSubType === 'Order Related' && this.selectedSubSubType === 'Order Confirmation /Status Issues') {
             this.sendCaseField = [];
             for (var i = 0; i < this.caseField.length; i++) {
@@ -1044,14 +1116,39 @@ export default class DynamicPageGenerator extends LightningElement {
     }
 
     handleClick(){
-        const event = new ShowToastEvent({
-            title: 'Case Updated',
-            variant: 'success',
-            message: 'The case has been Updated successfully.'
-        });
-        this.dispatchEvent(event);
-        this.closeQuickAction();
+        debugger;
+        
+        if(this.selectedStatus === 'Closed'){
+            if(this.selectedDisposition !== null && this.selectedDisposition !== '' && this.selectedDisposition !== undefined){
+                const event = new ShowToastEvent({
+                    title: 'Case Updated',
+                    variant: 'success',
+                    message: 'The case has been Updated successfully.'
+                });
+                //this.updateStatusfield();
+                this.dispatchEvent(event);
+                this.closeQuickAction();
+            }else{
+
+                const event = new ShowToastEvent({
+                    title: 'Error',
+                    variant: 'error',
+                    message: 'Please fill in the Disposition field before closing the case.'
+                });
+                this.dispatchEvent(event);
+            }
+        }else{
+              const event = new ShowToastEvent({
+                    title: 'Case Updated',
+                    variant: 'success',
+                    message: 'The case has been Updated successfully.'
+                });
+                this.updateStatusfield();
+                this.dispatchEvent(event);
+                this.closeQuickAction();
+        }
     }
+    
     handleCancel(){
         this.closeQuickAction();
     }

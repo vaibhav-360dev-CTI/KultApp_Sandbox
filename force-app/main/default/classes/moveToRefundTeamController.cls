@@ -1,6 +1,6 @@
 public class moveToRefundTeamController {
     
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static RefundWrapper getOrderLineItem(String caseId) { 
         
         List<Case> caseList = [SELECT Id,Contact_Number__c,RefundTeamMember__c, Sub_Type__c, Sub_Sub_Type__c, OrderId__c, OrderId__r.Name,OrderId__r.Refund_Type__c, OrderId__r.Refund_Reason__c, OrderId__r.Coupon__c,OrderId__r.Refund_Amount__c,OrderId__r.Paid_Amount__c 
@@ -24,7 +24,7 @@ public class moveToRefundTeamController {
     } 
     
     @AuraEnabled
-    public static String updateOrderAndCaseFields(String caseId, String caseRefund, String refundReason, String coupon,String refundValue,String refundTeamMemberId, integer refundamount,integer paidamount,String type,string subtype,List<OrderItem> orderItemsToUpdate) {
+    public static String updateOrderAndCaseFields(String caseId, String caseRefund, String refundReason, String coupon,String refundValue,String refundTeamMemberId/*, integer refundamount*/,integer paidamount/*,String type,string subtype*/,List<OrderItem> orderItemsToUpdate) {
         String result;
         
         system.debug('caseId--->'+caseId);
@@ -58,7 +58,7 @@ public class moveToRefundTeamController {
                 if(caseRecord.Status == 'New'){
                     caseRecord.Status = 'In Progress'; 
                 }
-                update caseRecord;
+
                 System.debug('caseRecord====>'+caseRecord);
                  System.debug('caseRecord.OrderId__c =======>'+caseRecord.OrderId__c);
                 
@@ -68,18 +68,42 @@ public class moveToRefundTeamController {
                     orderRecord.Refund_Reason__c = refundReason;
                     orderRecord.Coupon__c = coupon;
                     orderRecord.Refund_Reasons__c = refundValue;
-                    orderRecord.Refund_Amount__c = refundamount;
+                    //orderRecord.Refund_Amount__c = refundamount;
                     orderRecord.Paid_Amount__c = paidamount;
                     system.debug('orderRecord--->'+orderRecord);
+                    
+                    update orderItemsToUpdate;
+                    
+                    system.debug('orderItemsToUpdate--->'+orderItemsToUpdate);
                     
                     List<OrderItem> updateAllOrderItems = new List<OrderItem>();
                     List<Affected_SKU__c> affectedSKUsToInsert = new List<Affected_SKU__c>();
                     Decimal totalrefundprice = 0;
-                    if (orderItemsToUpdate != null && !orderItemsToUpdate.isEmpty()) {
-                        //update orderItemsToUpdate;
-                        for(OrderItem ori : orderItemsToUpdate){
-                            
+                    List<String> skuList = new List<String>();
+                    List<OrderItem> orditm = [SELECT Affected_Quantity__c, Is_Already_Utilized__c, Total_Selling_Price__c, Refund_Reasons__c, 
+                    Product_Name__c, Status__c, SKU__c, Refunded_Price__c, Selling_Price__c, Brand__c, Refund_Price__c, Refund_Type__c, 
+                    Refund_Reason__c, Reason_for_RTO__c, Is_Duplicate_Order__c, Refund_Quantity__c, OrderItemNumber, SystemModstamp, 
+                    LastModifiedById, LastModifiedDate, CreatedById, CreatedDate, Description, EndDate, ServiceDate, TotalPrice, 
+                    ListPrice, UnitPrice, Quantity, AvailableQuantity, QuoteLineItemId, OriginalOrderItemId, PricebookEntryId, 
+                    OrderId, IsDeleted, Product2Id, Id FROM OrderItem WHERE Id IN :orderItemsToUpdate];
+                 
+                        
+                        if(orditm.size()>0){
+                            for(OrderItem itm : orditm){
+                                if(itm.SKU__c != null){
+                                    skuList.add(itm.SKU__c);
+                                }
+                            }
+                        }
+                    
+
+                    if (orditm != null && !orditm.isEmpty()) {
+                        Decimal refundAmountForEachItem = 0; 
+                        for(OrderItem ori : orditm){
+                            refundAmountForEachItem = refundAmountForEachItem + ori.Refund_Price__c;
+
                             if(ori.Is_Already_Utilized__c != true){
+                                system.debug('SKU===============> '+ ori.SKU__c);
                                 Affected_SKU__c affectedSKUrec = new Affected_SKU__c();
                                 affectedSKUrec.Name = ori.SKU__c;
                                 affectedSKUrec.Brand_Name__c = ori.Brand__c;
@@ -89,7 +113,7 @@ public class moveToRefundTeamController {
                                 affectedSKUsToInsert.add(affectedSKUrec);
                             }
                             //ori.Refund_Reasons__c = refundValue;
-                            ori.Is_Already_Utilized__c = true;
+                           ori.Is_Already_Utilized__c = true;
                             updateAllOrderItems.add(ori);
                             if(ori.Refund_Price__c != null){
                                 
@@ -99,16 +123,30 @@ public class moveToRefundTeamController {
                             }
                             
                         }
+                        system.debug('skuList================>'+skuList);
+                        if(skuList.size()>0){
+                            String skuString = String.join(skuList, ';');
+                            system.debug('skuString================>'+skuString);
+                            caseRecord.SKU_Details__c = skuString;
+                            
+                        }
+                        if(refundAmountForEachItem != 0){
+                            caseRecord.Refund_Amount__c = refundAmountForEachItem;
+                            system.debug('caseRecord.Refund_Amount__c================>'+caseRecord.Refund_Amount__c);
+                        }
+                        
+                        update caseRecord;
                         System.debug('affectedSKUsToInsert==> '+ affectedSKUsToInsert);
                         if(!affectedSKUsToInsert.isEmpty()){
                             insert affectedSKUsToInsert;
                         }
                         if(totalrefundprice > 0){
                             orderRecord.Refund_Amount__c = totalrefundprice;
-                            
                         }
+                        
                         update orderRecord;
                         update updateAllOrderItems;
+                        System.debug('updateAllOrderItems==> ' + updateAllOrderItems);
                     }
                 }
                 

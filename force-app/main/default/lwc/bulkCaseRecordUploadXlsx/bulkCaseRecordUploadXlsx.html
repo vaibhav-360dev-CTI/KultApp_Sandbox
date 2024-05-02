@@ -2,7 +2,7 @@
      <template lwc:if={showTable}>
           <lightning-card title="Case" icon-name="standard:case">
                <div class="datatable-container">
-                    <c-json-table json-data={jsonData}></c-json-table>
+                    <c-json-table doc-temp-name={docTempName} json-data={jsonData}></c-json-table>
                </div>
                <br />
                <div class="slds-align_absolute-center">

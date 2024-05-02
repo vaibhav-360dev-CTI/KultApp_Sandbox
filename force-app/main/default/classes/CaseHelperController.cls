@@ -182,7 +182,7 @@ public class CaseHelperController {
     //Method for Getting Case Details on LWC Card - Tushar
     @AuraEnabled
     Public static Case getCaseDetails(String recId){
-        return  [Select Id,Account.Name,OrderId__r.OrderNumber,Refund_Reason__c,Sub_Type__c,Sub_Sub_Type__c,Origin,Type_Of_Case__c, Case_Sub_Status__c FROM Case WHERE Id=: recId];         
+        return  [Select Id,Account.Name,OrderId__r.Name,Refund_Reason__c,Sub_Type__c,Sub_Sub_Type__c,Origin,Type_Of_Case__c, Case_Sub_Status__c FROM Case WHERE Id=: recId];         
     }
     
     // @AuraEnabled

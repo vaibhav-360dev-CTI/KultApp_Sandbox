@@ -17,4 +17,8 @@ trigger TriggerOnCase on Case (before insert, before update, after update, after
     if(trigger.isAfter && trigger.isInsert){
         caseTriggerHelper.createdAffectedSKUs(trigger.new);
     }
+    if((trigger.isInsert && trigger.isBefore) || (trigger.isUpdate && trigger.isBefore)){
+        caseTriggerHelper.handleCases(trigger.new);
+    }
+   
 }

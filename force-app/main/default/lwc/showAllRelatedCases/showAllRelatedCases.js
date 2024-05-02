@@ -1,4 +1,5 @@
 import { LightningElement, track, wire, api } from 'lwc';
+import FaqIcon from '@salesforce/resourceUrl/FaqIcon';
 import getCaseList from '@salesforce/apex/showAllRelatedCasesController.getCaseList';
 import { NavigationMixin } from 'lightning/navigation';
 
@@ -7,6 +8,7 @@ export default class showAllRelatedCases extends NavigationMixin(LightningElemen
 @track areCasesAvailable = false;
 @track caseList = [];
 @track relCaseAvail = false;
+ FaqIcon = FaqIcon;
 // @wire(getCaseList, {caseId: '$recordId'})
 // wiredContacts({data, error}){
 //     debugger;

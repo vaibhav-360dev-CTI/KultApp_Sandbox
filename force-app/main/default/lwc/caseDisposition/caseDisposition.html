@@ -25,8 +25,39 @@
                                         </span>
                                     </div>
                                 </template>
-                            </template>
+                                <template for:each={showDispostionField} for:item="field">
+                                    <div key={field.key} class="slds-col slds-size_6-of-12">
+                                        <span>
+                                            <lightning-input-field field-name={field.value}></lightning-input-field>
+                                        </span>
+                                    </div>
+                                </template>
+                            </template>                           
+                            <div class="slds-form-element slds-m-bottom_x-small">
+                                <div class="slds-form-element__row">
+                                    <div class="slds-size_1-of-1 slds-grid slds-gutters">
+                                        <div class="slds-col slds-size_5-of-12">
+                                            <label class="slds-form-element__label" for="status-combobox">
+                                                Status
+                                            </label>
+                                        </div>
+                                        <div class="slds-col slds-size_7-of-12">
+                                            <div class="slds-form-element__control comboBoxSize">
+                                                <lightning-combobox 
+                                                    id="status-combobox"
+                                                    name="status"
+                                                    value={StatusValue}
+                                                    placeholder="Select Status"
+                                                    options={Statusoptions}
+                                                    onchange={handleChange}>
+                                                </lightning-combobox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        
                         <div class="slds-align_absolute-center slds-modal__footer">
                             <lightning-button class="" type="submit" variant="brand" label="Update" onclick={handleClick} ></lightning-button>&nbsp;&nbsp;&nbsp;
                             <lightning-button class="" type="cancel" variant="neutral" label="Cancel" onclick={handleCancel} ></lightning-button>

@@ -99,7 +99,7 @@ export default class CaseParentAllScreenComponent extends LightningElement {
                               if (this.caseDetails.OrderId__c == null || this.caseDetails.OrderId__c == undefined || this.caseDetails.OrderId__c == '') {
                                     this.orderNumber = '-';
                               } else {
-                                    this.orderNumber = this.caseDetails.OrderId__r.OrderNumber;
+                                    this.orderNumber = this.caseDetails.OrderId__r.Name;
                               }
                               if (this.caseDetails.Origin == null || this.caseDetails.Origin == undefined || this.caseDetails.Origin == '') {
                                     this.caseOrigin = '-';

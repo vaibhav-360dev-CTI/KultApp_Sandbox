@@ -1,5 +1,4 @@
 public without sharing class referBackToCsTeamController {
-    
     @AuraEnabled
     public static Case getCaseById(String caseId) {
         System.debug('caseId====>'+caseId);
@@ -9,15 +8,38 @@ public without sharing class referBackToCsTeamController {
         System.debug(cases);
         return cases;
     }
+
+    @AuraEnabled
+    public static boolean getCaseTeamAndType(String caseId){
+        try {
+            Case caseRec = [SELECT Id, Refer_Back_Reason__c, Refund_Amount__c, Approval_Remarks__c, 
+            Rejection_Remarks__c, Rejection_Reason__c, Describe_Information_Needed__c, 
+            OrderId__c, OrderId__r.Refund_Amount__c,ownerId, RecordType.Name  FROM Case  WHERE Id = :caseId LIMIT 1 ];
+            List<User> userRecList = [SELECT Id, Name, Profile.Name FROM User WHERE Id =: caseRec.OwnerId];
+            User userRec = new User();
+            Boolean isWHAndOrderRelated = false;
+            if(!userRecList.isEmpty()){
+                userRec = userRecList[0];
+            }
+            if(userRec != null && caseRec.RecordType.Name == 'Order Related' && userRec.Profile.Name == 'WareHouse Team'){
+                isWHAndOrderRelated = true;
+            }
+            return isWHAndOrderRelated;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
     
     @AuraEnabled
-    public static List<Case> getCaseAndOrderDetails(String caseId, String referBackReason,String approvalRemarks, String  rejectionReason,String describeInformationNeeded,Decimal orderRefundAmount) {
+    public static List<Case> getCaseAndOrderDetails(String caseId, String referBackReason,String approvalRemarks, String  rejectionReason,String describeInformationNeeded,Decimal orderRefundAmount, String resolutionRemarks, String base64, String filename, String awbNumber, String focOrderId, String updateDesc) {
         System.debug('caseId====>' + caseId);
         System.debug('referBackReason ===>'+referBackReason);
         System.debug('approvalRemarks===>'+approvalRemarks);
         System.debug('rejectionReason===>'+rejectionReason);
         System.debug('describeInformationNeeded===>'+describeInformationNeeded);
         System.debug('orderRefundAmount===>'+orderRefundAmount);
+        System.debug('awbNumber===>'+awbNumber);
+        System.debug('focOrderId===>'+focOrderId);
         String currUserId = userInfo.getUserId();
         List<Case> updatedCases = new List<Case>();   
         
@@ -63,9 +85,22 @@ public without sharing class referBackToCsTeamController {
                     caseToUpdate.OrderId__r.Refund_Amount__c = orderRefundAmount;
                 }
                 caseToUpdate.Case_Sub_Status__c = 'Referred Back to CS Team';
+                caseToUpdate.AWB_Number__c = awbNumber;
+                caseToUpdate.FOC_Order_Id__c = focOrderId;
+                System.debug('caseToUpdate ==> ' + caseToUpdate);
                 update caseToUpdate;
+
+                Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                cpdRec.Status__c = referBackReason == 'Resolved' ? 'Resolved' : 'In Progress';
+                cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? resolutionRemarks : referBackReason == 'Send Update' ? updateDesc : describeInformationNeeded;
+                cpdRec.Case__c = caseId;
+                cpdRec.Current_Action__c = 'Referred Back to CS Team';
+                insert cpdRec;
+                if(base64 != null){
+                    uploadFile(base64, filename, cpdRec.Id);
+                }
                 
-                List<CaseShare> existingShares = [SELECT Id, UserOrGroup.Name FROM CaseShare WHERE CaseId = :caseToUpdate.Id AND UserOrGroupId = :currUserId];
+                List<CaseShare> existingShares = [SELECT Id, UserOrGroup.Name FROM CaseShare WHERE CaseId = :caseToUpdate.Id AND UserOrGroupId = :currUserId AND RowCause != 'Owner'];
                 System.debug('existingShares======>'+existingShares);
                 if(!existingShares.isEmpty()){
                     delete existingShares;
@@ -156,6 +191,47 @@ public without sharing class referBackToCsTeamController {
         }
     }
     
+    @AuraEnabled
+  public static String uploadFile(String base64, String filename, String recordId) {
+        ContentVersion cv = createContentVersion(base64, filename);
+        ContentDocumentLink cdl = createContentLink(cv.Id, recordId);
+        if (cv == null || cdl == null) { return null; }
+        return cdl.Id;
+  }
+
+  private static ContentVersion createContentVersion(String base64, String filename) {
+    ContentVersion cv = new ContentVersion();
+    cv.VersionData = EncodingUtil.base64Decode(base64);
+    cv.Title = filename;
+    cv.PathOnClient = filename;
+    try {
+      insert cv;
+      return cv;
+    } catch(DMLException e) {
+      System.debug(e);
+      return null;
+    }
+  }
+
+  private static ContentDocumentLink createContentLink(String contentVersionId, String recordId) {
+    if (contentVersionId == null || recordId == null) { return null; }
+ContentDocumentLink cdl = new ContentDocumentLink();
+cdl.ContentDocumentId = [
+SELECT ContentDocumentId 
+FROM ContentVersion 
+WHERE Id =: contentVersionId].ContentDocumentId;
+cdl.LinkedEntityId = recordId;
+// ShareType is either 'V', 'C', or 'I'
+// V = Viewer, C = Collaborator, I = Inferred
+cdl.ShareType = 'V';
+try {
+insert cdl;
+return cdl;
+} catch(DMLException e) {
+System.debug(e);
+return null;
+}
+}
    // We Dont use this method any where ==================================================>
    /*
     public static void sendEmailToUserAndNotificationToUserReasonForLostInTransit(List<Case> caseList, map<Id,Case> oldMapCase) {

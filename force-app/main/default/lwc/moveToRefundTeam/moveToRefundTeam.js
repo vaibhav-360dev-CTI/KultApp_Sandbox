@@ -116,6 +116,7 @@ export default class MoveToRefundTeam extends LightningElement {
                     value: this.AccountIdForLWC,
                 }],
             };
+
         }
     }
 
@@ -134,11 +135,213 @@ export default class MoveToRefundTeam extends LightningElement {
     }
 
 
-    @wire(getOrderLineItems, { caseId: '$recordId' })
-    wiredAccount({ error, data }) {
+    // @wire(getOrderLineItems, { caseId: '$recordId' })
+    // wiredAccount({ error, data }) {
+    //     debugger;
+    //     if (data) {
+    //         if(data.orderRecord == null){
+    //             const event = new ShowToastEvent({
+    //                 title: 'Error',
+    //                 message: 'No Order Found on the Case.',
+    //                 variant: 'error',
+    //             });
+    //             this.dispatchEvent(event);
+    //             this.dispatchEvent(new CloseActionScreenEvent());
+    //             getRecordNotifyChange([{ recordId: this.recordId }]);
+    //         }
+    //         this.caseRefund = data.orderRecord.Refund_Type__c;
+    //         this.refundReason = data.orderRecord.Refund_Reason__c;
+    //         this.Coupon = data.orderRecord.Coupon__c;
+    //         this.ContactPhone = data.caseRecord.Contact_Number__c;
+    //         this.refundteamMemeber = data.caseRecord.RefundTeamMember__c;
+    //         this.userdata = data.caseRecord.RefundTeamMember__c;
+    //         this.refundamount = data.caseRecord.OrderId__r.Refund_Amount__c;
+    //         this.paidamount = data.caseRecord.OrderId__r.Paid_Amount__c;
+
+    //         if ((data.caseRecord.Sub_Type__c == undefined || data.caseRecord.Sub_Type__c == null || data.caseRecord.Sub_Type__c == '') || (data.caseRecord.Sub_Sub_Type__c == undefined || data.caseRecord.Sub_Sub_Type__c == null || data.caseRecord.Sub_Sub_Type__c == '')) {
+    //                 const event = new ShowToastEvent({
+    //                     title: 'Alert',
+    //                     message: 'Please Enter Case Details before Assigning to Refund Team.',
+    //                     variant: 'warning',
+    //                 });
+    //                 this.dispatchEvent(event);
+    //                 this.dispatchEvent(new CloseActionScreenEvent());
+    //                 getRecordNotifyChange([{ recordId: this.recordId }]);
+    //         }
+
+
+    //         if (this.caseRefund == 'Full') {
+    //             this.refundtypeOli = 'Full';
+    //             this.isFullSelected = true;
+    //             this.isPartialSelected = false;
+    //         } else if (this.caseRefund === 'Partial') {
+    //             this.isFullSelected = false;
+    //             this.isPartialSelected = true;
+    //         } else {
+    //             this.isFullSelected = false;
+    //             this.isPartialSelected = false;
+    //         }
+
+    //         this.records = data.orderItems.map(item => ({
+    //             productName: item.Product2.Name,
+    //             Id: item.Id,
+    //             totalQuantity: item.Quantity,
+    //             refundQuantity: item.Quantity,
+    //             //totalprice: item.TotalPrice,
+    //             isAlreadyUtilized : item.Is_Already_Utilized__c,
+    //             totalprice: item.Total_Selling_Price__c,
+    //             refundreasonPickListValue: item.Refund_Reasons__c,
+    //              refundPrice: item.TotalPrice,
+    //             skudetail: item.SKU__c,
+    //             OliRefundReason: item.Refund_Reason__c,
+    //             refundtypeOli: 'Full'
+    //         }));
+    //         debugger;
+
+    //         this.records2 = data.orderItems.map(item => ({
+    //             productName: item.Product2.Name,
+    //             Id: item.Id,
+    //             totalQuantity: item.Quantity,
+    //             refundQuantity: item.Refund_Quantity__c,
+    //             //totalprice: item.TotalPrice,
+    //             isAlreadyUtilized : item.Is_Already_Utilized__c,
+    //             totalprice: item.Total_Selling_Price__c,
+    //              refundPrice: item.Refund_Price__c,
+    //             skudetail: item.SKU__c,
+    //             OliRefundReason: item.Refund_Reason__c,
+    //             refundtypeOli: item.Refund_Type__c,
+    //             refundreasonPickListValue: item.Refund_Reasons__c,
+    //             editable: true,
+    //             checkboxVal2: false,
+    //             disableReason: true
+    //         }));
+
+    //     } else{
+    //         const event = new ShowToastEvent({
+    //             title: 'Error',
+    //             message: 'No Order Found on the Case.',
+    //             variant: 'error',
+    //         });
+    //         this.dispatchEvent(event);
+    //         this.dispatchEvent(new CloseActionScreenEvent());
+    //         getRecordNotifyChange([{ recordId: this.recordId }]);
+    //     }
+    // }
+
+
+    connectedCallback() {
         debugger;
-        if (data) {
-            if(data.orderRecord == null){
+        setTimeout(() => {
+            if (this.AccountIdForLWC) {
+                this.filter = {
+                    criteria: [{
+                        fieldPath: 'ProfileId',
+                        operator: 'eq',
+                        value: this.AccountIdForLWC,
+                    }],
+                };
+                
+            }
+             this.fetchOrderLineItems();
+
+        }, 900);
+        
+   }
+
+    fetchOrderLineItems() {
+        debugger;
+        getOrderLineItems({ caseId: this.recordId })
+            .then(data => {
+                debugger;
+                if (data) {
+                    if (data.orderRecord == null) {
+                        const event = new ShowToastEvent({
+                            title: 'Error',
+                            message: 'No Order Found on the Case.',
+                            variant: 'error',
+                        });
+                        this.dispatchEvent(event);
+                        this.dispatchEvent(new CloseActionScreenEvent());
+                        getRecordNotifyChange([{ recordId: this.recordId }]);
+                    }
+                    this.caseRefund = data.orderRecord.Refund_Type__c;
+                    this.refundReason = data.orderRecord.Refund_Reason__c;
+                    this.Coupon = data.orderRecord.Coupon__c;
+                    this.ContactPhone = data.caseRecord.Contact_Number__c;
+                    this.refundteamMemeber = data.caseRecord.RefundTeamMember__c;
+                    this.userdata = data.caseRecord.RefundTeamMember__c;
+                    this.refundamount = data.caseRecord.OrderId__r.Refund_Amount__c;
+                    this.paidamount = data.caseRecord.OrderId__r.Paid_Amount__c;
+
+                    if ((data.caseRecord.Sub_Type__c == undefined || data.caseRecord.Sub_Type__c == null || data.caseRecord.Sub_Type__c == '') || (data.caseRecord.Sub_Sub_Type__c == undefined || data.caseRecord.Sub_Sub_Type__c == null || data.caseRecord.Sub_Sub_Type__c == '')) {
+                        const event = new ShowToastEvent({
+                            title: 'Alert',
+                            message: 'Please Enter Case Details before Assigning to Refund Team.',
+                            variant: 'warning',
+                        });
+                        this.dispatchEvent(event);
+                        this.dispatchEvent(new CloseActionScreenEvent());
+                        getRecordNotifyChange([{ recordId: this.recordId }]);
+                    }
+
+                    if (this.caseRefund == 'Full') {
+                        this.refundtypeOli = 'Full';
+                        this.isFullSelected = true;
+                        this.isPartialSelected = false;
+                    } else if (this.caseRefund === 'Partial') {
+                        this.isFullSelected = false;
+                        this.isPartialSelected = true;
+                    } else {
+                        this.isFullSelected = false;
+                        this.isPartialSelected = false;
+                    }
+
+                    this.records = data.orderItems.map(item => ({
+                        productName: item.Product2.Name,
+                        Id: item.Id,
+                        totalQuantity: item.Quantity,
+                        refundQuantity: item.Quantity,
+                        //totalprice: item.TotalPrice,
+                        isAlreadyUtilized: item.Is_Already_Utilized__c,
+                        totalprice: item.Total_Selling_Price__c,
+                        refundreasonPickListValue: item.Refund_Reasons__c,
+                        refundPrice: item.TotalPrice,
+                        skudetail: item.SKU__c,
+                        OliRefundReason: item.Refund_Reason__c,
+                        refundtypeOli: 'Full'
+                    }));
+                    debugger;
+
+                    this.records2 = data.orderItems.map(item => ({
+                        productName: item.Product2.Name,
+                        Id: item.Id,
+                        totalQuantity: item.Quantity,
+                        refundQuantity: item.Refund_Quantity__c,
+                        //totalprice: item.TotalPrice,
+                        isAlreadyUtilized: item.Is_Already_Utilized__c,
+                        totalprice: item.Total_Selling_Price__c,
+                        refundPrice: item.Refund_Price__c,
+                        skudetail: item.SKU__c,
+                        OliRefundReason: item.Refund_Reason__c,
+                        refundtypeOli: item.Refund_Type__c,
+                        refundreasonPickListValue: item.Refund_Reasons__c,
+                        editable: true,
+                        checkboxVal2: false,
+                        disableReason: true
+                    }));
+
+                } else {
+                    const event = new ShowToastEvent({
+                        title: 'Error',
+                        message: 'No Order Found on the Case.',
+                        variant: 'error',
+                    });
+                    this.dispatchEvent(event);
+                    this.dispatchEvent(new CloseActionScreenEvent());
+                    getRecordNotifyChange([{ recordId: this.recordId }]);
+                }
+            })
+            .catch(error => {
                 const event = new ShowToastEvent({
                     title: 'Error',
                     message: 'No Order Found on the Case.',
@@ -147,87 +350,11 @@ export default class MoveToRefundTeam extends LightningElement {
                 this.dispatchEvent(event);
                 this.dispatchEvent(new CloseActionScreenEvent());
                 getRecordNotifyChange([{ recordId: this.recordId }]);
-            }
-            this.caseRefund = data.orderRecord.Refund_Type__c;
-            this.refundReason = data.orderRecord.Refund_Reason__c;
-            this.Coupon = data.orderRecord.Coupon__c;
-            this.ContactPhone = data.caseRecord.Contact_Number__c;
-            this.refundteamMemeber = data.caseRecord.RefundTeamMember__c;
-            this.userdata = data.caseRecord.RefundTeamMember__c;
-            this.refundamount = data.caseRecord.RefundTeamMember__c;
-            this.paidamount = data.caseRecord.OrderId__r.Paid_Amount__c;
-
-
-
-            if ((data.caseRecord.Sub_Type__c == undefined || data.caseRecord.Sub_Type__c == null || data.caseRecord.Sub_Type__c == '') || (data.caseRecord.Sub_Sub_Type__c == undefined || data.caseRecord.Sub_Sub_Type__c == null || data.caseRecord.Sub_Sub_Type__c == '')) {
-                    const event = new ShowToastEvent({
-                        title: 'Alert',
-                        message: 'Please Enter Case Details before Assigning to Refund Team.',
-                        variant: 'warning',
-                    });
-                    this.dispatchEvent(event);
-                    this.dispatchEvent(new CloseActionScreenEvent());
-                    getRecordNotifyChange([{ recordId: this.recordId }]);
-            }
-
-
-            if (this.caseRefund == 'Full') {
-                this.refundtypeOli = 'Full';
-                this.isFullSelected = true;
-                this.isPartialSelected = false;
-            } else if (this.caseRefund === 'Partial') {
-                this.isFullSelected = false;
-                this.isPartialSelected = true;
-            } else {
-                this.isFullSelected = false;
-                this.isPartialSelected = false;
-            }
-
-            this.records = data.orderItems.map(item => ({
-                productName: item.Product2.Name,
-                Id: item.Id,
-                totalQuantity: item.Quantity,
-                refundQuantity: item.Quantity,
-                totalprice: item.TotalPrice,
-                isAlreadyUtilized : item.Is_Already_Utilized__c,
-                //totalprice: item.Total_Selling_Price__c,
-                refundreasonPickListValue: item.Refund_Reasons__c,
-                // refundPrice: item.TotalPrice,
-                skudetail: item.SKU__c,
-                OliRefundReason: item.Refund_Reason__c,
-                refundtypeOli: 'Full'
-            }));
-            debugger;
-
-            this.records2 = data.orderItems.map(item => ({
-                productName: item.Product2.Name,
-                Id: item.Id,
-                totalQuantity: item.Quantity,
-                refundQuantity: item.Refund_Quantity__c,
-                totalprice: item.TotalPrice,
-                isAlreadyUtilized : item.Is_Already_Utilized__c,
-                //totalprice: item.Total_Selling_Price__c,
-                // refundPrice: item.Refund_Price__c,
-                skudetail: item.SKU__c,
-                OliRefundReason: item.Refund_Reason__c,
-                refundtypeOli: item.Refund_Type__c,
-                refundreasonPickListValue: item.Refund_Reasons__c,
-                editable: true,
-                checkboxVal2: false,
-                disableReason: true
-            }));
-
-        } else{
-            const event = new ShowToastEvent({
-                title: 'Error',
-                message: 'No Order Found on the Case.',
-                variant: 'error',
             });
-            this.dispatchEvent(event);
-            this.dispatchEvent(new CloseActionScreenEvent());
-            getRecordNotifyChange([{ recordId: this.recordId }]);
         }
-    }
+
+
+
     handelRefundTypeChange(event) {
         debugger;
         if (event.target.value == 'Full') {
@@ -289,10 +416,10 @@ export default class MoveToRefundTeam extends LightningElement {
             }
             this.records2[rowIndex].refundtypeOli = event.target.value;
             this.records2[rowIndex].editable = false;
-            // if (this.totalprice != undefined && this.totalQuantity != null && this.refundQuantity != '') {
-            // this.refundPrice = (this.totalprice / this.totalQuantity) * this.refundQuantity;
-            // console.log('refund price' ,this.refundPrice);
-            // }
+            if (this.totalprice != undefined && this.totalQuantity != null && this.refundQuantity != '') {
+            this.refundPrice = (this.totalprice / this.totalQuantity) * this.refundQuantity;
+            console.log('refund price' ,this.refundPrice);
+            }
         }
     }
 
@@ -435,7 +562,7 @@ export default class MoveToRefundTeam extends LightningElement {
                     return;
                     }
                     updatedRecords.push({
-                        //Refund_Price__c: obj.refundPrice,
+                        Refund_Price__c: obj.refundPrice,
                         Refund_Quantity__c: obj.refundQuantity,
                         Refund_Reason__c: obj.OliRefundReason,
                         Refund_Type__c: obj.refundtypeOli,
@@ -446,7 +573,7 @@ export default class MoveToRefundTeam extends LightningElement {
                 }
                 else {
                     updatedRecords.push({
-                        //Refund_Price__c: 0,
+                        Refund_Price__c: 0,
                         Refund_Quantity__c: 0,
                         Refund_Reason__c: null,
                         Refund_Type__c: null,
@@ -477,7 +604,7 @@ export default class MoveToRefundTeam extends LightningElement {
                 return;
                 }
                 updatedRecords.push({
-                    //Refund_Price__c: obj.refundPrice,
+                    Refund_Price__c: obj.refundPrice,
                     Refund_Quantity__c: obj.refundQuantity,
                     Refund_Reason__c: obj.OliRefundReason,
                     Refund_Type__c : obj.refundOptions,

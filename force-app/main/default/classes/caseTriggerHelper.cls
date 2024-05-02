@@ -118,7 +118,7 @@ System.debug(e.getMessage());
             System.debug('orderIds==> ' + orderIds);
             System.debug('caseIdByOrderId==> ' + caseIdByOrderId);
             List<OrderItem> oliList = [SELECT Id, OrderId, UnitPrice, ListPrice, TotalPrice, Selling_Price__c, SKU__c, Refunded_Price__c, 
-                                       Brand__c, Product_Name__c, Total_Selling_Price__c, Is_Already_Utilized__c FROM OrderItem WHERE OrderId IN: orderIds AND OrderId != null AND SKU__c IN: skuListToIterate];
+                                       Brand__c, Product_Name__c, Total_Selling_Price__c, Is_Already_Utilized__c, Quantity FROM OrderItem WHERE OrderId IN: orderIds AND OrderId != null AND SKU__c IN: skuListToIterate];
             System.debug('oliList==> ' + oliList);
             System.debug('orderIds==================> ' + orderIds);
             System.debug('skuListToIterate==================> ' + skuListToIterate);
@@ -142,6 +142,8 @@ System.debug(e.getMessage());
                     affRec.MRP__c = oliBySKUByCaseId.get(caseId).get(sku).UnitPrice;
                     affRec.Product_Name__c = oliBySKUByCaseId.get(caseId).get(sku).Product_Name__c;
                     affRec.Name = sku;
+                    affRec.Selling_Price__c = oliBySKUByCaseId.get(caseId).get(sku).Selling_Price__c;
+                    affRec.Total_Quantity__c = oliBySKUByCaseId.get(caseId).get(sku).Quantity;
                     affectedSKUsToInsert.add(affRec);
                 }
             }
@@ -152,7 +154,7 @@ System.debug(e.getMessage());
             System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
         }
     }
-
+    
     public static void updateUserFieldsOnReassignment(List<case> caseList, Map<Id, Case> oldMap){
         try{
             Set<Id> OwnerIds = new Set<Id>();
@@ -180,8 +182,13 @@ System.debug(e.getMessage());
                 newCaseRec.Id = caseRec.Id;
                 System.debug('check1');
                 System.debug('usersById.containsKey(caseRec.OwnerId) ' + usersById.containsKey(caseRec.OwnerId));
+                //System.debug('usersById.get(caseRec.OwnerId).Profile.Name==> ' + usersById.get(caseRec.OwnerId).Profile.Name);
+                // if(caseRec.Id != null && oldMap.containsKey(caseRec.Id) && usersById.get(oldMap.get(caseRec.Id).OwnerId).Profile.Name == 'Customer Service Executive'){
+                //     newCaseRec.CS_Team_Member__c = oldMap.get(caseRec.Id).OwnerId;
+                // }
                 if(usersById.containsKey(caseRec.OwnerId)){
                     if(usersById.get(caseRec.OwnerId).Profile.Name == 'Customer Service Executive'){
+                        System.debug('test');
                         newCaseRec.CS_Team_Member__c = caseRec.OwnerId;
                     }else if(usersById.get(caseRec.OwnerId).Profile.Name == 'WareHouse Team'){
                         newCaseRec.Warehouse_Team_Member__c = caseRec.OwnerId;
@@ -297,7 +304,7 @@ System.debug(e.getMessage());
         }
         
     } 
-
+    
     public static void SendEmailTemplateWithTemplate(List<Case> caseList, Map<Id, User> userMap) {
         EmailTemplate et1 = new EmailTemplate();
         EmailTemplate et2 = new EmailTemplate();
@@ -345,8 +352,8 @@ System.debug(e.getMessage());
                     }else{
                         body1 = body1.replace('{!Case.Sub_Sub_Type__c}', 'NA');
                     }
-                    if(caseRec.Remarks_mentioned__c != null){
-                        body1 = body1.replace('{!Case.Remarks_mentioned__c}', caseRec.Remarks_mentioned__c);
+                    if(caseRec.CSE_Remarks__c != null){
+                        body1 = body1.replace('{!Case.Remarks_mentioned__c}', caseRec.CSE_Remarks__c);
                     }else{
                         body1 = body1.replace('{!Case.Remarks_mentioned__c}', 'NA');
                     }
@@ -401,8 +408,8 @@ System.debug(e.getMessage());
                     }else{
                         body2 = body2.replace('{!Case.Sub_Sub_Type__c}', 'NA');
                     }
-                    if(caseRec.Remarks_mentioned__c != null){
-                        body2 = body2.replace('{!Case.Remarks_mentioned__c}', caseRec.Remarks_mentioned__c);
+                    if(caseRec.CSE_Remarks__c != null){
+                        body2 = body2.replace('{!Case.Remarks_mentioned__c}', caseRec.CSE_Remarks__c);
                     }else{
                         body2 = body2.replace('{!Case.Remarks_mentioned__c}', 'NA');
                     }
@@ -420,5 +427,34 @@ System.debug(e.getMessage());
         } catch (Exception e) {
             System.debug(e.getMessage());
         }        
-    }  
+    } 
+    
+    public static void handleCases(List<Case> newCases) {
+        Set<Id> setOfOrderId = new Set<Id>();
+        
+        for (Case cs : newCases) {
+            if (cs.OrderId__c != null) {
+                setOfOrderId.add(cs.OrderId__c);
+            }
+        }
+        System.debug('setOfOrderId==> ' + setOfOrderId); 
+        
+        Map<Id, String> orderIdToCouponMap = new Map<Id, String>();
+        
+        List<Order> orderList = [SELECT Id, Coupon__c FROM Order WHERE Id IN :setOfOrderId];
+        System.debug('orderList==> ' + orderList);
+        String coupon;
+        for (Order ord : orderList) {
+            coupon = ord.Coupon__c;
+        }
+        System.debug('coupon==> ' + coupon);
+        for (Case cs : newCases) {
+            if (cs.OrderId__c != null) {
+                cs.Coupon__c = coupon;
+                System.debug('cs.Coupon__c==> ' + cs.Coupon__c);
+            }
+        }
+        
+    }
+    
 }

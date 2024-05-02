@@ -4,6 +4,7 @@ public without sharing class moveToWarehouseController {
         try{
             if(recId != null){
                 Case caseRec = new Case();
+                List<Affected_SKU__c> affSKUList = new List<Affected_SKU__c>();
                 List<Case> caseList = [SELECT Id, IsDeleted, MasterRecordId, CaseNumber, ContactId, AccountId, EntitlementId, ParentId, 
                                        SuppliedName, SuppliedEmail, SuppliedPhone, SuppliedCompany, Type, RecordTypeId, Status, Reason, Origin, 
                                        Language, Subject, Priority, Description, IsClosed, ClosedDate, IsEscalated, OwnerId, SlaStartDate, SlaExitDate, 
@@ -32,7 +33,7 @@ public without sharing class moveToWarehouseController {
                                        MT_Assignment_Reason__c, MT_Assignment_Remarks__c, Reason_For_Duplicate_Order__c, Category__c, Type_Of_Case__c, Social_Media_Platform__c, 
                                        User_Name__c, Type_of_Post__c, Post_Id__c, Record_changed__c, Created_DateTime__c, Refund_Reasons__c, Order_Source__c, Caption__c, 
                                        Created_Time__c, POST_URL__c, Comments_JSON__c, Mention__c, HashTag__c, Hash_Tag_Id__c, Customer_s_Request__c, Post_Comments__c, 
-                                       Post_Case_Comments__c, Case_Communication__c, Warehouse_Team_Member__c, CS_Team_Member__c, RecordType.Name, Case_Sub_Status__c FROM Case WHERE Id=: recId];
+                                       Post_Case_Comments__c, Case_Communication__c, Warehouse_Team_Member__c, CS_Team_Member__c, RecordType.Name, Case_Sub_Status__c, CSE_Remarks__c, Number_of_Times_Sent_to_WH__c FROM Case WHERE Id=: recId];
                 wareHouseWrapper wr = new wareHouseWrapper();
                 if(!caseList.isEmpty()){
                     caseRec = caseList[0];
@@ -43,6 +44,8 @@ public without sharing class moveToWarehouseController {
                             wr.oliList = oliList;
                         }
                     }
+                    affSKUList = [SELECT Id, Case__c FROM Affected_SKU__c WHERE Case__c = :recId];
+                    System.debug('affSKUList=> ' + affSKUList);
                 }
                 List<String> customerRequestOptions = getPicklistValues('Case', 'Customer_s_Request__c');
                 List<String> caseReasonOptions = getPicklistValues('Case', 'Type_Of_Case__c');
@@ -50,6 +53,11 @@ public without sharing class moveToWarehouseController {
                 wr.customerRequestOptions = customerRequestOptions;
                 wr.caseReasonOptions = caseReasonOptions;
                 wr.caseRec = caseRec;
+                if(!affSKUList.isEmpty()){
+                    wr.isAffSKUsFound = true;
+                }else{
+                    wr.isAffSKUsFound = false;
+                }
                 wr.countryList = getCountryPicklistValues('Case', 'Address_With_Pin_Code__CountryCode__s');
                 wr.statesByCountry = dependentPicklistValAPEX.getCountryStateDependencies('Case', 'Address_With_Pin_Code__CountryCode__s', 'Address_With_Pin_Code__StateCode__s');
                 return wr;
@@ -62,7 +70,7 @@ public without sharing class moveToWarehouseController {
     }
     
     @AuraEnabled
-    public static String moveToWHteams(Case caseRec){
+    public static String moveToWHteams(Case caseRec, String CSremarks){
         try{
             List<User> userLists = [SELECT Id, Name FROM User WHERE Profile.Name = 'WareHouse Team' AND ManagerId = null LIMIT 1];
             List<Group> groupList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId, OwnerId, DoesSendEmailToMembers, DoesIncludeBosses, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp FROM Group WHERE DeveloperName = 'Warehouse_Team_Queue'];
@@ -80,8 +88,16 @@ public without sharing class moveToWarehouseController {
                 caseRec.OwnerId = queueId;
                 caseRec.Status = 'In Progress';
                 caseRec.Case_Sub_Status__c = 'Assigned to Warehouse Team';
+                caseRec.Number_of_Times_Sent_to_WH__c = caseRec.Number_of_Times_Sent_to_WH__c == null ? 1 : caseRec.Number_of_Times_Sent_to_WH__c + 1;
                 update caseRec;
-                List<CaseShare> existingShares = [SELECT Id FROM CaseShare WHERE CaseId = :caseRec.Id AND UserOrGroupId = :caseRec.CS_Team_Member__c];
+                Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                cpdRec.Status__c = 'In Progress';
+                cpdRec.CS_Remarks__c = CSremarks;
+                cpdRec.Case__c = caseRec.Id;
+                cpdRec.Current_Action__c = 'Moved to WH Team';
+                insert cpdRec;
+                
+                List<CaseShare> existingShares = [SELECT Id FROM CaseShare WHERE CaseId = :caseRec.Id AND UserOrGroupId = :caseRec.CS_Team_Member__c AND RowCause != 'Owner'];
                 System.debug('existingShares======>'+existingShares);
                 
                 if(!existingShares.isEmpty()){
@@ -139,6 +155,8 @@ public without sharing class moveToWarehouseController {
         @AuraEnabled
         public Case caseRec;
         @AuraEnabled
+        public Boolean isAffSKUsFound;
+        @AuraEnabled
         public List<OrderItem> oliList;
         @AuraEnabled
         public List<Country> countryList;
@@ -183,4 +201,20 @@ public without sharing class moveToWarehouseController {
         public String value;
     }
     
+    @AuraEnabled
+    public static String showErrorToAddSkuDetails(String recId) {
+    try {
+        List<Affected_SKU__c> affSKUList = [SELECT Id, Case__c FROM Affected_SKU__c WHERE Id = :recId];
+        if (affSKUList.size() > 0) {
+            return 'SUCCESS';
+        } else {
+            return 'No affected SKUs found.';
+        }
+    } catch (Exception e) {
+        System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+        return null;
+    }
+}
+
+
 }

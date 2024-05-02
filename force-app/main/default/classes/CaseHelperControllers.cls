@@ -38,7 +38,7 @@ public class CaseHelperControllers {
     public static Case getCaseRec(String caseId){
         try{
             if(caseId != null){
-                Case caseRec = [SELECT Id, Sub_Type__c, Sub_Sub_Type__c FROM Case WHERE Id =: caseId LIMIT 1];
+                Case caseRec = [SELECT Id, Sub_Type__c, Sub_Sub_Type__c,Status,Disposition__c FROM Case WHERE Id =: caseId LIMIT 1];
                 return caseRec;
             }
             return null;
@@ -77,6 +77,32 @@ public class CaseHelperControllers {
 * @description Field Sets for LWC Component for Child Case Creation.
 *
 */
+
+    //Getting Status field
+    @AuraEnabled
+    public static void updateStatusfield(String recId,String Status){
+        try {
+            case recordToupdate = [Select Id,Status from case WHERE Id =: recId];
+           recordToupdate.Status =  Status;
+           System.debug('case status====>'+Status);
+            update recordToupdate;       
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage() + ' AND Error Line No :' + e.getLineNumber());
+        }
+    }
+// Case status
+    @AuraEnabled
+    public static Case loadcasestatus (String recordId){
+        try {
+            Case loadcastatus = [SELECT Id, Status FROM Case WHERE Id = :recordId];
+            return loadcastatus;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage() + ' AND Error Line No :' + e.getLineNumber());
+        }
+    }
+    
+
+
     // getting case field-set 
     @AuraEnabled
     public static List<String> getCaseFieldSetList(){
@@ -478,8 +504,8 @@ public class CaseHelperControllers {
     
     
     @AuraEnabled
-    public static List<Case> getRelatedCases(String recId) {
-        Case cse = [SELECT Id, CaseNumber, Subject, OrderId__r.OrderNumber,OrderId__c,Sub_Type__c,Sub_Sub_Type__c FROM Case WHERE Id = :recId];
+    public static List<Case>  getRelatedCases(String recId) {
+        Case cse = [SELECT Id, CaseNumber, Subject,Order_Number__c, OrderId__r.Name,RecordType.Name,OrderId__c,Sub_Type__c,Sub_Sub_Type__c,AccountId,ContactId,Email_Id__c FROM Case WHERE Id = :recId];
         System.debug('cse:::::::::::>' + cse);
         Set<Id> caseOrderIds = new Set<Id>();
         set<String> TypeString = new set<String>();
@@ -490,12 +516,78 @@ public class CaseHelperControllers {
             SubTypeString.add(cse.Sub_Sub_Type__c);
         }
         System.debug('caseOrderIds:::::::::::>' + caseOrderIds);
-        List<Case> caseList = [SELECT Id, Subject, Origin, Status, OrderId__r.OrderNumber,CaseNumber,Sub_Type__c,Sub_Sub_Type__c FROM Case WHERE OrderId__c IN :caseOrderIds AND Sub_Type__c IN: TypeString  AND  Sub_Sub_Type__c IN: SubTypeString AND ParentId = null Order By CreatedDate];
+        List<Case> caseList = [SELECT Id, Subject, Origin, Status, OrderId__r.OrderNumber,CaseNumber,Sub_Type__c,Sub_Sub_Type__c,RecordType.Name,RecordTypeId FROM Case WHERE OrderId__c IN :caseOrderIds AND Sub_Type__c IN: TypeString  AND  Sub_Sub_Type__c IN: SubTypeString AND ParentId = null Order By CreatedDate];
+        System.debug('caseList:::::::::::>' + caseList);
+        return caseList;
+    }
+    @AuraEnabled
+    public static List<Case>  mergeCaseBasedOnAccIdConIdEmailIdPhoneNumberInstagram(String recId) {
+        Case cse = [SELECT Id, CaseNumber, Subject, Order_Number__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE Id = :recId];
+        System.debug('cse:::::::::::>' + cse);
+        Set<Id> caseAccountIds = new Set<Id>();
+        Set<Id> caseContactIds = new Set<Id>();
+        set<String> TypeString = new set<String>();
+        set<String> EmailString = new set<String>();
+        set<String> PhoneString = new set<String>();
+        set<String> MobileString = new set<String>();
+        set<String> InstagramString = new set<String>();
+        set<String> contactNumberString = new set<String>();
+        if (cse.AccountId != null || cse.ContactId != null || cse.Email_Id__c != null || cse.ContactPhone != null || 
+        cse.Instagram_ID__c != null || cse.ContactMobile != null || cse.Contact_Number__c != null){
+            caseAccountIds.add(cse.AccountId);
+            caseContactIds.add(cse.ContactId);
+            EmailString.add(cse.Email_Id__c);
+           // PhoneString.add(cse.ContactPhone);
+            InstagramString.add(cse.Instagram_ID__c);
+            // MobileString.add(cse.ContactMobile);
+            contactNumberString.add(cse.Contact_Number__c);
+            
+        }
+        System.debug('caseAccountIds:::::::::::>' + caseAccountIds);
+        System.debug('caseContactIds:::::::::::>' + caseContactIds);
+        System.debug('EmailString:::::::::::>' + EmailString);
+        System.debug('PhoneString:::::::::::>' + PhoneString);
+        System.debug('InstagramString:::::::::::>' + InstagramString);
+        System.debug('MobileString:::::::::::>' + MobileString);
+        System.debug('contactNumberString:::::::::::>' + contactNumberString);
+
+        List<Case> caseList = [SELECT Id, Subject, Origin, Status,OrderId__r.Name, Order_Number__c,RecordType.Name,OrderId__r.OrderNumber,CaseNumber,Sub_Type__c,Sub_Sub_Type__c,ContactPhone,
+        Account.Name,AccountId,Contact.Name,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE 
+        (AccountId IN :caseAccountIds OR ContactId IN :caseContactIds OR Email_Id__c IN :EmailString 
+        OR Contact_Number__c IN :contactNumberString OR Instagram_ID__c IN :InstagramString) AND Status != 'Closed' Order By CreatedDate];
         System.debug('caseList:::::::::::>' + caseList);
         return caseList;
     }
     
-    
+    @AuraEnabled
+    public static String mergeDuplicateCases(List<String> cases) {
+      try{
+        System.debug('cases:::::::::::>' + cases);
+        String caseId; 
+        String caseNo; 
+       List<Case> cseList = [SELECT Id,Status,CreatedDate,caseNumber,Case_Reason_Description__c From Case Where Id IN: cases Order By CreatedDate ASC];
+       System.debug('cseList:::::::::::>' + cseList);
+       caseId = cseList[0].Id;
+       caseNo = cseList[0].caseNumber;
+       System.debug('caseId:::::::::::>' + caseId);
+       System.debug('caseNo:::::::::::>' + caseNo);
+       List<Case> updatingCaseList = new List<Case>();
+        for(Case cse : cseList){
+                if(cse.Id != caseId){
+                    cse.Status = 'Closed';
+                    cse.Case_Reason_Description__c =  'Closed as Duplicate Case Under Case No.' + caseNo;
+                    updatingCaseList.add(cse);
+                }
+        }
+        update updatingCaseList;
+        system.debug('updatingCaseList=============>'+updatingCaseList);
+        return 'SUCCESS';
+      }catch(Exception e ){
+        System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
+        return null;
+      }
+    }
+
     @AuraEnabled
     public static List<Case> mergeSelectedCases(String caseId, List<Case> cases) {
         System.debug('CaseId:::::::::::>' + caseId);
@@ -1412,7 +1504,7 @@ public class CaseHelperControllers {
         
         try {
             if (OrdId != null) {
-                orderItems = [SELECT Id, Product2.Name, Quantity, Refund_Quantity__c, TotalPrice, Refund_Price__c, Refund_Reason__c, Refund_Reasons__c, Refund_Type__c, SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem WHERE OrderId = :OrdId];
+                orderItems = [SELECT Id, Product2.Name, Quantity, Refund_Quantity__c, TotalPrice, Refund_Price__c, Refund_Reason__c, Refund_Reasons__c, Refund_Type__c, SKU__c, Total_Selling_Price__c, Selling_Price__c,Affected_Quantity__c FROM OrderItem WHERE OrderId = :OrdId];
             }
         } catch (Exception e) {
             System.debug('Error Message==> ' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
@@ -1508,6 +1600,189 @@ public class CaseHelperControllers {
             return null;
         }
     }
+
+    @AuraEnabled
+    public static Case createCaseFromContact(String RecordTypeName, String Type, String SubType, String Subjt, String conNumber, String recId, String ordId) {
+        system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId);        
+        try {
+
+           Contact con = [SELECT Id,Name,AccountId From Contact Where Id =: recId];
+           Order ord = [SELECT Id,AccountId From Order where Id =: ordId];
+           system.debug('ContactAccountId===============>'+ con.AccountId );
+
+            Case newCase = new Case();
+            
+                Set<Id> setOfOwnerId = new Set<Id>();
+                List<Case> cseList = new List<Case>();
+                RecordType rt = [SELECT Id FROM RecordType WHERE Name = 'General Queries' LIMIT 1];
+                system.debug('RecordTypeName =============> '+rt.Id );
+                RecordType rt1 = [SELECT Id FROM RecordType WHERE Name = 'ORDER RELATED' LIMIT 1];
+                system.debug('RecordTypeName ===========> '+rt1.Id );
+
+                if(ordId != null){
+                    newCase.OrderId__c = ordId;
+                    newCase.RecordTypeId = rt1.Id;
+                    if(ord.AccountId != null){
+                        newCase.AccountId = ord.AccountId;
+                    }
+                    
+                }else{
+                    newCase.RecordTypeId = rt.Id;
+                }
+                
+                
+                newCase.Subject = 'Manual Case Creation';
+             
+                if(conNumber != null){
+                    newCase.Contact_Number__c = conNumber;
+                }
+                if(recId != null){
+                    newCase.contactId = recId;
+                }
+
+                newCase.Status = 'New';
+                newCase.OwnerId = UserInfo.getUserId();
+                            
+                
+                insert newCase;
+                system.debug('newCaseId==============> '+ newCase.Id);
+                system.debug('Order_SKU_details__c===============>'+ newCase.OwnerId);
+                setOfOwnerId.add(newCase.OwnerId);
+                cseList.add(newCase);
+                System.debug('newCase:::::::::::>' + newCase);
+                
+ 
+                Set<String> setOfUserId = new Set<String>();
+                Messaging.CustomNotification notification = new Messaging.CustomNotification();
+                List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+                CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
+                List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
+                EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
+                Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
+                System.debug('userList:::::::::::>' + userList);
+                for (User us : userList) {
+                    setOfUserId.add(us.Id);
+                }
+                System.debug('setOfUserId:::::::::::>' + setOfUserId);
+                
+                User usr = [SELECT Id,Name,Email From User Where Id=: newCase.OwnerId];
+                // notification to user
+                notification.setBody('A New Case Has been created. Please check the details.');
+                notification.setTitle('Hi, A New Case Has been created.');
+                notification.setSenderId(usr.Id);
+                notification.setNotificationTypeId(customNotiList.Id); 
+                notification.setTargetId(newCase.Id);
+                // email to user
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                
+                String body = temp.body;
+                body = body.replace('{!Case.Id}',newCase.Id);
+                mail.setPlainTextBody(body);
+                mail.setTemplateId(temp.id);
+                //mail.setTargetObjectId(newCase.Id);
+                mail.setToAddresses(new List<String> {usr.Email});
+                mailList.add(mail);
+                
+                System.debug('notification:::::::::::>' + notification);
+                notification.send(new Set<String> { newCase.OwnerId });
+                Messaging.sendEmail(mailList);
+                
+            
+            return newCase;
+        } catch (Exception e) {
+            System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
+            return null;
+        }
+    }
+
+    @AuraEnabled
+    public static Case createCaseFromAccount(String RecordTypeName, String Type, String SubType, String Subjt, String conNumber, String recId, String ordId) {
+        system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId);
+        try {
+            Case newCase = new Case();
+                Set<Id> setOfOwnerId = new Set<Id>();
+                List<Case> cseList = new List<Case>();
+                RecordType rt = [SELECT Id FROM RecordType WHERE Name = 'General Queries' LIMIT 1];
+                system.debug('RecordTypeName =============> '+rt.Id );
+                RecordType rt1 = [SELECT Id FROM RecordType WHERE Name = 'ORDER RELATED' LIMIT 1];
+                system.debug('RecordTypeName ===========> '+rt1.Id );
+                Order ord = [SELECT Id,AccountId From Order where Id =: ordId];
+                
+               
+
+                
+                if(ordId != null){
+                    newCase.OrderId__c = ordId;
+                    newCase.RecordTypeId = rt1.Id;
+                    if(ord.AccountId != null){
+                        newCase.AccountId = ord.AccountId;
+                    }
+                }else{
+                    newCase.RecordTypeId = rt.Id;
+                }
+                
+                newCase.Subject = 'Manual Case Creation';
+
+                if(conNumber != null){
+                    newCase.Contact_Number__c = conNumber;
+                }
+                
+                newCase.Status = 'New';
+                newCase.OwnerId = UserInfo.getUserId();
+                
+                
+                
+                insert newCase;
+                system.debug('newCaseId==============> '+ newCase.Id);
+                system.debug('Order_SKU_details__c===============>'+ newCase.OwnerId);
+                setOfOwnerId.add(newCase.OwnerId);
+                cseList.add(newCase);
+                System.debug('newCase:::::::::::>' + newCase);
+                
+ 
+                Set<String> setOfUserId = new Set<String>();
+                Messaging.CustomNotification notification = new Messaging.CustomNotification();
+                List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+                CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
+                List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
+                EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
+                Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
+                System.debug('userList:::::::::::>' + userList);
+                for (User us : userList) {
+                    setOfUserId.add(us.Id);
+                }
+                System.debug('setOfUserId:::::::::::>' + setOfUserId);
+                
+                User usr = [SELECT Id,Name,Email From User Where Id=:newCase.OwnerId ];
+                // notification to user
+                notification.setBody('A New Case Has been created. Please check the details.');
+                notification.setTitle('Hi, A New Case Has been created.');
+                notification.setSenderId(usr.Id);
+                notification.setNotificationTypeId(customNotiList.Id); 
+                notification.setTargetId(newCase.Id);
+                // email to user
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                
+                String body = temp.body;
+                body = body.replace('{!Case.Id}',newCase.Id);
+                mail.setPlainTextBody(body);
+                mail.setTemplateId(temp.id);
+                //mail.setTargetObjectId(newCase.Id);
+                mail.setToAddresses(new List<String> {usr.Email});
+                mailList.add(mail);
+                
+                System.debug('notification:::::::::::>' + notification);
+                notification.send(new Set<String> { newCase.OwnerId });
+                Messaging.sendEmail(mailList);
+                
+            
+            return newCase;
+        } catch (Exception e) {
+            System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
+            return null;
+        }
+    }
+
     @AuraEnabled
     public static List<String> getCaseFieldSetListForCourierIssue(){
         try{
@@ -1524,5 +1799,104 @@ public class CaseHelperControllers {
             System.debug('The Error ::' + e.getMessage() + ' AND Error Line No :' + e.getLineNumber());
         }
         return null;
+    }
+
+   @AuraEnabled
+   public static List<OrderItem> getOrderIfItHasLineItems(String recId){
+    system.debug('recId==================>'+ recId);
+        try {
+            if(recId != null){
+                Case cserec = [SELECT Id,OrderId__c From Case Where Id=:recId ];
+                system.debug('OrderId__c==================>'+ cserec.OrderId__c);
+
+                List<OrderItem> itmList = [SELECT Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber, Order.CreatedDate,Order.Paid_Amount__c FROM OrderItem  Where OrderId =: cserec.OrderId__c];
+                system.debug('itmList==================>'+ itmList);
+
+                return itmList;
+            }
+        
+        } catch (Exception e) {
+            System.debug('The Error ::' + e.getMessage() + ' AND Error Line No :' + e.getLineNumber());
+        }
+        return null;
+   }
+
+   @AuraEnabled
+    public static String updateSKUdetailsAndCreateRecordOfSKU( String recId,String ordId, List<Id> ordLinItmList, List<OrderItem> oliList) {
+        system.debug('recId===>'+recId+ 'ordId========>'+ordId);
+        system.debug('ordLinItmList==============>'+ordLinItmList);
+        system.debug('oliList==============>'+oliList);
+        try {
+            List<String> skuString = new List<String>();
+            List<Affected_SKU__c> affectedSKUsList = new List<Affected_SKU__c>(); 
+            if(ordLinItmList.Size()>0){
+                update oliList;
+                Map<Id,OrderItem> ordMap = new Map<Id,OrderItem>([SELECT Id,SKU__c,Product_Name__c,Affected_Quantity__c,Quantity,Selling_Price__c,UnitPrice,Total_Selling_Price__c,Brand__c From OrderItem Where Id IN:ordLinItmList ]);
+                for(Id key : ordMap.keySet()){
+                    skuString.add(ordMap.get(key).SKU__c);
+                    Affected_SKU__c affectedSKU = new Affected_SKU__c();
+                    affectedSKU.Name = ordMap.get(key).SKU__c;
+                    affectedSKU.Case__c = recId;
+                    affectedSKU.Brand_Name__c = ordMap.get(key).Brand__c;
+                    affectedSKU.Total_Quantity__c = ordMap.get(key).Quantity;
+                    affectedSKU.Product_Name__c = ordMap.get(key).Product_Name__c;
+                    affectedSKU.MRP__c = ordMap.get(key).UnitPrice;
+                    affectedSKU.Selling_Price__c = ordMap.get(key).Selling_Price__c;
+                    affectedSKU.Affected_Quantity__c = ordMap.get(key).Affected_Quantity__c;
+                    // Add other fields as needed for the Affected_SKU__c object
+                    affectedSKUsList.add(affectedSKU);
+                }
+            }
+            
+           
+
+            // Create a comma-separated string from the SKU values
+            String commaSeparatedSKUs = String.join(skuString, ';');
+            System.debug('commaSeparatedSKUs==> ' + commaSeparatedSKUs);
+
+            Case newCase = new Case();
+            if (recId != null ) {
+
+                if(skuString.size()>0){
+                    newCase.SKU_Details__c = commaSeparatedSKUs;
+                }
+                if(ordId != null){
+                    newCase.OrderId__c = ordId;
+                }
+                    newCase.Id = recId;
+                
+                
+                update newCase;
+                system.debug('newCase.SKU_Details__c==============>'+newCase.SKU_Details__c);
+
+                
+                    List<String> splitSKUs = newCase.SKU_Details__c.split(';');
+                    system.debug('splitSKUs==============>'+splitSKUs);
+                
+                
+
+                // Create a list to store the Affected_SKU__c records
+
+                // Iterate over the split SKUs and create Affected_SKU__c records
+            //   if(splitSKUs.size()>0){
+            //     for (String sku : splitSKUs) {
+            //         Affected_SKU__c affectedSKU = new Affected_SKU__c();
+            //         affectedSKU.Name = sku;
+            //         affectedSKU.Case__c = recId;
+            //         affectedSKU.Brand_Name__c = recId;
+            //         // Add other fields as needed for the Affected_SKU__c object
+            //         affectedSKUsList.add(affectedSKU);
+            //     }
+            //   }
+
+                // Insert the list of Affected_SKU__c records
+                insert affectedSKUsList;
+              system.debug('affectedSKUsList==============>'+affectedSKUsList);
+            }
+            return 'SUCCESS';
+        } catch (Exception e) {
+            System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
+            return null;
+        }
     }
 }

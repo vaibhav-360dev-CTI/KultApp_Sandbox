@@ -179,7 +179,7 @@ public class caseTriggerHelperTest {
         cse.Marketing_Team__c = userInstant.Id;
         cse.SKU_Details__c = 'testingqwerty';
         cse.OwnerId = userInstant.Id;
-        cse.Remarks_mentioned__c = 'testing';
+        cse.CSE_Remarks__c = 'testing';
         cse.Refer_Back_Reason__c = 'Refund Processed';
         cse.Approval_Remarks__c = 'asdfghfds';
         cse.Rejection_Reason__c = 'qwertyui';
@@ -287,7 +287,7 @@ public class caseTriggerHelperTest {
         cse.Refund_Reason__c = 'Testing'; 
         cse.SKU_Details__c = 'testingqwerty';
         cse.OwnerId = userInstant.Id;
-        cse.Remarks_mentioned__c = 'testing';
+        cse.CSE_Remarks__c = 'testing';
         cse.Refer_Back_Reason__c = 'Refund Processed';
         cse.Approval_Remarks__c = 'asdfghfds';
         cse.Rejection_Reason__c = 'qwertyui';

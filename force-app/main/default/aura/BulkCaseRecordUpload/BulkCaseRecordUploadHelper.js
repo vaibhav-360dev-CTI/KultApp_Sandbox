@@ -6,7 +6,7 @@
         if (!file.name.match(/\.(csv||CSV)$/)) {
             component.set("v.HideUploadSixscreen", false);
             //  return alert('only support csv files');
-            return alert('Uploading XlSX files');
+            //  return alert('Uploading XlSX files');
         }else{
             reader = new FileReader();
             reader.onerror =function errorHandler(evt) {
@@ -68,7 +68,7 @@
                     content += "</table>";
                     component.set("v.TableContent",content); 
                     component.set("v.showMain",true);   
-                     component.set("v.showScondScreen",false); 
+                    component.set("v.showScondScreen",false); 
                 }
             }
             reader.readAsText(file);
@@ -89,7 +89,7 @@
         var dataRows=allTextLines.length;
         var headers = allTextLines[0].split(',');
         var fieldsList = headers;
-
+        
         var typeOfCase = component.get('v.tempNameToDownload');
         
         action.setParams({ 
@@ -101,6 +101,18 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
+                var toastEvent = $A.get("e.force:showToast");
+                toastEvent.setParams({
+                    title : 'SUCCESS',
+                    message: 'Record saved successfully!',
+                    duration:' 5000',
+                    key: 'info_alt',
+                    type: 'success',
+                    mode: 'pester'
+                });
+                toastEvent.fire();
+                 window.location.reload();
+                /*
                 this.LightningAlert.open({
                     message: 'Record saved successfully!',
                     theme: 'success',
@@ -108,6 +120,7 @@
                 }).then(function() { 
                     window.location.reload();
                 });
+                */
             }
             else if (state === "INCOMPLETE") {
                 // do something

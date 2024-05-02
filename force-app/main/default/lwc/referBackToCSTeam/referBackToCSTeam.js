@@ -1,31 +1,44 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import getCaseById from '@salesforce/apex/referBackToCsTeamController.getCaseById';
 import getCaseAndOrderDetails from '@salesforce/apex/referBackToCsTeamController.getCaseAndOrderDetails';
+import getCaseTeamAndType from '@salesforce/apex/referBackToCsTeamController.getCaseTeamAndType';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { getPicklistValues} from 'lightning/uiObjectInfoApi';
 import CASE_OBJECT from '@salesforce/schema/Case';
-import REFERBACKREASON_FIELD from '@salesforce/schema/Case.Refer_Back_Reason__c'
+import REFERBACKREASON_FIELD from '@salesforce/schema/Case.Refer_Back_Reason__c';
 export default class ReferBackToCSTeam extends LightningElement {
 
 
 
     @track ListOfCaseRecords = [];
     @track error;
+    @track wareHouseOrderRelated = false;
     @track result;
     @track referBack;
+    @track awbNumber;
+    @track focOrderId;
     @track RequestApprove = false;
     @track RequestReject = false;
     @track NeedMoreInfo = false;
+    @track SendUpdate = false;
+    @track resolved = false;
     @track referBackReason;
+    @track resolutionRemarks;
     @track refundAmount;
     @track approvalRemarks;
     @track rejectionRemarks;
     @track rejectionReason;
     @track describeInformationNeeded;
+    @track updateDesc;
     @track orderId;
     @track orderRefundAmount;
     RefrebackOption=[];
+    fileData = {
+        'filename': null,
+        'base64': null,
+        'recordId': this.recordId
+    }
 
 
     @api recordId;
@@ -44,26 +57,100 @@ export default class ReferBackToCSTeam extends LightningElement {
         return data.values.map(item=>({label:item.label, value: item.value}));
     }
 
+    connectedCallback() {
+        debugger;
+        console.log('recordId====>' + this.recordId);
+        setTimeout(() => {
+            this.getCaseDetails();
+            this.getCaseTeamAndType();
+        }, 300);
+    }
+
+    getCaseTeamAndType() {
+        debugger;
+        getCaseTeamAndType({ caseId: this.recordId })
+            .then((result) => {
+                if (result) {
+                    this.wareHouseOrderRelated = result;
+                } else {
+                    console.log('No cases found for the provided ID');
+                }
+            }).catch((err) => {
+                console.error('Error retrieving contacts:', err);
+            });
+    }
+
+    getCaseDetails() {
+        debugger;
+        getCaseById({ caseId: this.recordId })
+            .then((result) => {
+                if (result) {
+                    this.ListOfCaseRecords.push(result);
+                    this.approvalRemarks = result.Approval_Remarks__c;
+                    this.refundAmount = result.OrderId__r.Refund_Amount__c;
+
+                    // this.rejectionRemarks = result.Rejection_Remarks__c;
+                    this.rejectionReason = result.Rejection_Reason__c;
+
+                    // this.describeInformationNeeded = result.Describe_Information_Needed__c;
+                    // this.resolutionRemarks = this.describeInformationNeeded;
+
+
+                    console.log('Cases retrieved successfully');
+                } else {
+                    console.log('No cases found for the provided ID');
+                }
+            }).catch((err) => {
+                console.error('Error retrieving contacts:', err);
+            });
+    }
+    
+    openfileUpload(event) {
+        const file = event.target.files[0]
+        var reader = new FileReader()
+        reader.onload = () => {
+            var base64 = reader.result.split(',')[1]
+            this.fileData = {
+                'filename': file.name,
+                'base64': base64,
+                'recordId': this.recordId
+            }
+            console.log(this.fileData)
+        }
+        reader.readAsDataURL(file)
+    }
 
     handelreferbackChange(event) {
         debugger;
         this.referBack = event.target.value;
         this.referBackReason = this.referBack;
 
-        if (this.referBack === 'Refund Processed' || this.referBack === 'Cancellation Processed') {
-            this.RequestApprove = true;
-            this.RequestReject = false;
+        // if (this.referBack === 'Refund Processed' || this.referBack === 'Cancellation Processed') {
+        //     this.RequestApprove = true;
+        //     this.RequestReject = false;
+        //     this.NeedMoreInfo = false;
+        // }
+        // else if (this.referBack === 'Refund Rejected' || this.referBack === 'Cancellation Rejected') {
+        //     this.RequestApprove = false;
+        //     this.RequestReject = true;
+        //     this.NeedMoreInfo = false;
+        // }
+        if(this.referBack === 'Resolved'){
+            this.resolved = true;
             this.NeedMoreInfo = false;
-        }
-        else if (this.referBack === 'Refund Rejected' || this.referBack === 'Cancellation Rejected') {
-            this.RequestApprove = false;
-            this.RequestReject = true;
-            this.NeedMoreInfo = false;
+            this.SendUpdate = false;
         }
         else if (this.referBack === 'Need More Info') {
             this.RequestApprove = false;
             this.RequestReject = false;
             this.NeedMoreInfo = true;
+            this.resolved = false;
+            this.SendUpdate = false;
+        }
+        else if (this.referBack === 'Send Update') {
+            this.SendUpdate = true;
+            this.resolved = false;
+            this.NeedMoreInfo = false;
         }
 
     }
@@ -71,6 +158,16 @@ export default class ReferBackToCSTeam extends LightningElement {
     handelApprovalremark(event) {
         debugger;
         this.approvalRemarks = event.target.value;
+    }
+
+    handleAWBNumber(event) {
+        debugger;
+        this.awbNumber = event.target.value;
+    }
+
+    handleFOCorderId(event) {
+        debugger;
+        this.focOrderId = event.target.value;
     }
 
     // handelRefundAmount(event) {
@@ -93,47 +190,14 @@ export default class ReferBackToCSTeam extends LightningElement {
         this.describeInformationNeeded = event.target.value;
     }
 
-    // @wire(getCaseById, { caseId: '$recordId' })
-    // wiredGetCase({ error, data }) {
-    //     if (data) {
-    //         this.ListOfCaseRecords = data;
-    //         console.log('Cases retrieved successfully');
-    //     } else if (error) {
-    //         console.error('Error retrieving cases:', error);
-    //     }
-    // }
-
-
-    connectedCallback() {
+    handeldescribeUpdate(event) {
         debugger;
-        console.log('recordId====>' + this.recordId);
-        setTimeout(() => {
-            this.getCaseDetails();
-        }, 300);
+        this.updateDesc = event.target.value;
     }
 
-    getCaseDetails() {
+    handelResolutionRemarks(event){
         debugger;
-        getCaseById({ caseId: this.recordId })
-            .then((result) => {
-                if (result) {
-                    this.ListOfCaseRecords.push(result);
-                    this.approvalRemarks = result.Approval_Remarks__c;
-                    this.refundAmount = result.OrderId__r.Refund_Amount__c;
-
-                    // this.rejectionRemarks = result.Rejection_Remarks__c;
-                    this.rejectionReason = result.Rejection_Reason__c;
-
-                    this.describeInformationNeeded = result.Describe_Information_Needed__c;
-
-
-                    console.log('Cases retrieved successfully');
-                } else {
-                    console.log('No cases found for the provided ID');
-                }
-            }).catch((err) => {
-                console.error('Error retrieving contacts:', err);
-            });
+        this.resolutionRemarks  = event.target.value;
     }
 
 
@@ -177,9 +241,21 @@ export default class ReferBackToCSTeam extends LightningElement {
             }
         }
 
+        if (this.referBack == 'Resolved') {
+            if (this.resolutionRemarks == undefined || this.resolutionRemarks == null || this.resolutionRemarks == '') {
+                alert("Enter Resolution Remarks");
+                return null;
+            }
+        }
 
+        if (this.referBack == 'Send Update') {
+            if (this.updateDesc == undefined || this.updateDesc == null || this.updateDesc == '') {
+                alert("Enter Send Update Details");
+                return null;
+            }
+        }
 
-
+        const {base64, filename, recordId} = this.fileData;
         getCaseAndOrderDetails({
             caseId: this.recordId,
             referBackReason: this.referBackReason,
@@ -189,7 +265,13 @@ export default class ReferBackToCSTeam extends LightningElement {
             rejectionReason: this.rejectionReason,
             describeInformationNeeded: this.describeInformationNeeded,
             //orderId:this.orderId,
-            orderRefundAmount: this.orderRefundAmount
+            orderRefundAmount: this.orderRefundAmount,
+            resolutionRemarks: this.resolutionRemarks,
+            updateDesc : this.updateDesc,
+            base64: base64,
+            filename: filename,
+            awbNumber: this.awbNumber,
+            focOrderId: this.focOrderId
         })
             .then((result) => {
                 console.log("result===>" + JSON.stringify(result));

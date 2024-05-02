@@ -1,0 +1,37 @@
+<aura:component
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+    access="global" controller="followUpController">
+    <aura:attribute name="followUpRemarks" type="string" />
+    <aura:attribute name="showTrue" type="Boolean"  default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around–medium {
+        padding: 0rem !important;
+        }
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+
+    <aura:if isTrue="{!v.showTrue}">
+
+        <div class="modal-header slds-modal__header slds-size_1-of-1">
+            <h2>Send Follow Up Request</h2>
+        </div>
+        <div class="slds-modal__content" id="modal-content-id-1">
+            <lightning:input type="text" value="{!v.followUpRemarks}" label="Enter Follow Up Remarks" required="true" />
+        </div>
+        <footer>
+            <div class="slds-col modal-footer slds-modal__footer">
+                <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{! c.closeModel }" />
+                <lightning:button variant="brand" label="Save" title="Save" onclick="{!c.submitDetails}" />
+            </div>
+        </footer>
+    </aura:if>
+
+</aura:component>

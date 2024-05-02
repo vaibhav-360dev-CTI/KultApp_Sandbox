@@ -39,14 +39,14 @@
                             {!v.orderRec.Account.Name}
                         </lightning:layoutItem>
                     </lightning:layout>
-                    <lightning:layout>
+                    <!-- <lightning:layout>
                         <lightning:layoutItem padding="horizontal-medium" size="5">
                             <b>Order Amount: </b> &nbsp;
                         </lightning:layoutItem>
                         <lightning:layoutItem padding="horizontal-medium" size="5">
                             {!v.orderRec.TotalAmount}
                         </lightning:layoutItem>
-                    </lightning:layout>
+                    </lightning:layout> -->
                     <lightning:layout>
                         <lightning:layoutItem padding="horizontal-medium" size="5">
                             <b>Order Paid Amount: </b> &nbsp;

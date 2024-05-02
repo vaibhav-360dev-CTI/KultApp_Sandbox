@@ -8,10 +8,13 @@
         if (event.getSource().get("v.files").length > 0) { 
             fileName = event.getSource().get("v.files")[0];
         }
-
-        var lwcComponent = component.find("lwcComponent");
-        lwcComponent.handleFileUpload(event);
-
+        var textFileName = fileName['name'];
+        const parts = textFileName.split('.');
+        const extension = parts[parts.length - 1];
+        if(extension == 'xlsx' || extension == 'xls'){
+            var lwcComponent = component.find("lwcComponent");
+            lwcComponent.handleFileUpload(event);   
+        }
         component.set("v.FileNameRecord", fileName['name']);
         helper.readFile(component,helper,fileName);
     },
@@ -30,7 +33,7 @@
         component.set("v.tempNameToDownload",tempName); 
         component.set("v.showScondScreen",true);
         component.set("v.showFirstScreen", false);
-      //  component.set("v.showFourthscreen",true);
+        //  component.set("v.showFourthscreen",true);
     },
     handleClickPincodeNotservice : function(component,event,helper){
         debugger;
@@ -67,7 +70,7 @@
         component.set("v.showScondScreen",true);
         component.set("v.showFirstScreen",false);
     },
-
+    
     onChangeFileType: function (component, event, helper) {
         debugger;
         var selectedFileType = component.find('select').get('v.value');

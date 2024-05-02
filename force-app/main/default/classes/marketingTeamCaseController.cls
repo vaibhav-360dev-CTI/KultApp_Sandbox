@@ -36,6 +36,12 @@ public without sharing class marketingTeamCaseController {
             cs.Status = 'In Progress';
             cs.Case_Sub_Status__c = 'Assigned to Marketing Team';
             update cs;
+            Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                cpdRec.Status__c = 'In Progress';
+                cpdRec.CS_Remarks__c = MarketingReason;
+                cpdRec.Case__c = cs.Id;
+                cpdRec.Current_Action__c = 'Moved to Marketing Team';
+                insert cpdRec;
             System.debug('cs ==>'+cs);
         
             setOfOwnerId.add(caseList1[0].OwnerId);

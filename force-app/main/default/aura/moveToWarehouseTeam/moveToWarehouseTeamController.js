@@ -18,11 +18,17 @@
                     dismissActionPanel.fire();
                     return;
                 }
-                if(caseRec.Origin.includes('Outbound') || caseRec.Origin == 'Bulk Upload'){
+                if((caseRec.Origin != undefined && caseRec.Origin != null) && (caseRec.Origin.includes('Outbound') || caseRec.Origin == 'Bulk Upload')){
                     component.set('v.showOutBound', true);
                 }
                 if(caseRec.Type_Of_Case__c != null && caseRec.Type_Of_Case__c != undefined && caseRec.Type_Of_Case__c != ''){
                     component.set('v.disableCxRequest', false);
+                }
+                if(!result.isAffSKUsFound){
+                    helper.showToast('Please Update Affected SKU details before proceeding', 'Error', 'error');
+                    var dismissActionPanel = $A.get("e.force:closeQuickAction");
+                    dismissActionPanel.fire();
+                    return;
                 }
                 var countryOptions = result.countryList;
                 var statesByCountry = result.statesByCountry;
@@ -47,6 +53,32 @@
                 component.set('v.cxRequestOptions', cxReqOptions);
                 component.set('v.caseRec', caseRec);
                 component.set('v.oliList', oliList);
+            }
+        });
+        $A.enqueueAction(action);
+    },
+
+    doInit: function (component, event, helper) {
+        debugger;
+        var action = component.get('c.showErrorToAddSkuDetails');
+        action.setParams({
+            recId: component.get('v.recordId')
+        });
+        action.setCallback(this, function (response) {
+            var state = response.getState();
+            if (state === 'SUCCESS') {
+                if (response.getReturnValue() != 'SUCCESS') {
+                    helper.showToast('Recent Follow-up Is Sitll Not yet Responded', 'Error', 'error');
+                    var dismissActionPanel = $A.get("e.force:closeQuickAction");
+                    dismissActionPanel.fire();
+                    $A.get('e.force:refreshView').fire();
+                }
+                else {
+                    component.set('v.showTrue', true);
+                }
+              
+            } else {
+                helper.showToast('Some Error Occured!', 'Error', 'error');
             }
         });
         $A.enqueueAction(action);
@@ -127,13 +159,15 @@
         }else if(isOutbound && (component.get('v.showAddressField') && (caseRec.Shipping_Mobile_No__c == undefined || caseRec.Shipping_Mobile_No__c == '' || caseRec.Shipping_Mobile_No__c == null))){
             helper.showToast('Please Enter Shipping Mobile Number', 'Alert', 'warning');
             return;
-        }else if(caseRec.Remarks_mentioned__c == undefined || caseRec.Remarks_mentioned__c == '' || caseRec.Remarks_mentioned__c == null){
+        }else if(caseRec.CSE_Remarks__c == undefined || caseRec.CSE_Remarks__c == '' || caseRec.CSE_Remarks__c == null){
             helper.showToast('Please Enter Remarks', 'Alert', 'warning');
             return;
         }
         var action = component.get('c.moveToWHteams');
+        var caseRec = component.get('v.caseRec');
         action.setParams({
             caseRec : component.get('v.caseRec'),
+            CSremarks : caseRec.CSE_Remarks__c
         });
         action.setCallback(this, function(response){
             var state = response.getState();
