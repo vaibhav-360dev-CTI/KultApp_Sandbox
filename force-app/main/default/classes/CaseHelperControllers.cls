@@ -1803,14 +1803,29 @@ public class CaseHelperControllers {
 
    @AuraEnabled
    public static List<OrderItem> getOrderIfItHasLineItems(String recId){
-    system.debug('recId==================>'+ recId);
         try {
             if(recId != null){
                 Case cserec = [SELECT Id,OrderId__c From Case Where Id=:recId ];
-                system.debug('OrderId__c==================>'+ cserec.OrderId__c);
+                Order orderRec = new Order();
+                List<OrderItem> itmList = new List<OrderItem>();
+                Set<Id> subOrderIds = new Set<Id>();
 
-                List<OrderItem> itmList = [SELECT Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber, Order.CreatedDate,Order.Paid_Amount__c FROM OrderItem  Where OrderId =: cserec.OrderId__c];
-                system.debug('itmList==================>'+ itmList);
+                if(cseRec.OrderId__c != null){
+                    orderRec = [SELECT Id, Name, ParentOrder__c FROM Order WHERE Id =: cseRec.OrderId__c];
+                }
+                if(orderRec.ParentOrder__c == null){
+                    List<Order> subOrderList = [SELECT Id FROM Order WHERE ParentOrder__c =: orderRec.Id];
+                    if(!subOrderList.isEmpty()){
+                        for(Order orderRecord : subOrderList){
+                            subOrderIds.add(orderRecord.Id);
+                        }
+                    }
+                    if(!subOrderIds.isEmpty()){
+                        itmList = [SELECT Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId IN: subOrderIds];
+                    }
+                }else{
+                    itmList = [SELECT Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId =: cserec.OrderId__c];
+                }
 
                 return itmList;
             }

@@ -7,12 +7,12 @@
             <div class="slds-box slds-m-around_medium">
                 <template if:true={CaseDataAvail}>
                     <lightning-record-edit-form object-api-name="Case" 
-                        record-type-id={recodTypeName} record-id={recordId}>
+                        record-type-id={recodTypeName} record-id={recordId} onsuccess={handleSuccess}>
                         <div class="slds-grid slds-wrap">
                             <template for:each={caseFieldSet} for:item="field">
                                 <div key={field.key} class="slds-col slds-size_6-of-12">
                                     <span>
-                                        <lightning-input-field onchange={onchageInputOpp} field-name={field.value}
+                                        <lightning-input-field onchange={onchageInputOpp} field-name={field.value} required={field.required}
                                            disabled={field.disabled}></lightning-input-field>
                                     </span>
                                 </div>
@@ -21,41 +21,69 @@
                                 <template for:each={sendCaseField} for:item="field">
                                     <div key={field.key} class="slds-col slds-size_6-of-12">
                                         <span>
-                                            <lightning-input-field field-name={field.value}></lightning-input-field>
+                                            <lightning-input-field field-name={field.value} required></lightning-input-field>
                                         </span>
                                     </div>
                                 </template>
                                 <template for:each={showDispostionField} for:item="field">
                                     <div key={field.key} class="slds-col slds-size_6-of-12">
                                         <span>
-                                            <lightning-input-field field-name={field.value}></lightning-input-field>
+                                            <lightning-input-field field-name={field.value} required></lightning-input-field>
                                         </span>
                                     </div>
                                 </template>
                             </template>                           
-                            <div class="slds-form-element slds-m-bottom_x-small">
-                                <div class="slds-form-element__row">
-                                    <div class="slds-size_1-of-1 slds-grid slds-gutters">
-                                        <div class="slds-col slds-size_5-of-12">
-                                            <label class="slds-form-element__label" for="status-combobox">
-                                                Status
-                                            </label>
-                                        </div>
-                                        <div class="slds-col slds-size_7-of-12">
-                                            <div class="slds-form-element__control comboBoxSize">
-                                                <lightning-combobox 
-                                                    id="status-combobox"
-                                                    name="status"
-                                                    value={StatusValue}
-                                                    placeholder="Select Status"
-                                                    options={Statusoptions}
-                                                    onchange={handleChange}>
-                                                </lightning-combobox>
+                            <template if:true={IfFCR}>
+                                <div class="slds-form-element slds-m-bottom_x-small">
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-size_1-of-1 slds-grid slds-gutters">
+                                            <div class="slds-col slds-size_5-of-12">
+                                                <label class="slds-form-element__label" for="status-combobox">
+                                                    Status
+                                                </label>
+                                            </div>
+                                            <div class="slds-col slds-size_7-of-12">
+                                                <div class="slds-form-element__control comboBoxSize">
+                                                    <lightning-combobox 
+                                                        id="status-combobox"
+                                                        name="status"
+                                                        required
+                                                        value={StatusValue}
+                                                        placeholder="Select Status"
+                                                        options={Statusoptions}
+                                                        onchange={handleChange}>
+                                                    </lightning-combobox>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </template>
+                            <template if:true={IfNFCR}>
+                                <div class="slds-form-element slds-m-bottom_x-small">
+                                    <div class="slds-form-element__row">
+                                        <div class="slds-size_1-of-1 slds-grid slds-gutters">
+                                            <div class="slds-col slds-size_5-of-12">
+                                                <label class="slds-form-element__label" for="status-combobox">
+                                                    Status
+                                                </label>
+                                            </div>
+                                            <div class="slds-col slds-size_7-of-12">
+                                                <div class="slds-form-element__control comboBoxSize">
+                                                    <lightning-combobox 
+                                                        name="status"
+                                                        required
+                                                        value={StatusValue}
+                                                        placeholder="Select Status"
+                                                        options={StatoptionsForNFCR}
+                                                        onchange={handleChange}>
+                                                    </lightning-combobox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                         
                         <div class="slds-align_absolute-center slds-modal__footer">

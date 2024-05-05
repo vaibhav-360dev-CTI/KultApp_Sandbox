@@ -10,7 +10,7 @@ public class WS_OrderCreation {
         public Decimal amount;
         public String coupon_code;
         public String coupon_discount;
-        public String is_coupon_redeemed;
+        public boolean is_coupon_redeemed;
         public String order_status;
         public CustomerDetails customer_details;
         public AddressDetails address_details;

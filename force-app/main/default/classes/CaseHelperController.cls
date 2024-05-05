@@ -126,14 +126,29 @@ public class CaseHelperController {
     @AuraEnabled
     public static List<OrderItem> getOrderLineItems(String orderId){
         List<OrderItem> orderLineItems = new List<OrderItem>();
+        Order orderRec = new Order();
+        Set<Id> subOrderIds = new Set<Id>();
+        List<OrderItem> itmList = new List<OrderItem>();
         
         // Case cRec = [Select Id,OrderId__c FROM Case WHERE ID =: caseId];
         
         if(orderId != null){
-            orderLineItems = [Select Id,Product2.Name,Quantity,TotalPrice,UnitPrice FROM OrderItem WHERE OrderId =:orderId];
-            if(orderLineItems.size()>0){
-                system.debug('orderLineItems'+orderLineItems);
-                return orderLineItems;
+            orderRec = [SELECT Id, Name, ParentOrder__c FROM Order WHERE Id =: orderId];
+            if(orderRec.ParentOrder__c == null){
+                List<Order> subOrderList = [SELECT Id FROM Order WHERE ParentOrder__c =: orderRec.Id];
+                if(!subOrderList.isEmpty()){
+                    for(Order orderRecord : subOrderList){
+                        subOrderIds.add(orderRecord.Id);
+                    }
+                }
+                if(!subOrderIds.isEmpty()){
+                    itmList = [SELECT Id,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c FROM OrderItem  Where OrderId IN: subOrderIds];
+                }
+            }else{
+                itmList = [SELECT Id,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c FROM OrderItem  Where OrderId =: orderId];
+            }
+            if(itmList.size()>0){
+                return itmList;
             }
         } 
         return null;          

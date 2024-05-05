@@ -284,9 +284,20 @@ export default class CreateCaseFromContact extends LightningElement {
     hanldeProgressValueChange(event) {
         debugger;
         this.selectedRecordIdFromParent = event.detail;
+        if(this.selectedRecordIdFromParent != 'NULL'){
+        if(this.selectedRecordIdFromParent != null && this.selectedRecordIdFromParent != '' && this.selectedRecordIdFromParent != undefined){
+            this.withOrder = true;
+            this.withoutOrder = false;
+        }
         this.callAllOrderItems();
-        this.withOrder = true;
-        this.withoutOrder = false;
+        }
+        if(this.selectedRecordIdFromParent == 'NULL'){
+             this.withoutOrder = true;
+             this.withOrder = false;
+        }else{
+             this.withoutOrder = false;
+             this.withOrder = true;
+        }
         // this.getRecordDetails();
     }
 

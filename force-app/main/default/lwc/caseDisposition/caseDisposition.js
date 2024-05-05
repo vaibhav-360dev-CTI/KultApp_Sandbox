@@ -38,6 +38,9 @@ export default class DynamicPageGenerator extends LightningElement {
     @track caseSubType;
     selectedDisposition;
     StatusValue;
+    IfFCR = false;
+    IfNFCR = false;
+    selectedCaseCategory;
 
     get Statusoptions() {
         return [
@@ -46,10 +49,17 @@ export default class DynamicPageGenerator extends LightningElement {
             { label: 'Re Assigned', value: 'Re Assigned' },
         ];
     } 
+    get StatoptionsForNFCR() {
+        return [
+            { label: 'In Progress', value: 'In Progress' },
+            { label: 'Re Assigned', value: 'Re Assigned' },
+        ];
+    }
 
     handleChange(event){
         debugger;
         this.StatusValue = event.detail.value;
+        this.handleShowSubFields();
     }
 
     connectedCallback() {
@@ -76,12 +86,18 @@ export default class DynamicPageGenerator extends LightningElement {
                          for (var key in this.data) {    
                             if((this.data)[key] == 'Subject'){
                                 TempArray.push({ key: key, value:(this.data)[key],  disabled:true});  
-                            }else{
-                                TempArray.push({ key: key, value:(this.data)[key],  disabled:false});
-                            }       
+                            }
+                            if((this.data)[key] == 'OrderId__c'){
+                                TempArray.push({ key: key, value:(this.data)[key],  disabled:false});  
+                            }
+                            if((this.data)[key] != 'OrderId__c' && (this.data)[key] != 'Subject'){
+                                TempArray.push({ key: key, value:(this.data)[key],  required:true});  
+                            } 
+                                  
                                          
                          }  
                          this.caseFieldSet = TempArray;
+
                          console.log('key', this.caseFieldSet); 
                          this.CaseDataAvail = true;
                          
@@ -132,8 +148,14 @@ export default class DynamicPageGenerator extends LightningElement {
                   if (result) {
                     this.selectedSubType = result.Sub_Type__c;
                     this.selectedSubSubType = result.Sub_Sub_Type__c;
-                    if(result.Status != 'Un Assigned' || result.Status != 'New' || result.Status != 'In Progress'){
-                    this.selectedStatus = result.Status;
+                    if(this.selectedCaseCategory == result.Status){
+                        if(this.selectedCaseCategory == 'FCR'){
+                            this.IfFCR = true;
+                            this.IfNFCR = false;
+                        }if(this.selectedCaseCategory == 'NFCR'){
+                            this.IfFCR = false;
+                            this.IfNFCR = true;
+                        }
                     }
                     this.selectedDisposition = result.Disposition__c;
                     this.handleShowSubFields();  
@@ -175,6 +197,16 @@ export default class DynamicPageGenerator extends LightningElement {
     if (event.target.fieldName == 'Sub_Type__c') {
         this.selectedSubType = event.target.value;
     }
+    if (event.target.fieldName == 'Case_Category__c') {
+        this.selectedCaseCategory = event.target.value;
+        if(this.selectedCaseCategory == 'FCR'){
+            this.IfFCR = true;
+            this.IfNFCR = false;
+        }if(this.selectedCaseCategory == 'NFCR'){
+            this.IfFCR = false;
+            this.IfNFCR = true;
+        }
+    }
     if (event.target.fieldName == 'Sub_Sub_Type__c') {
         this.selectedSubSubType = event.target.value;
     }
@@ -190,16 +222,17 @@ export default class DynamicPageGenerator extends LightningElement {
     handleShowSubFields(){
         debugger;
         
-        if(this.selectedStatus === 'Closed'){
+        
+        if(this.StatusValue === 'Closed'){
             this.showDispostionField = [];
             for (var i = 0; i < this.caseField.length; i++) {
-                if (this.caseField[i].value== "Disposition__c") {
+                if (this.caseField[i].value== "Disposition__c" || this.caseField[i].value== "Case_Reason_Description__c") {
                     this.showDispostionField.push(this.caseField[i]);
                 }
             }
             this.showSubFields = true;
         }
-        if(this.selectedStatus !== 'Closed'){
+        if(this.StatusValue !== 'Closed'){
             this.showDispostionField = [];
             
         }
@@ -1115,19 +1148,23 @@ export default class DynamicPageGenerator extends LightningElement {
         }
     }
 
+    handleSuccess(){
+        const event = new ShowToastEvent({
+            title: 'Case Updated',
+            variant: 'success',
+            message: 'The case has been Updated successfully.'
+        });
+        this.updateStatusfield();
+        this.dispatchEvent(event);
+        this.closeQuickAction();
+    }
+
     handleClick(){
         debugger;
         
-        if(this.selectedStatus === 'Closed'){
+        if(this.StatusValue === 'Closed'){
             if(this.selectedDisposition !== null && this.selectedDisposition !== '' && this.selectedDisposition !== undefined){
-                const event = new ShowToastEvent({
-                    title: 'Case Updated',
-                    variant: 'success',
-                    message: 'The case has been Updated successfully.'
-                });
-                //this.updateStatusfield();
-                this.dispatchEvent(event);
-                this.closeQuickAction();
+                
             }else{
 
                 const event = new ShowToastEvent({
@@ -1138,14 +1175,14 @@ export default class DynamicPageGenerator extends LightningElement {
                 this.dispatchEvent(event);
             }
         }else{
-              const event = new ShowToastEvent({
-                    title: 'Case Updated',
-                    variant: 'success',
-                    message: 'The case has been Updated successfully.'
-                });
-                this.updateStatusfield();
-                this.dispatchEvent(event);
-                this.closeQuickAction();
+            // this.updateStatusfield();
+            //   const event = new ShowToastEvent({
+            //         title: 'Case Updated',
+            //         variant: 'success',
+            //         message: 'The case has been Updated successfully.'
+            //     });
+            //     this.dispatchEvent(event);
+            //     this.closeQuickAction();
         }
     }
     

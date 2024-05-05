@@ -3,19 +3,32 @@ public class moveToRefundTeamController {
     @AuraEnabled
     public static RefundWrapper getOrderLineItem(String caseId) { 
         
-        List<Case> caseList = [SELECT Id,Contact_Number__c,RefundTeamMember__c, Sub_Type__c, Sub_Sub_Type__c, OrderId__c, OrderId__r.Name,OrderId__r.Refund_Type__c, OrderId__r.Refund_Reason__c, OrderId__r.Coupon__c,OrderId__r.Refund_Amount__c,OrderId__r.Paid_Amount__c 
+        List<Case> caseList = [SELECT Id,Contact_Number__c,RefundTeamMember__c, Sub_Type__c, Sub_Sub_Type__c, OrderId__c, OrderId__r.Name,OrderId__r.Refund_Type__c, OrderId__r.Refund_Reason__c, OrderId__r.Coupon__c,OrderId__r.Refund_Amount__c,OrderId__r.Paid_Amount__c, OrderId__r.ParentOrder__c
                                FROM Case WHERE Id = :caseId];
         System.debug('caseList=====>'+caseList);
         
         if (!caseList.isEmpty()) {
             Case caseRecord = caseList[0];
             System.debug('caseRecord=====>'+caseRecord);
+            List<OrderItem> orderItems = new List<OrderItem>();
+            Set<Id> subOrderIds = new Set<Id>();
             
             Order orderRecord = caseRecord.OrderId__r;
-            
-            System.debug('orderRecord=====>'+orderRecord);
-            
-            List<OrderItem> orderItems = [SELECT Id, Product2.Name,Quantity,Is_Already_Utilized__c, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c  FROM OrderItem WHERE OrderId = :orderRecord.Id];
+            System.debug('orderRecord.ParentOrder__c=====>'+orderRecord.ParentOrder__c);
+            if(orderRecord.ParentOrder__c == null){
+                List<Order> subOrderList = [SELECT Id FROM Order WHERE ParentOrder__c =: orderRecord.Id];
+                System.debug('subOrderList=====>'+subOrderList);
+                if(!subOrderList.isEmpty()){
+                    for(Order orderRec : subOrderList){
+                        subOrderIds.add(orderRec.Id);
+                    }
+                }
+                if(!subOrderIds.isEmpty()){
+                    orderItems = [SELECT Id, Product2.Name,Product_Name__c, Quantity,Is_Already_Utilized__c, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId IN: subOrderIds];
+                }
+            }else{
+                orderItems = [SELECT Id, Product2.Name,Product_Name__c, Quantity,Is_Already_Utilized__c, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId =: orderRecord.Id];
+            }
             System.debug('orderItems=====>'+orderItems);
             return new RefundWrapper(caseRecord, orderRecord, orderItems);
         } else {
@@ -136,6 +149,12 @@ public class moveToRefundTeamController {
                         }
                         
                         update caseRecord;
+                        Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                        cpdRec.Status__c = 'In Progress';
+                        cpdRec.CS_Remarks__c = refundReason;
+                        cpdRec.Case__c = caseRecord.Id;
+                        cpdRec.Current_Action__c = 'Moved to Refund Team';
+                        insert cpdRec;
                         System.debug('affectedSKUsToInsert==> '+ affectedSKUsToInsert);
                         if(!affectedSKUsToInsert.isEmpty()){
                             insert affectedSKUsToInsert;

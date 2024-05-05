@@ -39,16 +39,19 @@
                                                     <div class="slds-truncate" title="CheckBox"></div>
                                                 </th> -->
                                                 <th scope="col">
+                                                    <div class="slds-truncate" title="Brand">Brand</div>
+                                                </th>
+                                                <th scope="col">
                                                     <div class="slds-truncate" title="Item">Item</div>
                                                 </th>
                                                 <th scope="col">
-                                                    <div class="slds-truncate" title="SKU Details">SKU Details</div>
+                                                    <div class="slds-truncate" title="SKU Details">SKU</div>
                                                 </th>
                                                 <th scope="col">
                                                     <div class="slds-truncate" title="Quantity">Quantity</div>
                                                 </th>
                                                 <th scope="col">
-                                                    <div class="slds-truncate" title="Affected Quantity">Affected Quantity</div>
+                                                    <div class="slds-truncate" title="Affected Quantity">Aff. Quantity</div>
                                                 </th>
                                                 <th scope="col">
                                                     <div class="slds-truncate" title="MRP">MRP</div>
@@ -56,9 +59,7 @@
                                                 <th scope="col">
                                                     <div class="slds-truncate" title="Selling Price">Selling Price</div>
                                                 </th>
-                                                <th scope="col">
-                                                    <div class="slds-truncate" title="Total Selling Price">Total Selling Price</div>
-                                                </th>
+
 
 
                                             </tr>
@@ -74,7 +75,12 @@
                                                         </lightning-input>
                                                     </td>
                                                     <td>
-                                                        <lightning-input type="Test" variant="standard"
+                                                        <lightning-input type="text" value={opls.brand}
+                                                            class="custom-input" variant="standard" name="BrandName"
+                                                            label="" disabled></lightning-input>
+                                                    </td>
+                                                    <td>
+                                                        <lightning-input type="text" variant="standard"
                                                             value={opls.productName} class="custom-input"
                                                             name="productName" label="" disabled></lightning-input>
 
@@ -83,21 +89,21 @@
 
                                                         <lightning-input type="Text" variant="standard"
                                                             value={opls.skudetail} class="custom-input"
-                                                            name="SkuDetails" label="" disabled></lightning-input>
+                                                            name="SkuDetails" label="" disabled style="width: 120px;"></lightning-input>
 
                                                     </td>
                                                     <td>
 
                                                         <lightning-input type="number" variant="standard"
                                                             value={opls.totalQuantity} class="custom-inputtotalquantity"
-                                                            name="totalQuantity" label="" disabled></lightning-input>
+                                                            name="totalQuantity" label="" disabled style="width: 80px;"></lightning-input>
 
                                                     </td>
                                                     <td key={opls.Id}>
                                                         <lightning-input data-index={index} type="number" variant="standard"
                                                             class="custom-input" value={opls.Affected_Quantity__c}
-                                                            name="refundQuantity" label=""
-                                                            onchange={handelaffectedChange} disabled={opls.disabled}></lightning-input>
+                                                            name="refundQuantity" label=""  
+                                                            onchange={handelaffectedChange} disabled={opls.disabled} style="width: 100px;"></lightning-input>
                                                     </td>
                                                     <td>
                                                         <lightning-input type="number" value={opls.UnitPrice}
@@ -107,13 +113,10 @@
                                                     <td>
                                                         <lightning-input type="number" value={opls.Selling_Price__c}
                                                             class="custom-inputmrp" variant="standard" name="Selling Price"
-                                                            label="" disabled></lightning-input>
+                                                            label="" disabled style="width: 100px;"></lightning-input>
                                                     </td>
-                                                    <td>
-                                                        <lightning-input type="number" value={opls.totalprice}
-                                                            class="custom-inputmrp" variant="standard" name="Total Selling Price"
-                                                            label="" disabled></lightning-input>
-                                                    </td>
+                                                    
+
                                                 </tr>
                                             </template>
                                         </tbody>
@@ -171,6 +174,11 @@
                                                 <th scope="col">
                                                     <div class="slds-truncate" title="MRP">Total Price</div>
                                                 </th>
+
+                                                <th scope="col">
+                                                    <div class="slds-truncate" title="Brand">Brand</div>
+                                                </th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -184,7 +192,12 @@
                                                         </lightning-input>
                                                     </td>
                                                     <td>
-                                                        <lightning-input type="Test" variant="standard"
+                                                        <lightning-input type="text" value={opls.brand}
+                                                            class="custom-input" variant="standard" name="BrandName"
+                                                            label="" disabled></lightning-input>
+                                                    </td>
+                                                    <td>
+                                                        <lightning-input type="text" variant="standard"
                                                             value={opls.productName} class="custom-input"
                                                             name="productName" label="" disabled></lightning-input>
 
@@ -193,20 +206,31 @@
 
                                                         <lightning-input type="Text" variant="standard"
                                                             value={opls.skudetail} class="custom-input"
-                                                            name="SkuDetails" label="" disabled></lightning-input>
+                                                            name="SkuDetails" label="" disabled style="width: 120px;"></lightning-input>
 
                                                     </td>
                                                     <td>
 
                                                         <lightning-input type="number" variant="standard"
                                                             value={opls.totalQuantity} class="custom-inputtotalquantity"
-                                                            name="totalQuantity" label="" disabled></lightning-input>
+                                                            name="totalQuantity" label="" disabled style="width: 80px;"></lightning-input>
 
                                                     </td>
+                                                    <td key={opls.Id}>
+                                                        <lightning-input data-index={index} type="number" variant="standard"
+                                                            class="custom-input" value={opls.Affected_Quantity__c}
+                                                            name="refundQuantity" label=""  
+                                                            onchange={handelaffectedChange} disabled={opls.disabled} style="width: 100px;"></lightning-input>
+                                                    </td>
                                                     <td>
-                                                        <lightning-input type="number" value={opls.totalprice}
+                                                        <lightning-input type="number" value={opls.UnitPrice}
                                                             class="custom-inputmrp" variant="standard" name="MRP"
                                                             label="" disabled></lightning-input>
+                                                    </td>
+                                                    <td>
+                                                        <lightning-input type="number" value={opls.Selling_Price__c}
+                                                            class="custom-inputmrp" variant="standard" name="Selling Price"
+                                                            label="" disabled style="width: 100px;"></lightning-input>
                                                     </td>
                                                 </tr>
                                             </template>

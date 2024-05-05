@@ -184,6 +184,12 @@ noRecordFound = false;
      this.searchKeyWord = '';
      this.searchRecordList = [];
 
+       const selectedEvent = new CustomEvent("progressvaluechange", {
+          detail: 'NULL'
+          });
+          // Dispatches the event.
+          this.dispatchEvent(selectedEvent);
+
      }
 
      hasRecord() {

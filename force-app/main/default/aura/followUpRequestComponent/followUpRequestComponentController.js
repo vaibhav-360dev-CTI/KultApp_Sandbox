@@ -5,31 +5,31 @@
     },
 
 
-    doInit: function (component, event, helper) {
-        debugger;
-        var action = component.get('c.checkFollowUpStatus');
-        action.setParams({
-            recId: component.get('v.recordId')
-        });
-        action.setCallback(this, function (response) {
-            var state = response.getState();
-            if (state === 'SUCCESS') {
-                if (response.getReturnValue() == 'Open') {
-                    helper.showToast('Recent Follow-up Is Sitll Not yet Responded', 'Error', 'error');
-                    var dismissActionPanel = $A.get("e.force:closeQuickAction");
-                    dismissActionPanel.fire();
-                    $A.get('e.force:refreshView').fire();
-                }
-                else {
-                    component.set('v.showTrue', true);
-                }
+    // doInit: function (component, event, helper) {
+    //     debugger;
+    //     var action = component.get('c.checkFollowUpStatu');
+    //     action.setParams({
+    //         recId: component.get('v.recordId')
+    //     });
+    //     action.setCallback(this, function (response) {
+    //         var state = response.getState();
+    //         if (state === 'SUCCESS') {
+    //             if (response.getReturnValue() == 'Open') {
+    //                 helper.showToast('Recent Follow-up Is Sitll Not yet Responded', 'Error', 'error');
+    //                 var dismissActionPanel = $A.get("e.force:closeQuickAction");
+    //                 dismissActionPanel.fire();
+    //                 $A.get('e.force:refreshView').fire();
+    //             }
+    //             else {
+    //                 component.set('v.showTrue', true);
+    //             }
               
-            } else {
-                helper.showToast('Some Error Occured!', 'Error', 'error');
-            }
-        });
-        $A.enqueueAction(action);
-    },
+    //         } else {
+    //             helper.showToast('Some Error Occured!', 'Error', 'error');
+    //         }
+    //     });
+    //     $A.enqueueAction(action);
+    // },
 
     submitDetails: function (component, event, helper) {
         debugger;

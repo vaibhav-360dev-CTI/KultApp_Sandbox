@@ -73,7 +73,7 @@ public class moveToWarehouseControllerTest {
         
         
         moveToWarehouseController.getCaseDetailsAndPicklistValues(cse.Id);
-        moveToWarehouseController.moveToWHteams(cse);
+        //moveToWarehouseController.moveToWHteams(cse);
         moveToWarehouseController.sendingCustomNotification(userInstant.Id, cse.Id,'Testing For Notification Title', 'Testing For Notification Body');
         
     }

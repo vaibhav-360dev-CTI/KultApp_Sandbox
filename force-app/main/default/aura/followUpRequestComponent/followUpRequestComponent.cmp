@@ -2,8 +2,8 @@
     implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
     access="global" controller="followUpController">
     <aura:attribute name="followUpRemarks" type="string" />
-    <aura:attribute name="showTrue" type="Boolean"  default="false" />
-    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- <aura:attribute name="showTrue" type="Boolean"  default="false" /> -->
+    <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> -->
     <aura:html tag="style">
         .cuf-content {
         padding: 0 0rem !important;
@@ -18,7 +18,7 @@
         }
     </aura:html>
 
-    <aura:if isTrue="{!v.showTrue}">
+    <!-- <aura:if isTrue="{!v.showTrue}"> -->
 
         <div class="modal-header slds-modal__header slds-size_1-of-1">
             <h2>Send Follow Up Request</h2>
@@ -32,6 +32,6 @@
                 <lightning:button variant="brand" label="Save" title="Save" onclick="{!c.submitDetails}" />
             </div>
         </footer>
-    </aura:if>
+    <!-- </aura:if> -->
 
 </aura:component>

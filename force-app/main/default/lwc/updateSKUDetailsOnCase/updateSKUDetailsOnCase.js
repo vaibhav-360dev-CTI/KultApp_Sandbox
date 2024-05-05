@@ -63,6 +63,8 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                 
                 for (let i = 0; i < this.AllOrderItems.length; i++) {
                     this.AllOrderItems[i].Affected_Quantity__c = null;
+                    this.AllOrderItems[i].disabled = true;
+                    this.selectedRows = [];
                 }
                 this.orderHasItemAvailable = true; 
             }
@@ -90,7 +92,7 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
             console.error("recordId parameter not found in the URL");
         }
         this.doSearch();
-        this.callAllOrderItems1();
+        //this.callAllOrderItems1();
     }
 
     callAllOrderItems() {
@@ -108,6 +110,7 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                         UnitPrice: item.UnitPrice,
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
+                        brand : item.Brand__c,
                         disabled: true
                     });
                 });
@@ -134,6 +137,7 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                         UnitPrice: item.UnitPrice,
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
+                        brand : item.Brand__c,
                         disabled: true
                     });
                 });
@@ -159,6 +163,29 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                 // Order is available
                 this.OrderNumberForAffectedQuantity = this.CaseOrderAndOrderLineItem[0].OrderId;
 
+                
+            if(this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__c != null){
+                if (this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.Name != null) {
+                    this.orderNumberOrName = this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.Name;
+                    this.orderNameOrNumberAvailable = true;
+                } else {
+                    this.orderNumberOrName = this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.OrderNumber;
+                    this.orderNameOrNumberAvailable = true;
+                }
+                if (this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.CreatedDate != null) {
+                    this.orderDate = this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.CreatedDate;
+                    this.orderchangedateDates = true;
+                }
+
+                if (this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.Paid_Amount__c != null) {
+                    this.PaidAmountofOrder = this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.Paid_Amount__c;
+                    this.PaidAmount = true;
+                }
+
+                if (this.CaseOrderAndOrderLineItem[0].OrderId != null) {
+                    this.ordersId = this.CaseOrderAndOrderLineItem[0].OrderId;
+                }
+            }else{
                 if (this.CaseOrderAndOrderLineItem[0].Order.Name != null) {
                     this.orderNumberOrName = this.CaseOrderAndOrderLineItem[0].Order.Name;
                     this.orderNameOrNumberAvailable = true;
@@ -177,8 +204,9 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                 }
 
                 if (this.CaseOrderAndOrderLineItem[0].OrderId != null) {
-                    this.ordersId = this.CaseOrderAndOrderLineItem[0].OrderId;
-                }
+                  
+            }
+        }
 
                 this.CaseOrderAndOrderLineItem.forEach(item => {
                     this.AllOrderItems.push({
@@ -190,38 +218,40 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                         UnitPrice: item.UnitPrice,
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
+                        brand : item.Brand__c,
                         disabled: true
                     });
                 });
 
                 this.error = undefined;
 
-                this.AllOrderItems = [];
+                //this.AllOrderItems = [];
 
-                getOrderItems({
-                    OrdId: this.ordersId
-                }).then(result => {
-                    result.forEach(item => {
-                        this.AllOrderItems.push({
-                            productName: item.Product2.Name,
-                            Id: item.Id,
-                            Affected_Quantity__c: item.Affected_Quantity__c,
-                            totalQuantity: item.Quantity,
-                            Selling_Price__c: item.Selling_Price__c,
-                            UnitPrice: item.UnitPrice,
-                            totalprice: item.Total_Selling_Price__c,
-                            skudetail: item.SKU__c,
-                            disabled: true
-                        });
-                    });
+                // getOrderItems({
+                //     OrdId: this.ordersId
+                // }).then(result => {
+                //     result.forEach(item => {
+                //         this.AllOrderItems.push({
+                //             productName: item.Product2.Name,
+                //             Id: item.Id,
+                //             Affected_Quantity__c: item.Affected_Quantity__c,
+                //             totalQuantity: item.Quantity,
+                //             Selling_Price__c: item.Selling_Price__c,
+                //             UnitPrice: item.UnitPrice,
+                //             totalprice: item.Total_Selling_Price__c,
+                //             skudetail: item.SKU__c,
+                //             Brand : item.Brand__c,
+                //             disabled: true
+                //         });
+                //     });
 
-                    this.error = undefined;
+                //     this.error = undefined;
 
 
-                }).catch(error => {
-                    this.error = error;
-                    this.AllOrderItems = undefined;
-                });
+                // }).catch(error => {
+                //     this.error = error;
+                //     this.AllOrderItems = undefined;
+                // });
                 if (this.ordersId != null) {
                     this.orderHasItemAvailable = true;
                 }

@@ -439,22 +439,25 @@ System.debug(e.getMessage());
         }
         System.debug('setOfOrderId==> ' + setOfOrderId); 
         
-        Map<Id, String> orderIdToCouponMap = new Map<Id, String>();
-        
+        Map<Id, String> orderIdToCouponMap = new Map<Id, String>();       
         List<Order> orderList = [SELECT Id, Coupon__c FROM Order WHERE Id IN :setOfOrderId];
         System.debug('orderList==> ' + orderList);
         String coupon;
-        for (Order ord : orderList) {
-            coupon = ord.Coupon__c;
+        
+        for(Order ord : orderList) {
+            orderIdToCouponMap.put(ord.Id, ord.Coupon__c);
         }
         System.debug('coupon==> ' + coupon);
         for (Case cs : newCases) {
             if (cs.OrderId__c != null) {
-                cs.Coupon__c = coupon;
-                System.debug('cs.Coupon__c==> ' + cs.Coupon__c);
+                coupon = orderIdToCouponMap.get(cs.OrderId__c);
+                    cs.Coupon__c = coupon;
+                    System.debug('cs.Coupon__c==> ' + cs.Coupon__c);
+                }else {
+                    System.debug('No coupon found for case with OrderId ' + cs.OrderId__c);
+                }
             }
         }
         
-    }
     
 }

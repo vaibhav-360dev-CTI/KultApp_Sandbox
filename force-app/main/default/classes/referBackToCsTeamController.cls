@@ -87,6 +87,7 @@ public without sharing class referBackToCsTeamController {
                 caseToUpdate.Case_Sub_Status__c = 'Referred Back to CS Team';
                 caseToUpdate.AWB_Number__c = awbNumber;
                 caseToUpdate.FOC_Order_Id__c = focOrderId;
+                caseToUpdate.Last_Response__c = system.now();
                 System.debug('caseToUpdate ==> ' + caseToUpdate);
                 update caseToUpdate;
 
