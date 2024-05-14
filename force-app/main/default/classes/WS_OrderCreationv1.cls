@@ -7,12 +7,11 @@ global class WS_OrderCreationv1 {
         RestResponse response = RestContext.response;
         List<ResponseBody> respBodyList = new List<ResponseBody>();
         try {
-            
             List<WS_OrderCreation> orderRecords = (List<WS_OrderCreation>) JSON.deserialize(req.requestBody.toString(), List<WS_OrderCreation>.class);
             Set<String> phone_numberSet = new Set<String>();
 
             Map<String,WS_OrderCreation.CustomerDetails> mapOfPhoneNumberByRecDetails = new Map<String,WS_OrderCreation.CustomerDetails>();//Phone number by customer details
-            Map<String,WS_OrderCreation.Data> mapOfPhoneNumberByOrderDetails = new Map<String,WS_OrderCreation.Data>();
+            Map<String,List<WS_OrderCreation.Data>> mapOfPhoneNumberByOrderDetails = new Map<String,List<WS_OrderCreation.Data>>();
             Map<String,List<WS_OrderCreation.OrderDetails>> mapOrderDetailsByOrderId = new Map<String,List<WS_OrderCreation.OrderDetails>>();
             Map<String, Id> mapOfContractIdByAccPhone = new Map<String, Id>();
             Map<String, WS_OrderCreation.OrderDetails> subOrderDetailsBySubOrderId = new Map<String, WS_OrderCreation.OrderDetails>();
@@ -31,7 +30,12 @@ global class WS_OrderCreationv1 {
                     for(WS_OrderCreation ws_orderInput : orderRecords){
 
                         if(ws_orderInput.data.customer_details != null && ws_orderInput.data.customer_details.phone_number != null){
-                            mapOfPhoneNumberByOrderDetails.put(ws_orderInput.data.customer_details.phone_number,ws_orderInput.data);
+                            if(mapOfPhoneNumberByOrderDetails.containsKey(ws_orderInput.data.customer_details.phone_number)){
+                                mapOfPhoneNumberByOrderDetails.get(ws_orderInput.data.customer_details.phone_number).add(ws_orderInput.data);
+                            }else{
+                                mapOfPhoneNumberByOrderDetails.put(ws_orderInput.data.customer_details.phone_number, new List<WS_OrderCreation.Data>{ws_orderInput.data});
+                            }
+                            //mapOfPhoneNumberByOrderDetails.put(ws_orderInput.data.customer_details.phone_number,ws_orderInput.data);
                             phone_numberSet.add(ws_orderInput.data.customer_details.phone_number);
                             mapOfPhoneNumberByRecDetails.put(ws_orderInput.data.customer_details.phone_number,ws_orderInput.data.customer_details);
                             mapOrderDetailsByOrderId.put(ws_orderInput.data.order_id, ws_orderInput.data.order_details);
@@ -42,6 +46,12 @@ global class WS_OrderCreationv1 {
                                 }
                             }
                         }
+                        // System.debug('mapOfPhoneNumberByOrderDetails==> ' + mapOfPhoneNumberByOrderDetails);
+                        // System.debug('phone_numberSet==> ' + phone_numberSet);
+                        // System.debug('mapOfPhoneNumberByRecDetails==> ' + mapOfPhoneNumberByRecDetails);
+                        // System.debug('mapOrderDetailsByOrderId==> ' + mapOrderDetailsByOrderId);
+                        // System.debug('subOrderNameBysubOrderItemName==> ' + subOrderNameBysubOrderItemName);
+                        // System.debug('subOrderItemBySubOrderItemName==> ' + subOrderItemBySubOrderItemName);
                     }
 
                     for(String mapKey : mapOrderDetailsByOrderId.keySet()){
@@ -58,7 +68,7 @@ global class WS_OrderCreationv1 {
                         List<Account> existingAccountList = new List<Account>();
                         Set<String> accountTobeCreate = new Set<String>();
                         Map<String,Id> mapOfPhoneNoByAccId = new Map<String,Id>();
-                        existingAccountList = [SELECT Id,Email__c,Phone From Account WHERE Phone in: phone_numberSet];
+                        existingAccountList = [SELECT Id,Email__c,Phone From Account WHERE Phone in: phone_numberSet AND Is_Deleted__c = false];
                         Set<String> existingRecIdSet = new Set<String>();
                         If(!existingAccountList.isEmpty()){
                             for(Account acc : existingAccountList){
@@ -68,8 +78,12 @@ global class WS_OrderCreationv1 {
                         }
                             for(String mapKey : mapOfPhoneNumberByRecDetails.keySet()){
                                 Account accRec = new Account();
-                                accRec.Name = mapOfPhoneNumberByRecDetails.get(mapKey).name != null ? mapOfPhoneNumberByRecDetails.get(mapKey).name : 'Unknown';
-                                accRec.Email__c = mapOfPhoneNumberByRecDetails.get(mapKey).email;
+                                if(mapOfPhoneNumberByRecDetails.get(mapKey).name != null){
+                                    accRec.Name = mapOfPhoneNumberByRecDetails.get(mapKey).name;
+                                }
+                                if(mapOfPhoneNumberByRecDetails.get(mapKey).email != null){
+                                    accRec.Email__c = mapOfPhoneNumberByRecDetails.get(mapKey).email;
+                                }
                                 accRec.Phone = mapOfPhoneNumberByRecDetails.get(mapKey).phone_number;
                                 if(existingRecIdSet.contains(mapKey)){
                                     accRec.Id = mapOfPhoneNoByAccId.get(mapKey);
@@ -79,18 +93,32 @@ global class WS_OrderCreationv1 {
                             }
 
                         Database.UpsertResult[] upsertResults = Database.upsert(accountListTobeUpsert,Account.Id, true);
-                        Map<Id,WS_OrderCreation.Data> mapOfAccountIdByOrderList = new Map<Id,WS_OrderCreation.Data>();
+                        Map<Id,List<WS_OrderCreation.Data>> mapOfAccountIdByOrderList = new Map<Id,List<WS_OrderCreation.Data>>();
                         for(Integer i = 0; i < upsertResults.size(); i++) {
                             Database.UpsertResult result = upsertResults[i];
                             Account upsertedAccount = accountListTobeUpsert[i];
                             
                             if(result.isSuccess()) {
-                                mapOfAccountIdByOrderList.put(result.getId(),mapOfPhoneNumberByOrderDetails.get(upsertedAccount.Phone));
+                                    for(WS_OrderCreation.Data dataRec : mapOfPhoneNumberByOrderDetails.get(upsertedAccount.Phone)){
+                                        if(mapOfAccountIdByOrderList.containsKey(result.getId())){
+                                            mapOfAccountIdByOrderList.get(result.getId()).add(dataRec);
+                                        }else{
+                                            mapOfAccountIdByOrderList.put(result.getId(), new List<WS_OrderCreation.Data>{dataRec});
+                                        }
+                                    }
+                               // mapOfAccountIdByOrderList.put(result.getId(),mapOfPhoneNumberByOrderDetails.get(upsertedAccount.Phone));
+                                System.debug('mapOfAccountIdByOrderList' + mapOfAccountIdByOrderList);
 
                             } else {
                                 for(Database.Error error : result.getErrors()) {
-                                    System.debug('Error message: ' + error.getMessage());
+                                    ResponseBody res = new ResponseBody();
+                                res.status = 'Error';
+                                res.message = 'Order Creation Failed: ' + error.getMessage();
+                                //res.orderId = upsertedOrder.Id;
+                                respBodyList.add(res);
                                 }
+                                RestContext.response.statusCode = 400;
+                                return respBodyList;
                             }
                         }
 
@@ -98,7 +126,9 @@ global class WS_OrderCreationv1 {
                             Set<String> orderIdSet = new Set<String>();
                             List<Order> OrderListTobeUpsert = new List<Order>(); 
                             for(Id mapKey : mapOfAccountIdByOrderList.keySet()){
-                                orderIdSet.add(mapOfAccountIdByOrderList.get(mapKey).order_id);
+                                for(WS_OrderCreation.Data dtaRec : mapOfAccountIdByOrderList.get(mapKey)){
+                                    orderIdSet.add(dtaRec.order_id);
+                                }
                             }
 
                             if(!orderIdSet.isEmpty()){
@@ -114,34 +144,36 @@ global class WS_OrderCreationv1 {
                                 }
 
                                 for(Id mapKey : mapOfAccountIdByOrderList.keySet()){
-                                    Order ord = new Order();
-                                    ord.Name = mapOfAccountIdByOrderList.get(mapKey).order_id;
+                                    for(WS_OrderCreation.Data ordRecords : mapOfAccountIdByOrderList.get(mapKey)){
+                                        Order ord = new Order();
+                                    ord.Name = ordRecords.order_id;
                                     ord.AccountId = mapKey;
-                                    ord.EffectiveDate = mapOfAccountIdByOrderList.get(mapKey).order_date != null ? Date.ValueOf(mapOfAccountIdByOrderList.get(mapKey).order_date) : System.today();
-                                    ord.Payment_Id__c = mapOfAccountIdByOrderList.get(mapKey).payment_id != null ? mapOfAccountIdByOrderList.get(mapKey).payment_id : '';
-                                    ord.Payment_Status__c = mapOfAccountIdByOrderList.get(mapKey).payment_status != null ? mapOfAccountIdByOrderList.get(mapKey).payment_status : '';
-                                    ord.Payment_Type__c = mapOfAccountIdByOrderList.get(mapKey).payment_type != null ? mapOfAccountIdByOrderList.get(mapKey).payment_type : '';
-                                    ord.Paid_Amount__c = mapOfAccountIdByOrderList.get(mapKey).amount != null ? mapOfAccountIdByOrderList.get(mapKey).amount : 0;
-                                    ord.Coupon_Code__c = mapOfAccountIdByOrderList.get(mapKey).coupon_code != null ? mapOfAccountIdByOrderList.get(mapKey).coupon_code : '';
-                                    ord.Coupon_Discount__c = mapOfAccountIdByOrderList.get(mapKey).coupon_discount != null ? Decimal.valueOf(mapOfAccountIdByOrderList.get(mapKey).coupon_discount) : 0;
-                                    ord.Coupon__c = mapOfAccountIdByOrderList.get(mapKey).is_coupon_redeemed != true ? 'No' : 'Yes';
-                                    ord.Status = mapOfAccountIdByOrderList.get(mapKey).order_status != null ? mapOfAccountIdByOrderList.get(mapKey).order_status : '';
-                                    ord.BillingStreet = mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.street != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.street : '';
-                                    ord.BillingPostalCode = mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.pin_code != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.pin_code : '';
-                                    ord.BillingState = mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.state != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.state : '';
-                                    ord.BillingCity = mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.city != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.city : '';
-                                    ord.BillingCountry = mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.country_code != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.billing_address.country_code : '';
-                                    ord.ShippingStreet = mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.street != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.street : '';
-                                    ord.ShippingPostalCode = mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.pin_code != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.pin_code : '';
-                                    ord.ShippingState = mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.state != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.state : '';
-                                    ord.ShippingCity = mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.city != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.city : '';
-                                    ord.ShippingCountry = mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.country_code != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.country_code : '';
-                                    ord.Delivery_Mobile_Number__c = mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.phone_number != null ? mapOfAccountIdByOrderList.get(mapKey).address_details.shipping_address.phone_number : '';
+                                    ord.EffectiveDate = ordRecords.order_date != null ? Date.ValueOf(ordRecords.order_date) : System.today();
+                                    ord.Payment_Id__c = ordRecords.payment_id != null ? ordRecords.payment_id : '';
+                                    ord.Payment_Status__c = ordRecords.payment_status != null ? ordRecords.payment_status : '';
+                                    ord.Payment_Type__c = ordRecords.payment_type != null ? ordRecords.payment_type : '';
+                                    ord.Paid_Amount__c = ordRecords.amount != null ? ordRecords.amount : 0;
+                                    ord.Coupon_Code__c = ordRecords.coupon_code != null ? ordRecords.coupon_code : '';
+                                    ord.Coupon_Discount__c = ordRecords.coupon_discount != null ? Decimal.valueOf(ordRecords.coupon_discount) : 0;
+                                    ord.Coupon__c = ordRecords.is_coupon_redeemed != true ? 'No' : 'Yes';
+                                    ord.Status = ordRecords.order_status != null ? ordRecords.order_status : 'Success';
+                                    ord.BillingStreet = ordRecords.address_details.billing_address.street != null ? ordRecords.address_details.billing_address.street : '';
+                                    ord.BillingPostalCode = ordRecords.address_details.billing_address.pin_code != null ? ordRecords.address_details.billing_address.pin_code : '';
+                                    ord.BillingState = ordRecords.address_details.billing_address.state != null ? ordRecords.address_details.billing_address.state : '';
+                                    ord.BillingCity = ordRecords.address_details.billing_address.city != null ? ordRecords.address_details.billing_address.city : '';
+                                    ord.BillingCountry = ordRecords.address_details.billing_address.country_code != null ? ordRecords.address_details.billing_address.country_code : '';
+                                    ord.ShippingStreet = ordRecords.address_details.shipping_address.street != null ? ordRecords.address_details.shipping_address.street : '';
+                                    ord.ShippingPostalCode = ordRecords.address_details.shipping_address.pin_code != null ? ordRecords.address_details.shipping_address.pin_code : '';
+                                    ord.ShippingState = ordRecords.address_details.shipping_address.state != null ? ordRecords.address_details.shipping_address.state : '';
+                                    ord.ShippingCity = ordRecords.address_details.shipping_address.city != null ? ordRecords.address_details.shipping_address.city : '';
+                                    ord.ShippingCountry = ordRecords.address_details.shipping_address.country_code != null ? ordRecords.address_details.shipping_address.country_code : '';
+                                    ord.Delivery_Mobile_Number__c = ordRecords.address_details.shipping_address.phone_number != null ? ordRecords.address_details.shipping_address.phone_number : '';
                                     ord.ContractId = null;
-                                    if(existingOrderIdSet.contains(mapOfAccountIdByOrderList.get(mapKey).order_id)){
-                                        ord.Id = mapofOrderNameByOrderId.get(mapOfAccountIdByOrderList.get(mapKey).order_id);
+                                    if(existingOrderIdSet.contains(ordRecords.order_id)){
+                                        ord.Id = mapofOrderNameByOrderId.get(ordRecords.order_id);
                                     }
                                     OrderListTobeUpsert.add(ord);
+                                    }
                                 }
 
                                 Database.UpsertResult[] orderUpsertResult = Database.upsert(OrderListTobeUpsert,Order.Id, false);
@@ -170,6 +202,8 @@ global class WS_OrderCreationv1 {
                                 res.orderId = upsertedOrder.Id;
                                 respBodyList.add(res);
                                 }
+                                RestContext.response.statusCode = 400;
+                                return respBodyList;
                             }
                             }
 
@@ -229,6 +263,7 @@ global class WS_OrderCreationv1 {
                                 //res.orderId = upsertedOrder.Id;
                                 respBodyList.add(res);
                                 }
+                                return respBodyList;
                             }
                         }
 
@@ -282,6 +317,8 @@ global class WS_OrderCreationv1 {
                                 //res.orderId = upsertedOrder.Id;
                                 respBodyList.add(res);
                                 }
+                                RestContext.response.statusCode = 400;
+                                return respBodyList;
                             }
                         }
                                 }
@@ -300,6 +337,7 @@ global class WS_OrderCreationv1 {
                             res.message = e.getMessage();
                             //res.orderId = upsertedOrder.Id;
                             respBodyList.add(res);
+                            RestContext.response.statusCode = 400;
                 return respBodyList;
             }
         }

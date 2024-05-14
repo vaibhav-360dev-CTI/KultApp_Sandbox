@@ -12,6 +12,13 @@ export default class OrderDetailItems extends LightningElement {
     orderValue;
     orderNumber;
     accountName;
+    orderDate;
+    shippingNumber;
+    discountValue;
+    paymentId;
+    loginNumber;
+    orderStatus;
+    couponCode;
 
     fixedWidth = "width:15rem;";
 
@@ -32,6 +39,13 @@ export default class OrderDetailItems extends LightningElement {
                 this.orderValue = result[0].Order.ParentOrder__r.Paid_Amount__c;
                 this.accountName = result[0].Order.Account.Name;
                 this.orderNumber = result[0].Order.ParentOrder__r.Name;
+                this.orderDate = result[0].Order.ParentOrder__r.EffectiveDate;
+                this.shippingNumber = result[0].Order.ParentOrder__r.Delivery_Mobile_Number__c;
+                this.discountValue = result[0].Order.ParentOrder__r.Coupon_Discount__c;
+                this.paymentId = result[0].Order.ParentOrder__r.Payment_Id__c;
+                this.loginNumber = result[0].Order.Account.Phone;
+                this.orderStatus = result[0].Order.ParentOrder__r.Status;
+                this.couponCode = result[0].Order.ParentOrder__r.Coupon_Code__c;
             })
             .catch(error => {
                 console.error('Error loading order line items', error);

@@ -72,6 +72,7 @@ global class WS_OrderUpdateV1 {
                     }
                 }
                 List<Order> existingSubOrders = [SELECt Id, Sub_Order_Id__c,Name, AccountId FROM Order WHERE ParentOrder__c IN: setOfOrderIds AND Name IN: subOrderDetailsBySubOrderId.keySet()];
+                System.debug('existingSubOrders: ' + existingSubOrders);
                 Map<String, Order> subOrderRecByName = new Map<String, Order>();
                 if(!existingSubOrders.isEmpty()){
                     for(Order ordRec : existingSubOrders){
@@ -104,6 +105,7 @@ global class WS_OrderUpdateV1 {
                         }
                         subOrderListToBeUpserted.add(SubOrdRec);
                     }
+                    System.debug('subOrderListToBeUpserted: ' + subOrderListToBeUpserted);
                     
                     Database.UpsertResult[] subOrderUpsertResult = Database.upsert(subOrderListToBeUpserted,Order.Id, false);
                     Set<Id> setOfSubOrderIds = new Set<Id>();
@@ -128,24 +130,37 @@ global class WS_OrderUpdateV1 {
                         } else {
                             for(Database.Error error : result.getErrors()) {
                                 System.debug('Error message: ' + error.getMessage());
+                                ResponseBody res = new ResponseBody();
+                                res.status = 'Error';
+                            res.message = 'Error Updating Order: ' + error.getMessage();
+                            res.order_id = null;
+                               res.sub_order_id = null;
+                            res.new_status = upsertedSubOrder.Status;
+                            respBodyList.add(res);
                             }
+                            RestContext.response.statusCode = 400;
+                            return respBodyList;
                         }
+                        System.debug('setOfSubOrderIds==>' + setOfSubOrderIds);
                     }
                     
                     
                     List<OrderItem> existingOrderItemList = [SELECT Id, Name__c, SKU__c, OrderId FROM OrderItem WHERE OrderId IN: setOfSubOrderIds];
+                    System.debug('existingOrderItemList==>' + existingOrderItemList);
                     List<OrderItem> orderItemToUpsert = new List<OrderItem>();
                     if(!existingOrderItemList.isEmpty()){
                         for(OrderItem ordItemRec : existingOrderItemList){
                             orderItemIdByOrderItemName.put(ordItemRec.Name__c, ordItemRec);
                         }
                     }
+                    System.debug('orderItemIdByOrderItemName==>' + orderItemIdByOrderItemName);
                     if(!subOrderItemBySubOrderItemName.isEmpty()){
                         for(String mapKey : subOrderItemBySubOrderItemName.keySet()){
                             OrderItem ordItemRec = new OrderItem();
                             if(orderItemIdByOrderItemName.containsKey(mapKey)){
                                 ordItemRec = orderItemIdByOrderItemName.get(mapKey);
                             }
+                            System.debug('Order Item Record==> ' + ordItemRec);
                             ordItemRec.Name__c = mapKey;
                             ordItemRec.SKU__c = subOrderItemBySubOrderItemName.get(mapKey).sku != null ? subOrderItemBySubOrderItemName.get(mapKey).sku : '';
                             ordItemRec.Status__c = subOrderItemBySubOrderItemName.get(mapKey).status != null ? subOrderItemBySubOrderItemName.get(mapKey).status : '';
@@ -166,6 +181,8 @@ global class WS_OrderUpdateV1 {
                             res.message = 'Failed to update status. ' + error.getMessage();
                             respBodyList.add(res);
                                 }
+                                RestContext.response.statusCode = 400;
+                                return respBodyList;
                             }
                         }
                     }
@@ -179,6 +196,7 @@ global class WS_OrderUpdateV1 {
             res.message = e.getMessage() + ' at Line number ' + e.getLineNumber();
             //res.orderId = upsertedOrder.Id;
             respBodyList.add(res);
+            RestContext.response.statusCode = 400;
             return respBodyList;
         }
     }

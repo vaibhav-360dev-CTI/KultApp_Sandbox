@@ -50,9 +50,7 @@ global class WS_CustomerCreation {
                         if(AccIdByUUID.containsKey(mapKey)){
                             accRecord.Id = AccIdByUUID.get(mapKey);
                         }
-                        if(cxDetailsByUUID.get(mapKey).name != null){
-                            accRecord.Name = cxDetailsByUUID.get(mapKey).name;
-                        }
+                        accRecord.Name = cxDetailsByUUID.get(mapKey).name != null ? cxDetailsByUUID.get(mapKey).name : 'New - ' + cxDetailsByUUID.get(mapKey).phone_number;
                         accRecord.Phone = cxDetailsByUUID.get(mapKey).phone_number != null ? cxDetailsByUUID.get(mapKey).phone_number : '';
                         accRecord.Email__c = cxDetailsByUUID.get(mapKey).email_id != null ? cxDetailsByUUID.get(mapKey).email_id: '';
                         accRecord.Is_Deleted__c = cxDetailsByUUID.get(mapKey).is_deleted != null ? cxDetailsByUUID.get(mapKey).is_deleted : false;
@@ -78,6 +76,7 @@ global class WS_CustomerCreation {
                         res.accountId = upsertedAccount.Id;
                         respBodyList.add(res);
                         }
+                        RestContext.response.statusCode = 400;
                     }
 
                 }
@@ -89,6 +88,7 @@ global class WS_CustomerCreation {
                 res.status = 'Error';
                 res.message = 'Failed to create user. ' + e.getMessage();
                 respBodyList.add(res);
+                RestContext.response.statusCode = 400;
             }
               return respBodyList;            
         }

@@ -3,7 +3,7 @@ public class moveToRefundTeamController {
     @AuraEnabled
     public static RefundWrapper getOrderLineItem(String caseId) { 
         
-        List<Case> caseList = [SELECT Id,Contact_Number__c,RefundTeamMember__c, Sub_Type__c, Sub_Sub_Type__c, OrderId__c, OrderId__r.Name,OrderId__r.Refund_Type__c, OrderId__r.Refund_Reason__c, OrderId__r.Coupon__c,OrderId__r.Refund_Amount__c,OrderId__r.Paid_Amount__c, OrderId__r.ParentOrder__c
+        List<Case> caseList = [SELECT Id,Contact_Number__c,RefundTeamMember__c, Sub_Type__c, Sub_Sub_Type__c, OrderId__c, Type, OrderId__r.Name,OrderId__r.Refund_Type__c, OrderId__r.Refund_Reason__c, OrderId__r.Coupon__c,OrderId__r.Refund_Amount__c,OrderId__r.Paid_Amount__c, OrderId__r.ParentOrder__c
                                FROM Case WHERE Id = :caseId];
         System.debug('caseList=====>'+caseList);
         
@@ -24,10 +24,10 @@ public class moveToRefundTeamController {
                     }
                 }
                 if(!subOrderIds.isEmpty()){
-                    orderItems = [SELECT Id, Product2.Name,Product_Name__c, Quantity,Is_Already_Utilized__c, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId IN: subOrderIds];
+                    orderItems = [SELECT Id, Product2.Name,Product_Name__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId IN: subOrderIds];
                 }
             }else{
-                orderItems = [SELECT Id, Product2.Name,Product_Name__c, Quantity,Is_Already_Utilized__c, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId =: orderRecord.Id];
+                orderItems = [SELECT Id, Product2.Name,Product_Name__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId =: orderRecord.Id];
             }
             System.debug('orderItems=====>'+orderItems);
             return new RefundWrapper(caseRecord, orderRecord, orderItems);
@@ -37,15 +37,9 @@ public class moveToRefundTeamController {
     } 
     
     @AuraEnabled
-    public static String updateOrderAndCaseFields(String caseId, String caseRefund, String refundReason, String coupon,String refundValue,String refundTeamMemberId/*, integer refundamount*/,integer paidamount/*,String type,string subtype*/,List<OrderItem> orderItemsToUpdate) {
+    public static String updateOrderAndCaseFields(String caseId, String caseRefund, String refundReason, String coupon,String refundValue/*,String refundTeamMemberId, integer refundamount*/,integer paidamount/*,String type,string subtype*/,List<OrderItem> orderItemsToUpdate) {
         String result;
         
-        system.debug('caseId--->'+caseId);
-        System.debug('caseRefund====>'+caseRefund);
-        System.debug('refundReason====>'+refundReason);
-        System.debug('coupon====>'+coupon);
-        System.debug('refundTeamMemberId====>'+refundTeamMemberId);
-        System.debug('paidamount=====>'+paidamount);
         System.debug('orderItemsToUpdate=====>'+orderItemsToUpdate);
         //System.debug('contactNumber====>'+contactNumber);
         
@@ -53,7 +47,11 @@ public class moveToRefundTeamController {
             String CSteamId;
             
             List<Case> caseList = [SELECT Id, OrderId__c, ownerId, AccountId, Status, ContactId, CS_Team_Member__c FROM Case WHERE Id = :caseId LIMIT 1];
-            System.debug('caseList=====>'+caseList);
+            List<Group> refundQueueList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId FROM Group WHERE DeveloperName = 'Refund_Team_Queue' LIMIT 1];
+            Group refundQueue = new Group();
+        if(!refundQueueList.isEmpty()){
+            refundQueue = refundQueueList[0];
+        }
             
             if (!caseList.isEmpty()) {
                 Case caseRecord = caseList[0];
@@ -61,19 +59,17 @@ public class moveToRefundTeamController {
                     caseRecord.CS_Team_Member__c = caseRecord.OwnerId;
                 }
                 CSteamId = caseRecord.CS_Team_Member__c;
-                caseRecord.OwnerId = refundTeamMemberId;
+                caseRecord.OwnerId = refundQueue.Id;
                 //caseRecord.RefundTeamMember__c = refundTeamMemberId;
                 //caseRecord.Contact_Number__c = contactNumber;
                 caseRecord.Refund_Type__c = caseRefund;
                 caseRecord.Refund_Reasons__c = refundValue;
                 caseRecord.Refund_Reason__c = refundReason;
                 caseRecord.Case_Sub_Status__c = 'Assigned to Refund Team';
+                caseRecord.Is_With_Refund_Team__c = true;
                 if(caseRecord.Status == 'New'){
                     caseRecord.Status = 'In Progress'; 
                 }
-
-                System.debug('caseRecord====>'+caseRecord);
-                 System.debug('caseRecord.OrderId__c =======>'+caseRecord.OrderId__c);
                 
                 if(caseRecord.OrderId__c != null){
                     Order orderRecord = [SELECT Id,Refund_Type__c,Refund_Reason__c, Coupon__c, Refund_Amount__c, Paid_Amount__c FROM Order WHERE Id = :caseRecord.OrderId__c LIMIT 1];
@@ -83,11 +79,9 @@ public class moveToRefundTeamController {
                     orderRecord.Refund_Reasons__c = refundValue;
                     //orderRecord.Refund_Amount__c = refundamount;
                     orderRecord.Paid_Amount__c = paidamount;
-                    system.debug('orderRecord--->'+orderRecord);
                     
                     update orderItemsToUpdate;
                     
-                    system.debug('orderItemsToUpdate--->'+orderItemsToUpdate);
                     
                     List<OrderItem> updateAllOrderItems = new List<OrderItem>();
                     List<Affected_SKU__c> affectedSKUsToInsert = new List<Affected_SKU__c>();
@@ -116,13 +110,13 @@ public class moveToRefundTeamController {
                             refundAmountForEachItem = refundAmountForEachItem + ori.Refund_Price__c;
 
                             if(ori.Is_Already_Utilized__c != true){
-                                system.debug('SKU===============> '+ ori.SKU__c);
                                 Affected_SKU__c affectedSKUrec = new Affected_SKU__c();
                                 affectedSKUrec.Name = ori.SKU__c;
                                 affectedSKUrec.Brand_Name__c = ori.Brand__c;
                                 affectedSKUrec.MRP__c = ori.UnitPrice;
                                 affectedSKUrec.Product_Name__c = ori.Product_Name__c;
                                 affectedSKUrec.Case__c = caseRecord.Id;
+                                affectedSKUrec.Created_By__c = 'CS Team';
                                 affectedSKUsToInsert.add(affectedSKUrec);
                             }
                             //ori.Refund_Reasons__c = refundValue;
@@ -132,20 +126,16 @@ public class moveToRefundTeamController {
                                 
                                 totalrefundprice = totalrefundprice + ori.Refund_Price__c;
                                 
-                                System.debug('totalrefundprice======>'+totalrefundprice);
                             }
                             
                         }
-                        system.debug('skuList================>'+skuList);
                         if(skuList.size()>0){
                             String skuString = String.join(skuList, ';');
-                            system.debug('skuString================>'+skuString);
                             caseRecord.SKU_Details__c = skuString;
                             
                         }
                         if(refundAmountForEachItem != 0){
                             caseRecord.Refund_Amount__c = refundAmountForEachItem;
-                            system.debug('caseRecord.Refund_Amount__c================>'+caseRecord.Refund_Amount__c);
                         }
                         
                         update caseRecord;
@@ -155,7 +145,6 @@ public class moveToRefundTeamController {
                         cpdRec.Case__c = caseRecord.Id;
                         cpdRec.Current_Action__c = 'Moved to Refund Team';
                         insert cpdRec;
-                        System.debug('affectedSKUsToInsert==> '+ affectedSKUsToInsert);
                         if(!affectedSKUsToInsert.isEmpty()){
                             insert affectedSKUsToInsert;
                         }
@@ -165,78 +154,20 @@ public class moveToRefundTeamController {
                         
                         update orderRecord;
                         update updateAllOrderItems;
-                        System.debug('updateAllOrderItems==> ' + updateAllOrderItems);
                     }
                 }
-                
-                
-                //creating Task based on the userID(refundTeamMemberId)
-                
-                Task newTask = new Task();
-                newTask.Subject = 'Case has been assigned to Move to Refund Team';
-                newTask.Description = 'Please Move To Refund Team case with case ID: ' + caseRecord.Id;
-                newTask.WhatId = caseRecord.Id; 
-                //newTask.OwnerId = refundTeamMemberId; 
-                insert newTask;
-                System.debug('newTask====>'+newTask);
-                
-                // if(caseRecord!= null && caseRecord.AccountId != null){
-                //     List<AccountShare> existingAccShareRec = [SELECT Id, AccountId, UserOrGroupId, AccountAccessLevel, OpportunityAccessLevel, CaseAccessLevel, 
-                //     ContactAccessLevel, RowCause, LastModifiedDate, LastModifiedById, IsDeleted FROM AccountShare WHERE AccountId =: caseRecord.AccountId AND UserOrGroupId =: refundTeamMemberId];
-                //     if(!existingAccShareRec.isEmpty()){
-                //         delete existingAccShareRec;
-                //     }else{
-                //         AccountShare newAccShare = new AccountShare();
-                //         newAccShare.AccountId = caseRecord.AccountId;
-                //         newAccShare.UserOrGroupId = refundTeamMemberId;
-                //         newAccShare.AccountAccessLevel = 'Edit';
-                //         //newAccShare.ContactAccessLevel = 'Edit';
-                //         newAccShare.OpportunityAccessLevel = 'Edit';
-                //         newAccShare.CaseAccessLevel = 'Edit';
-                //         insert newAccShare;
-                //         System.debug('newAccShare======>'+newAccShare);
-                //     }
-                // }
-                
-                
-                //create a case share record with Edit Access to the Refund team Member
-                
                 List<CaseShare> existingShares = [SELECT Id FROM CaseShare WHERE CaseId = :caseRecord.Id AND UserOrGroupId = :CSteamId];
-                System.debug('existingShares======>'+existingShares);
                 
                 if(!existingShares.isEmpty()){
                     //delete existingShares;
-                    System.debug('existingShares delete records======>'+existingShares);
                 }else{
                     CaseShare newCaseShare = new CaseShare();
                     newCaseShare.CaseId =  caseId;    //caseRecord.Id;
-                    System.debug('caseId=======>'+caseId);      
                     newCaseShare.UserOrGroupId = CSteamId;
-                    System.debug('CSteamId=====>'+CSteamId);
                     newCaseShare.CaseAccessLevel = 'Edit';
                     //newCaseShare.RowCause = Schema.CaseShare.RowCause.Manual;
                     insert newCaseShare;
-                    System.debug('newCaseShare======>'+newCaseShare);
                 }
-                
-                
-                
-                
-                //Approval processes to fire
-                
-                /* Approval.ProcessSubmitRequest req= new Approval.ProcessSubmitRequest();
-req.setComments('Submitting record for Approval');
-req.setObjectId(caseRecord.id);
-req.setNextApproverIds(new Id[] {caseRecord.RefundTeamMember__c});
-req.setSubmitterId(caseRecord.ownerId); 
-req.setProcessDefinitionNameOrId('When_Case_Is_Moved_to_ReFund_Team_Member');
-Approval.ProcessResult approvalresult = Approval.process(req); */
-                
-                //Custom Notification call from this  (sendingCustomNotification) Method!
-                //sendingCustomNotification(refundTeamMemberId, caseId, 'A case has been assigned', 'A case has been assigned to you to process the refund.');
-                
-                
-                
                 result = 'success';
             }
             

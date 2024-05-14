@@ -4,34 +4,38 @@ public without sharing class referBackToCsTeamController {
         System.debug('caseId====>'+caseId);
         Case cases = [SELECT Id, Refer_Back_Reason__c, Refund_Amount__c, Approval_Remarks__c, 
                       Rejection_Remarks__c, Rejection_Reason__c, Describe_Information_Needed__c, 
-                      OrderId__c, OrderId__r.Refund_Amount__c,ownerId  FROM Case  WHERE Id = :caseId LIMIT 1];
+                      OrderId__c, OrderId__r.Refund_Amount__c,ownerId,Refund_Reasons__c, Refund_Type__c  FROM Case  WHERE Id = :caseId LIMIT 1];
         System.debug(cases);
         return cases;
     }
 
     @AuraEnabled
-    public static boolean getCaseTeamAndType(String caseId){
+    public static string getCaseTeamAndType(String caseId){
         try {
             Case caseRec = [SELECT Id, Refer_Back_Reason__c, Refund_Amount__c, Approval_Remarks__c, 
             Rejection_Remarks__c, Rejection_Reason__c, Describe_Information_Needed__c, 
-            OrderId__c, OrderId__r.Refund_Amount__c,ownerId, RecordType.Name  FROM Case  WHERE Id = :caseId LIMIT 1 ];
+            OrderId__c, OrderId__r.Refund_Amount__c,ownerId, RecordType.Name, Type, Is_With_Refund_Team__c  FROM Case  WHERE Id = :caseId LIMIT 1 ];
             List<User> userRecList = [SELECT Id, Name, Profile.Name FROM User WHERE Id =: caseRec.OwnerId];
             User userRec = new User();
             Boolean isWHAndOrderRelated = false;
             if(!userRecList.isEmpty()){
                 userRec = userRecList[0];
             }
-            if(userRec != null && caseRec.RecordType.Name == 'Order Related' && userRec.Profile.Name == 'WareHouse Team'){
+            if(userRec != null && caseRec.Type == 'Order Related' && userRec.Profile.Name == 'WareHouse Team'){
                 isWHAndOrderRelated = true;
+                return 'showFOCandAWB';
+            }else if(caseRec.Is_With_Refund_Team__c){
+                return 'showRefundAmount';
             }
-            return isWHAndOrderRelated;
+            return 'none';
+            
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
     
     @AuraEnabled
-    public static List<Case> getCaseAndOrderDetails(String caseId, String referBackReason,String approvalRemarks, String  rejectionReason,String describeInformationNeeded,Decimal orderRefundAmount, String resolutionRemarks, String base64, String filename, String awbNumber, String focOrderId, String updateDesc) {
+    public static List<Case> getCaseAndOrderDetails(String caseId, String referBackReason, Decimal refundAmount, String approvalRemarks, String  rejectionReason,String describeInformationNeeded,Decimal orderRefundAmount, String resolutionRemarks, String updateDesc, String base64, String filename, String awbNumber, String focOrderId) {
         System.debug('caseId====>' + caseId);
         System.debug('referBackReason ===>'+referBackReason);
         System.debug('approvalRemarks===>'+approvalRemarks);
@@ -45,8 +49,8 @@ public without sharing class referBackToCsTeamController {
         
         try {
             if(String.isNotBlank(caseId)){
-                Case caseRec = [SELECT Id, OwnerId, CS_Team_Member__c FROM Case WHERE Id=: caseId LIMIT 1]; //SELECT Id, OwnerId, User.ManagerId FROM Case WHERE Id = '500F300000DLFGLIA5'
-                String OwnersId= caseRec.CS_Team_Member__c;
+                Case caseRec = [SELECT Id, CS_Team_Member__c,CaseNumber, OwnerId FROM Case WHERE Id=: caseId LIMIT 1]; //SELECT Id, OwnerId, User.ManagerId FROM Case WHERE Id = '500F300000DLFGLIA5'
+                String OwnersId= caseRec.CS_Team_Member__c != null ? caseRec.CS_Team_Member__c : userInfo.getUserId();
                 List<User> userList = [SELECT Id,Email,Name From User Where Profile.Name = 'Customer Service Executive' AND Id=:OwnersId LIMIT 1];
                 User userRec = new User();
                 if(!userList.isEmpty()){
@@ -56,13 +60,125 @@ public without sharing class referBackToCsTeamController {
                 if(caseId != null){
                     caseToUpdate.id = caseId;
                 }
-                if(caseRec.CS_Team_Member__c != null){
-                    caseToUpdate.OwnerId = caseRec.CS_Team_Member__c;
-                }else{
-                    caseToUpdate.OwnerId = userRec.Id;
-                }
+                
                 if(referBackReason != null){
+                    if(referBackReason == 'Need More Info' || referBackReason == 'Send Update'){
+                        if(referBackReason == 'Need More Info'){
+                            Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                            notification.setBody('The Team has asked more information On this Case Please Kindly Look Into it Detail of the Case are'+  caseRec.CaseNumber); 
+                            notification.setTitle('Need More Info On Case'); 
+                            notification.setSenderId(Userinfo.getUserId()); 
+                            CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'ReferBackToCsTeam'];  
+                            notification.setNotificationTypeId(type.id); 
+                            notification.setTargetId(caseId); // target object id 
+                            if(caseRec.CS_Team_Member__c != null){
+                                notification.send(new Set<String> { caseRec.CS_Team_Member__c });
+                            }else{
+                                notification.send(new Set<String> { caseRec.OwnerId });
+                            }
+                            caseToUpdate.more_Info_Requested__c = true;
+                            Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                cpdRec.Status__c = referBackReason == 'Resolved' ? 'Resolved' : 'In Progress';
+                cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? resolutionRemarks : describeInformationNeeded;
+                cpdRec.Case__c = caseId;
+                cpdRec.Current_Action__c = 'Requested more Info from CS Team';
+                insert cpdRec;
+                if(base64 != null){
+                    uploadFile(base64, filename, cpdRec.Id);
+                }
+
+                        }if(referBackReason == 'Send Update'){
+                            Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                            notification.setBody('The Team has sent some update on this Case, Please Look into it.'+  caseRec.CaseNumber); 
+                            notification.setTitle('Update Received On Case'); 
+                            notification.setSenderId(Userinfo.getUserId()); 
+                            CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'ReferBackToCsTeam'];  
+                            notification.setNotificationTypeId(type.id); 
+                            notification.setTargetId(caseId); // target object id 
+                            if(caseRec.CS_Team_Member__c != null){
+                                notification.send(new Set<String> { caseRec.CS_Team_Member__c });
+                            }else{
+                                notification.send(new Set<String> { caseRec.OwnerId });
+                            }
+
+                            List<Follow_Up_Request__c> furs = [SELECT Id, Follow_Up_Status__c, OwnerId, Response_Notes__c, CreatedDate 
+                                               FROM Follow_Up_Request__c 
+                                               WHERE Follow_Up_Status__c = 'Open' AND Case__c = :caseId ];
+            List<Follow_Up_Request__c> fuprRec = new List<Follow_Up_Request__c>();
+            
+            if (!furs.isEmpty()) {
+                //fuprRec = furs[0];
+                for(Follow_Up_Request__c fr : furs){
+                    fr.Follow_Up_Status__c = 'Responded';
+                    fr.Response_Notes__c = updateDesc;
+                    fr.Response_Time__c = System.Now(); 
+                    fuprRec.add(fr);
+                }
+                
+                update fuprRec;
+                if(base64 != null){
+                    uploadFile(base64, filename, fuprRec[0].Id);
+                }
+                notification.send(new set<String>{fuprRec[0].OwnerId});
+                
+                }else{
+                    Follow_Up_Request__c fupRec = new Follow_Up_Request__c();
+                    fupRec.Follow_Up_Status__c = 'Responded';
+                    fupRec.Response_Notes__c = updateDesc;
+                    fupRec.Response_Time__c = System.Now();
+                    fupRec.Case__c = caseId;
+                    insert fupRec;
+                    if(caseRec.CS_Team_Member__c != null){
+                        notification.send(new Set<String> { caseRec.CS_Team_Member__c });
+                    }else{
+                        notification.send(new Set<String> { caseRec.OwnerId });
+                    }
+                    if(base64 != null){
+                        uploadFile(base64, filename, fupRec.Id);
+                    }
+                }
+                        }
+                       
+                    }
+
+                    if(referBackReason == 'Resolved'){
+                        caseToUpdate.Is_With_Refund_Team__c = false;
+                        if(caseRec.CS_Team_Member__c != null && caseRec.CS_Team_Member__c != ''){
+                            caseToUpdate.OwnerId = caseRec.CS_Team_Member__c;
+                        }else if(userRec.Id != null){
+                            caseToUpdate.OwnerId = userRec.Id;
+                        }else{
+                            System.debug('Inside');
+                            caseToUpdate.OwnerId = caseRec.OwnerId;
+                            System.debug('userInfo.getUserId()==> ' + userInfo.getUserId());
+                        }
+                        System.debug('caseRec.CS_Team_Member__c==> ' + caseRec.CS_Team_Member__c);
+                        System.debug('userRec==> ' + userRec);
+                        Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                cpdRec.Status__c = referBackReason == 'Resolved' ? 'Resolved' : 'In Progress';
+                cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? resolutionRemarks : describeInformationNeeded;
+                cpdRec.Case__c = caseId;
+                cpdRec.Current_Action__c = 'Referred Back to CS Team';
+                insert cpdRec;
+                        Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                            notification.setBody('The Team has resolved the Case, Please Look into it.'+  caseRec.CaseNumber); 
+                            notification.setTitle('Case Resolved'); 
+                            notification.setSenderId(Userinfo.getUserId()); 
+                            CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'ReferBackToCsTeam'];  
+                            notification.setNotificationTypeId(type.id); 
+                            notification.setTargetId(caseId); // target object id 
+                            if(caseRec.CS_Team_Member__c != null){
+                                notification.send(new Set<String> { caseRec.CS_Team_Member__c });
+                            }else{
+                                notification.send(new Set<String> { caseRec.OwnerId });
+                            }
+                    }
                     caseToUpdate.Refer_Back_Reason__c = referBackReason;
+                    List<CaseShare> existingShares = [SELECT Id, UserOrGroup.Name FROM CaseShare WHERE CaseId = :caseToUpdate.Id AND UserOrGroupId = :currUserId AND RowCause != 'Owner'];
+                System.debug('existingShares======>'+existingShares);
+                if(!existingShares.isEmpty()){
+                    delete existingShares;
+                }
                 }
                 // if(refundAmount != null){
                 // caseToUpdate.Refund_Amount__c = refundAmount;
@@ -84,28 +200,15 @@ public without sharing class referBackToCsTeamController {
                 if (caseToUpdate.OrderId__c != null && orderRefundAmount != null) {
                     caseToUpdate.OrderId__r.Refund_Amount__c = orderRefundAmount;
                 }
+                if(refundAmount != null){
+                    caseToUpdate.Refund_Amount__c = refundAmount;
+                }
                 caseToUpdate.Case_Sub_Status__c = 'Referred Back to CS Team';
                 caseToUpdate.AWB_Number__c = awbNumber;
                 caseToUpdate.FOC_Order_Id__c = focOrderId;
                 caseToUpdate.Last_Response__c = system.now();
                 System.debug('caseToUpdate ==> ' + caseToUpdate);
                 update caseToUpdate;
-
-                Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
-                cpdRec.Status__c = referBackReason == 'Resolved' ? 'Resolved' : 'In Progress';
-                cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? resolutionRemarks : referBackReason == 'Send Update' ? updateDesc : describeInformationNeeded;
-                cpdRec.Case__c = caseId;
-                cpdRec.Current_Action__c = 'Referred Back to CS Team';
-                insert cpdRec;
-                if(base64 != null){
-                    uploadFile(base64, filename, cpdRec.Id);
-                }
-                
-                List<CaseShare> existingShares = [SELECT Id, UserOrGroup.Name FROM CaseShare WHERE CaseId = :caseToUpdate.Id AND UserOrGroupId = :currUserId AND RowCause != 'Owner'];
-                System.debug('existingShares======>'+existingShares);
-                if(!existingShares.isEmpty()){
-                    delete existingShares;
-                }
                 
                 System.debug('Case record updated successfully===========>' + caseToUpdate);        
                 updatedCases.add(caseToUpdate);
@@ -117,9 +220,7 @@ public without sharing class referBackToCsTeamController {
                 //sendingCustomNotification(userRec.Id,caseId, 'Case Referred Back', 'Refund Team Member has assigned the case back to you, kindly take relevant actions',emaillist);
                 //moveToRefundTeamController.sendingCustomNotification(caseToUpdate.OwnerId, caseToUpdate.Id, 'Case Referred Back', 'Refund Team Member has assigned the case back to you, kindly take relevant actions');
                 
-            }
-            
-            
+            }            
         } catch (Exception e) {
             System.debug('Error updating Case record: ' + e.getMessage());
             system.debug('Exception Line Number--->'+e.getLineNumber());

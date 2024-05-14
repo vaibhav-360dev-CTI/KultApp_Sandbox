@@ -22,6 +22,10 @@
                                 <lightning-input label="Paid Amount" type="Currency" value={PaidAmountofOrder}
                                     disabled></lightning-input>
                             </template>
+                            <lightning-input label="Discount Amount" type="Currency" value={discountAmount}
+                                    disabled></lightning-input>
+                                    <lightning-input label="Coupon Code" type="test" value={couponCode}
+                                    disabled></lightning-input>
 
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <template if:true={orderHasItemAvailable}>
@@ -136,7 +140,7 @@
             </lightning-card>
         </div>
     </template>
-    <template if:true={show2ndPage}>
+    <!-- <template if:true={show2ndPage}>
         <div>
             <lightning-card>
                 <div class="slds-align_absolute-center">
@@ -146,10 +150,6 @@
                     <lightning-layout-item size="12" small-device-size="12" medium-device-size="6"
                         large-device-size="12" padding="horizontal-small">
                         <div class="custom-box">
-
-                            <!-- <lightning-record-picker label="Order" placeholder="Select Order..." name="selectedOrder" filter={filter}
-                                object-api-name="Order" onchange={handlesChange} onkeypress={handleEnter} display-info={displayInfo}>
-                            </lightning-record-picker> -->
                             <c-custom-Lookup-L-W-C
                                 onprogressvaluechange={hanldeProgressValueChange}></c-custom-Lookup-L-W-C>
 
@@ -250,5 +250,5 @@
 
             </lightning-card>
         </div>
-    </template>
+    </template> -->
 </template>

@@ -7,6 +7,7 @@ import { CloseActionScreenEvent } from 'lightning/actions';
 import { getPicklistValues} from 'lightning/uiObjectInfoApi';
 import CASE_OBJECT from '@salesforce/schema/Case';
 import REFERBACKREASON_FIELD from '@salesforce/schema/Case.Refer_Back_Reason__c';
+import { getRecordNotifyChange } from "lightning/uiRecordApi";
 export default class ReferBackToCSTeam extends LightningElement {
 
 
@@ -14,6 +15,7 @@ export default class ReferBackToCSTeam extends LightningElement {
     @track ListOfCaseRecords = [];
     @track error;
     @track wareHouseOrderRelated = false;
+    @track refundResolved = false;
     @track result;
     @track referBack;
     @track awbNumber;
@@ -70,8 +72,12 @@ export default class ReferBackToCSTeam extends LightningElement {
         debugger;
         getCaseTeamAndType({ caseId: this.recordId })
             .then((result) => {
-                if (result) {
-                    this.wareHouseOrderRelated = result;
+                if (result == 'showFOCandAWB') {
+                    this.wareHouseOrderRelated = true;
+                    this.refundResolved = false;
+                }else if (result == 'showRefundAmount') {
+                    this.refundResolved = true;
+                    this.wareHouseOrderRelated = false;
                 } else {
                     console.log('No cases found for the provided ID');
                 }
@@ -87,13 +93,16 @@ export default class ReferBackToCSTeam extends LightningElement {
                 if (result) {
                     this.ListOfCaseRecords.push(result);
                     this.approvalRemarks = result.Approval_Remarks__c;
-                    this.refundAmount = result.OrderId__r.Refund_Amount__c;
+                    //this.refundAmount = result.OrderId__r.Refund_Amount__c;
 
                     // this.rejectionRemarks = result.Rejection_Remarks__c;
                     this.rejectionReason = result.Rejection_Reason__c;
 
                     // this.describeInformationNeeded = result.Describe_Information_Needed__c;
                     // this.resolutionRemarks = this.describeInformationNeeded;
+                    if(result.Refund_Type__c == 'Full'){
+                        this.refundAmount = result.Refund_Amount__c;
+                    }
 
 
                     console.log('Cases retrieved successfully');
@@ -163,6 +172,11 @@ export default class ReferBackToCSTeam extends LightningElement {
     handleAWBNumber(event) {
         debugger;
         this.awbNumber = event.target.value;
+    }
+
+    handleRefundAmt(event){
+        debugger;
+        this.refundAmount = event.target.value;
     }
 
     handleFOCorderId(event) {
@@ -259,7 +273,7 @@ export default class ReferBackToCSTeam extends LightningElement {
         getCaseAndOrderDetails({
             caseId: this.recordId,
             referBackReason: this.referBackReason,
-            //refundAmount: this.refundAmount,
+            refundAmount: this.refundAmount,
             approvalRemarks: this.approvalRemarks,
             //rejectionRemarks: this.rejectionRemarks,
             rejectionReason: this.rejectionReason,
@@ -278,6 +292,7 @@ export default class ReferBackToCSTeam extends LightningElement {
                 this.ListOfCaseRecords = result;
                 this.showToast('Success', 'Records saved successfully', 'success');
                 this.handleClose();
+                getRecordNotifyChange([{ recordId: this.recordId }]);
             }).catch((err) => {
                 console.log("err===>" + JSON.stringify(err));
                 this.error = err;

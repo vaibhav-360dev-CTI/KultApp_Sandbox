@@ -1,0 +1,16 @@
+<template>
+    <div class="slds-align_absolute-center" style="padding: 0.5rem; background: #b1b9c5;">
+        <lightning-card>
+            <template if:true={show1}>
+                <h1 style="text-transform: uppercase; color: rgb(22, 77, 58); font-weight: bold;">
+                    The Case has been Called After Missed Call
+                </h1>
+            </template>
+            <template if:true={show2}>
+                <h1 style="text-transform: uppercase; color: rgb(22, 77, 58); font-weight: bold;">
+                    The Case is yet to be Called!!
+                </h1>
+            </template>
+        </lightning-card>
+    </div>
+</template>

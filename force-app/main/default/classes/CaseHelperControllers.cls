@@ -38,7 +38,7 @@ public class CaseHelperControllers {
     public static Case getCaseRec(String caseId){
         try{
             if(caseId != null){
-                Case caseRec = [SELECT Id, Sub_Type__c, Sub_Sub_Type__c,Status,Disposition__c FROM Case WHERE Id =: caseId LIMIT 1];
+                Case caseRec = [SELECT Id, Sub_Type__c, Sub_Sub_Type__c,Status,Disposition__c, Case_Category__c FROM Case WHERE Id =: caseId LIMIT 1];
                 return caseRec;
             }
             return null;
@@ -77,20 +77,20 @@ public class CaseHelperControllers {
 * @description Field Sets for LWC Component for Child Case Creation.
 *
 */
-
+    
     //Getting Status field
     @AuraEnabled
     public static void updateStatusfield(String recId,String Status){
         try {
             case recordToupdate = [Select Id,Status from case WHERE Id =: recId];
-           recordToupdate.Status =  Status;
-           System.debug('case status====>'+Status);
+            recordToupdate.Status =  Status;
+            System.debug('case status====>'+Status);
             update recordToupdate;       
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage() + ' AND Error Line No :' + e.getLineNumber());
         }
     }
-// Case status
+    // Case status
     @AuraEnabled
     public static Case loadcasestatus (String recordId){
         try {
@@ -101,8 +101,8 @@ public class CaseHelperControllers {
         }
     }
     
-
-
+    
+    
     // getting case field-set 
     @AuraEnabled
     public static List<String> getCaseFieldSetList(){
@@ -522,7 +522,7 @@ public class CaseHelperControllers {
     }
     @AuraEnabled
     public static List<Case>  mergeCaseBasedOnAccIdConIdEmailIdPhoneNumberInstagram(String recId) {
-        Case cse = [SELECT Id, CaseNumber, Subject, Order_Number__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE Id = :recId];
+        Case cse = [SELECT Id, CaseNumber, SuppliedEmail, SuppliedPhone, Subject, Order_Number__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE Id = :recId];
         System.debug('cse:::::::::::>' + cse);
         Set<Id> caseAccountIds = new Set<Id>();
         Set<Id> caseContactIds = new Set<Id>();
@@ -533,61 +533,55 @@ public class CaseHelperControllers {
         set<String> InstagramString = new set<String>();
         set<String> contactNumberString = new set<String>();
         if (cse.AccountId != null || cse.ContactId != null || cse.Email_Id__c != null || cse.ContactPhone != null || 
-        cse.Instagram_ID__c != null || cse.ContactMobile != null || cse.Contact_Number__c != null){
-            caseAccountIds.add(cse.AccountId);
-            caseContactIds.add(cse.ContactId);
-            EmailString.add(cse.Email_Id__c);
-           // PhoneString.add(cse.ContactPhone);
-            InstagramString.add(cse.Instagram_ID__c);
-            // MobileString.add(cse.ContactMobile);
-            contactNumberString.add(cse.Contact_Number__c);
-            
-        }
-        System.debug('caseAccountIds:::::::::::>' + caseAccountIds);
-        System.debug('caseContactIds:::::::::::>' + caseContactIds);
-        System.debug('EmailString:::::::::::>' + EmailString);
-        System.debug('PhoneString:::::::::::>' + PhoneString);
-        System.debug('InstagramString:::::::::::>' + InstagramString);
-        System.debug('MobileString:::::::::::>' + MobileString);
-        System.debug('contactNumberString:::::::::::>' + contactNumberString);
-
+            cse.Instagram_ID__c != null || cse.ContactMobile != null || cse.Contact_Number__c != null || cse.SuppliedEmail != null || cse.SuppliedPhone != null){
+                caseAccountIds.add(cse.AccountId);
+                caseContactIds.add(cse.ContactId);
+                EmailString.add(cse.Email_Id__c);
+                EmailString.add(cse.SuppliedEmail);
+                // PhoneString.add(cse.ContactPhone);
+                InstagramString.add(cse.Instagram_ID__c);
+                // MobileString.add(cse.ContactMobile);
+                contactNumberString.add(cse.Contact_Number__c);
+                contactNumberString.add(cse.SuppliedPhone);
+                
+            }
+        
         List<Case> caseList = [SELECT Id, Subject, Origin, Status,OrderId__r.Name, Order_Number__c,RecordType.Name,OrderId__r.OrderNumber,CaseNumber,Sub_Type__c,Sub_Sub_Type__c,ContactPhone,
-        Account.Name,AccountId,Contact.Name,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE 
-        (AccountId IN :caseAccountIds OR ContactId IN :caseContactIds OR Email_Id__c IN :EmailString 
-        OR Contact_Number__c IN :contactNumberString OR Instagram_ID__c IN :InstagramString) AND Status != 'Closed' Order By CreatedDate];
-        System.debug('caseList:::::::::::>' + caseList);
+                               Account.Name,AccountId,Contact.Name,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE 
+                               (AccountId IN :caseAccountIds OR ContactId IN :caseContactIds OR Email_Id__c IN :EmailString OR SuppliedEmail IN: emailString
+                                OR Contact_Number__c IN :contactNumberString OR SuppliedPhone IN :contactNumberString OR Instagram_ID__c IN :InstagramString) AND Status != 'Closed' Order By CreatedDate];
         return caseList;
     }
     
     @AuraEnabled
     public static String mergeDuplicateCases(List<String> cases) {
-      try{
-        System.debug('cases:::::::::::>' + cases);
-        String caseId; 
-        String caseNo; 
-       List<Case> cseList = [SELECT Id,Status,CreatedDate,caseNumber,Case_Reason_Description__c From Case Where Id IN: cases Order By CreatedDate ASC];
-       System.debug('cseList:::::::::::>' + cseList);
-       caseId = cseList[0].Id;
-       caseNo = cseList[0].caseNumber;
-       System.debug('caseId:::::::::::>' + caseId);
-       System.debug('caseNo:::::::::::>' + caseNo);
-       List<Case> updatingCaseList = new List<Case>();
-        for(Case cse : cseList){
+        try{
+            System.debug('cases:::::::::::>' + cases);
+            String caseId; 
+            String caseNo; 
+            List<Case> cseList = [SELECT Id,Status,CreatedDate,caseNumber,Case_Reason_Description__c From Case Where Id IN: cases Order By CreatedDate ASC];
+            System.debug('cseList:::::::::::>' + cseList);
+            caseId = cseList[0].Id;
+            caseNo = cseList[0].caseNumber;
+            System.debug('caseId:::::::::::>' + caseId);
+            System.debug('caseNo:::::::::::>' + caseNo);
+            List<Case> updatingCaseList = new List<Case>();
+            for(Case cse : cseList){
                 if(cse.Id != caseId){
                     cse.Status = 'Closed';
                     cse.Case_Reason_Description__c =  'Closed as Duplicate Case Under Case No.' + caseNo;
                     updatingCaseList.add(cse);
                 }
+            }
+            update updatingCaseList;
+            system.debug('updatingCaseList=============>'+updatingCaseList);
+            return 'SUCCESS';
+        }catch(Exception e ){
+            System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
+            return null;
         }
-        update updatingCaseList;
-        system.debug('updatingCaseList=============>'+updatingCaseList);
-        return 'SUCCESS';
-      }catch(Exception e ){
-        System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
-        return null;
-      }
     }
-
+    
     @AuraEnabled
     public static List<Case> mergeSelectedCases(String caseId, List<Case> cases) {
         System.debug('CaseId:::::::::::>' + caseId);
@@ -623,475 +617,475 @@ public class CaseHelperControllers {
         return casesToUpdate;
     }
     
-  
-    //this method is not used anywhere
-  /*  public static void sendEmailToUserAndNotificationToUserPincodeNotServiceable(List<Case> caseList,  map<Id,Case> oldMapCase) {
-        EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Order_Issue_Pin_Code_Unserviceable_Refund_Initiated'];
-        List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_pincode_not_serviceable'];
-        Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
-        List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-        List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
-        
-        String str = temp.HTMLValue;
-        String body = temp.body;
-        
-        set<Id> setOfId = new set<Id>();
-        set<Id> setOfOrderId = new set<Id>();
-        for(case cs : caseList){
-            setOfId.add(cs.contactId);
-            setOfOrderId.add(cs.OrderId__c);
-        }
-        List<User> userList = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'Refund Team'];
-        set<String> refundTeamUsers = new set<String>();
-        List<Id> refundTeamTaskUsers = new List<Id>();
-        for(User usr : userList){
-            refundTeamUsers.add(usr.Id);
-            refundTeamTaskUsers.add(usr.Id);
-        }
-        
-        List<User> userListForWareHouse = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'WareHouse Team'];
-        set<String> WareHouseUsers = new set<String>();
-        for(User usr : userListForWareHouse){
-            WareHouseUsers.add(usr.Id);
-            
-        }
-        
-        
-        List<String> emailString1 = new List<String>();
-        List<decimal> ordNumber = new List<decimal>();
-        Map<Id,Contact> mapOfContact = new Map<Id,Contact>();
-        
-        List<Contact> conList =[SELECT Id,Name,Email From Contact Where Id IN:setOfId];
-        
-        Map<Id,Order> mapOfOrd = new Map<Id,Order>();
-        List<Order> orderList = [SELECT Id,CreatedDate,OrderNumber From Order Where Id IN:setOfOrderId];
-        for(Order ord : orderList){
-            if(!mapOfOrd.containsKey(ord.Id)){
-                mapOfOrd.put(Ord.Id,Ord);
-            }
-        }
-        
-        for(Contact con : conList){
-            mapOfContact.put(con.Id, con);
-        }
-        
-        List<String> emailString = new List<String>();
-        
-        List<task> taskList = new List<task>();
-        for (Case cse : caseList) {
-            
-            if(cse.OutBound_PinCode_not_Serviceable__c != oldMapCase.get(cse.Id).OutBound_PinCode_not_Serviceable__c){
-                // if (cse.OutBound_PinCode_not_Serviceable__c == true) {
-                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-                Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-                
-                if (cse.ContactId != null) {
-                    Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-                }
-                if (cse.OrderId__c != null) {
-                    Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-                }
-                if (cse.CreatedDate != null) {
-                    Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-                }
-                if (cse.Address_With_Pin_Code__PostalCode__s != null) {
-                    Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
-                }
-                if (cse.Amount_Paid__c != null) {
-                    Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
-                }if(mapOfContact.get(cse.ContactId).Email != null){
-                    emailString.add(mapOfContact.get(cse.ContactId).Email);
-                }
-                mail.setSubject(temp != null ? temp.Subject : '');
-                mail.setPlainTextBody(Body);
-                mail.setTemplateId(temp != null ? temp.Id : null);
-                mail.setSaveAsActivity(true);
-                mail.setWhatId(cse.Id);
-                mail.setToAddresses(emailString);
-                mailList.add(mail);
-                
-                notification.setBody('Dear Refund teams, Please take a look of this Order as pincode is not serviceable, Please Do the Refund as early as Possible'); 
-                notification.setTitle('Pincode Not ServiceAble'); 
-                notification.setSenderId(Userinfo.getUserId()); 
-                notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-                notification.setTargetId(cse.id);
-                notification.send(refundTeamUsers);
-                
-                WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order as pincode is not serviceable, Please Do not delivery the Order'); 
-                WareHouseNotification.setTitle('Pincode Not ServiceAble'); 
-                WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-                WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-                WareHouseNotification.setTargetId(cse.id);
-                WareHouseNotification.send(WareHouseUsers);
-                
-                task tsk = new task();
-                tsk.subject ='Refund the Money To Customer';
-                tsk.Priority = 'High';
-                tsk.ActivityDate = System.today().addDays(2);
-                tsk.whatId =   cse.Id;
-                tsk.OwnerId = refundTeamTaskUsers[0];
-                taskList.add(tsk);
-                
-            } 
-            if(cse.InBound_PinCode_not_Serviceable__c != oldMapCase.get(cse.Id).InBound_PinCode_not_Serviceable__c) {   
-                //  else if (cse.InBound_PinCode_not_Serviceable__c == true) {
-                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-                Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-                
-                if (cse.ContactId != null) {
-                    Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-                }
-                if (cse.OrderId__c != null) {
-                    Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-                }
-                if (cse.CreatedDate != null) {
-                    Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-                }
-                if (cse.Address_With_Pin_Code__PostalCode__s != null) {
-                    Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
-                }
-                if (cse.Amount_Paid__c != null) {
-                    Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
-                }
-                if(mapOfContact.get(cse.ContactId).Email != null){
-                    emailString.add(mapOfContact.get(cse.ContactId).Email);
-                }
-                mail.setPlainTextBody(Body);
-                mail.setTemplateId(temp != null ? temp.Id : null);
-                mail.setSaveAsActivity(true);
-                mail.setWhatId(cse.Id);
-                mail.setToAddresses(emailString);
-                mailList.add(mail);
-                system.debug('mailList:::::::::>' + mailList);
-                
-                notification.setBody('Dear Refund teams, Please take a look of this Order as pincode is not serviceable, Please Do the Refund as early as Possible'); 
-                notification.setTitle('Pincode Not ServiceAble'); 
-                notification.setSenderId(Userinfo.getUserId()); 
-                notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-                notification.setTargetId(cse.id);
-                notification.send(refundTeamUsers); 
-                system.debug('notification:::::::::>' + notification);
-                
-                
-                WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order as pincode is not serviceable, Please Do not delivery the Order'); 
-                WareHouseNotification.setTitle('Pincode Not ServiceAble'); 
-                WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-                WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-                WareHouseNotification.setTargetId(cse.id);
-                WareHouseNotification.send(WareHouseUsers);
-                
-                task tsk = new task();
-                tsk.subject ='Refund the Money To Customer';
-                tsk.Priority = 'High';
-                tsk.ActivityDate = System.today().addDays(2);
-                tsk.whatId =   cse.Id;
-                tsk.OwnerId = refundTeamTaskUsers[0];
-                taskList.add(tsk);
-            }
-        }
-        
-        if (!mailList.isEmpty()) {
-            //Messaging.sendEmail(mailList);
-        }
-        Insert taskList;
-        system.debug('taskList:::::::::>' + taskList);
-        
-    } */
-    
-    
-   
     
     //this method is not used anywhere
-  /*  public static void sendEmailToUserAndNotificationToUserDelayInDelivery(List<Case> caseList, map<Id,Case> oldMapCase) {
-        EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Urgent_Customer_Unresponsive_After_3_Attempted_Calls_Regarding_Delayed_Order'];
-        List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_dealy_delivery'];
-        Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
-        List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-        List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
-        
-        String str = temp.HTMLValue;
-        String body = temp.body;
-        
-        set<Id> setOfId = new set<Id>();
-        set<Id> setOfOrderId = new set<Id>();
-        for(case cs : caseList){
-            setOfId.add(cs.contactId);
-            setOfOrderId.add(cs.OrderId__c);
-        }
-        List<User> userList = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'Refund Team'];
-        set<String> refundTeamUsers = new set<String>();
-        List<Id> refundTeamTaskUsers = new List<Id>();
-        for(User usr : userList){
-            refundTeamUsers.add(usr.Id);
-            refundTeamTaskUsers.add(usr.Id);
-        }
-        
-        
-        List<User> userListForWareHouse = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'WareHouse Team'];
-        set<String> WareHouseUsers = new set<String>();
-        for(User usr : userListForWareHouse){
-            WareHouseUsers.add(usr.Id);
-        }
-        
-        List<User> usersListForOwner = [SELECT Id,Name,Email From User];
-        Map<Id,User> mapOfUser = new Map<Id,User>();
-        for(User usr : usersListForOwner){
-            mapOfUser.put(usr.Id,usr);
-        }
-        List<String> emailString1 = new List<String>();
-        List<decimal> ordNumber = new List<decimal>();
-        Map<Id,Contact> mapOfContact = new Map<Id,Contact>();
-        
-        List<Contact> conList =[SELECT Id,Name,Email From Contact Where Id IN:setOfId];
-        
-        Map<Id,Order> mapOfOrd = new Map<Id,Order>();
-        List<Order> orderList = [SELECT Id,CreatedDate,OrderNumber From Order Where Id IN:setOfOrderId];
-        for(Order ord : orderList){
-            if(!mapOfOrd.containsKey(ord.Id)){
-                mapOfOrd.put(Ord.Id,Ord);
-            }
-        }
-        
-        for(Contact con : conList){
-            mapOfContact.put(con.Id, con);
-        }
-        List<String> emailString = new List<String>();
-        
-        List<task> taskList = new List<task>();
-        for (Case cse : caseList) {
-            
-            if(cse.OutBound_Dealy_In_Delivery__c != oldMapCase.get(cse.Id).OutBound_Dealy_In_Delivery__c){
-                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-                Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-                
-                if (cse.ContactId != null) {
-                    Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-                } 
-                if (cse.OrderId__c != null) {
-                    Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-                }
-                if (cse.CreatedDate != null) {
-                    Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-                }
-                if (cse.OwnerId != null) {
-                    Body = Body.replace('{!Case.OwnerFullName}', mapOfUser.get(cse.OwnerId).Name);
-                }
-                
-                
-                if(mapOfContact.get(cse.ContactId).Email != null){
-                    emailString.add(mapOfContact.get(cse.ContactId).Email);
-                }
-                mail.setSubject(temp != null ? temp.Subject : '');
-                mail.setPlainTextBody(Body);
-                mail.setTemplateId(temp != null ? temp.Id : null);
-                mail.setSaveAsActivity(true);
-                mail.setWhatId(cse.Id);
-                mail.setToAddresses(emailString);
-                mailList.add(mail);
-                
-                notification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
-                notification.setTitle('Delay in Delivery'); 
-                notification.setSenderId(Userinfo.getUserId()); 
-                notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-                notification.setTargetId(cse.id);
-                notification.send(refundTeamUsers);
-                
-                WareHouseNotification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
-                WareHouseNotification.setTitle('Delay in Delivery'); 
-                WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-                WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-                WareHouseNotification.setTargetId(cse.id);
-                WareHouseNotification.send(WareHouseUsers);
-                
-                task tsk = new task();
-                tsk.subject ='Delay in Delivery';
-                tsk.Priority = 'High';
-                tsk.ActivityDate = System.today().addDays(2);
-                tsk.whatId =   cse.Id;
-                tsk.OwnerId = refundTeamTaskUsers[0];
-                taskList.add(tsk);
-                
-            }
-            if(cse.Inbound_Dealy_In_Delivery__c != oldMapCase.get(cse.Id).Inbound_Dealy_In_Delivery__c){
-                // else if (cse.Inbound_Dealy_In_Delivery__c == true) {
-                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-                Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-                
-                if (cse.ContactId != null) {
-                    Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-                }
-                
-                if (cse.OrderId__c != null) {
-                    Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-                }
-                if (cse.CreatedDate != null) {
-                    Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-                }
-                if (cse.OwnerId != null) {
-                    Body = Body.replace('{!Case.OwnerFullName}', mapOfUser.get(cse.OwnerId).Name);
-                }
-                if(mapOfContact.get(cse.ContactId).Email != null){
-                    emailString.add(mapOfContact.get(cse.ContactId).Email);
-                }
-                mail.setPlainTextBody(Body);
-                mail.setTemplateId(temp != null ? temp.Id : null);
-                mail.setSaveAsActivity(true);
-                mail.setWhatId(cse.Id);
-                mail.setToAddresses(emailString);
-                mailList.add(mail);
-                system.debug('mailList:::::::::>' + mailList);
-                
-                notification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
-                notification.setTitle('Delay in Delivery'); 
-                notification.setSenderId(Userinfo.getUserId()); 
-                notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-                notification.setTargetId(cse.id);
-                notification.send(refundTeamUsers);   
-                system.debug('notification:::::::::>' + notification);
-                
-                WareHouseNotification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
-                WareHouseNotification.setTitle('Delay in Delivery'); 
-                WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-                WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-                WareHouseNotification.setTargetId(cse.id);
-                WareHouseNotification.send(WareHouseUsers);
-                
-                task tsk = new task();
-                tsk.subject ='Delay in Delivery';
-                tsk.Priority = 'High';
-                tsk.ActivityDate = System.today().addDays(2);
-                tsk.whatId =   cse.Id;
-                tsk.OwnerId = refundTeamTaskUsers[0];
-                taskList.add(tsk);
-            }
-        }
-        
-        if (!mailList.isEmpty()) {
-            //  Messaging.sendEmail(mailList);
-        }
-        Insert taskList;
-        system.debug('taskList:::::::::>' + taskList);
-        
-    } */
+    /*  public static void sendEmailToUserAndNotificationToUserPincodeNotServiceable(List<Case> caseList,  map<Id,Case> oldMapCase) {
+EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Order_Issue_Pin_Code_Unserviceable_Refund_Initiated'];
+List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_pincode_not_serviceable'];
+Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
+List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
+
+String str = temp.HTMLValue;
+String body = temp.body;
+
+set<Id> setOfId = new set<Id>();
+set<Id> setOfOrderId = new set<Id>();
+for(case cs : caseList){
+setOfId.add(cs.contactId);
+setOfOrderId.add(cs.OrderId__c);
+}
+List<User> userList = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'Refund Team'];
+set<String> refundTeamUsers = new set<String>();
+List<Id> refundTeamTaskUsers = new List<Id>();
+for(User usr : userList){
+refundTeamUsers.add(usr.Id);
+refundTeamTaskUsers.add(usr.Id);
+}
+
+List<User> userListForWareHouse = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'WareHouse Team'];
+set<String> WareHouseUsers = new set<String>();
+for(User usr : userListForWareHouse){
+WareHouseUsers.add(usr.Id);
+
+}
+
+
+List<String> emailString1 = new List<String>();
+List<decimal> ordNumber = new List<decimal>();
+Map<Id,Contact> mapOfContact = new Map<Id,Contact>();
+
+List<Contact> conList =[SELECT Id,Name,Email From Contact Where Id IN:setOfId];
+
+Map<Id,Order> mapOfOrd = new Map<Id,Order>();
+List<Order> orderList = [SELECT Id,CreatedDate,OrderNumber From Order Where Id IN:setOfOrderId];
+for(Order ord : orderList){
+if(!mapOfOrd.containsKey(ord.Id)){
+mapOfOrd.put(Ord.Id,Ord);
+}
+}
+
+for(Contact con : conList){
+mapOfContact.put(con.Id, con);
+}
+
+List<String> emailString = new List<String>();
+
+List<task> taskList = new List<task>();
+for (Case cse : caseList) {
+
+if(cse.OutBound_PinCode_not_Serviceable__c != oldMapCase.get(cse.Id).OutBound_PinCode_not_Serviceable__c){
+// if (cse.OutBound_PinCode_not_Serviceable__c == true) {
+Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+Messaging.CustomNotification notification = new Messaging.CustomNotification();
+Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
+
+if (cse.ContactId != null) {
+Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
+}
+if (cse.OrderId__c != null) {
+Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
+}
+if (cse.CreatedDate != null) {
+Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
+}
+if (cse.Address_With_Pin_Code__PostalCode__s != null) {
+Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
+}
+if (cse.Amount_Paid__c != null) {
+Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
+}if(mapOfContact.get(cse.ContactId).Email != null){
+emailString.add(mapOfContact.get(cse.ContactId).Email);
+}
+mail.setSubject(temp != null ? temp.Subject : '');
+mail.setPlainTextBody(Body);
+mail.setTemplateId(temp != null ? temp.Id : null);
+mail.setSaveAsActivity(true);
+mail.setWhatId(cse.Id);
+mail.setToAddresses(emailString);
+mailList.add(mail);
+
+notification.setBody('Dear Refund teams, Please take a look of this Order as pincode is not serviceable, Please Do the Refund as early as Possible'); 
+notification.setTitle('Pincode Not ServiceAble'); 
+notification.setSenderId(Userinfo.getUserId()); 
+notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
+notification.setTargetId(cse.id);
+notification.send(refundTeamUsers);
+
+WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order as pincode is not serviceable, Please Do not delivery the Order'); 
+WareHouseNotification.setTitle('Pincode Not ServiceAble'); 
+WareHouseNotification.setSenderId(Userinfo.getUserId()); 
+WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
+WareHouseNotification.setTargetId(cse.id);
+WareHouseNotification.send(WareHouseUsers);
+
+task tsk = new task();
+tsk.subject ='Refund the Money To Customer';
+tsk.Priority = 'High';
+tsk.ActivityDate = System.today().addDays(2);
+tsk.whatId =   cse.Id;
+tsk.OwnerId = refundTeamTaskUsers[0];
+taskList.add(tsk);
+
+} 
+if(cse.InBound_PinCode_not_Serviceable__c != oldMapCase.get(cse.Id).InBound_PinCode_not_Serviceable__c) {   
+//  else if (cse.InBound_PinCode_not_Serviceable__c == true) {
+Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+Messaging.CustomNotification notification = new Messaging.CustomNotification();
+Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
+
+if (cse.ContactId != null) {
+Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
+}
+if (cse.OrderId__c != null) {
+Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
+}
+if (cse.CreatedDate != null) {
+Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
+}
+if (cse.Address_With_Pin_Code__PostalCode__s != null) {
+Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
+}
+if (cse.Amount_Paid__c != null) {
+Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
+}
+if(mapOfContact.get(cse.ContactId).Email != null){
+emailString.add(mapOfContact.get(cse.ContactId).Email);
+}
+mail.setPlainTextBody(Body);
+mail.setTemplateId(temp != null ? temp.Id : null);
+mail.setSaveAsActivity(true);
+mail.setWhatId(cse.Id);
+mail.setToAddresses(emailString);
+mailList.add(mail);
+system.debug('mailList:::::::::>' + mailList);
+
+notification.setBody('Dear Refund teams, Please take a look of this Order as pincode is not serviceable, Please Do the Refund as early as Possible'); 
+notification.setTitle('Pincode Not ServiceAble'); 
+notification.setSenderId(Userinfo.getUserId()); 
+notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
+notification.setTargetId(cse.id);
+notification.send(refundTeamUsers); 
+system.debug('notification:::::::::>' + notification);
+
+
+WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order as pincode is not serviceable, Please Do not delivery the Order'); 
+WareHouseNotification.setTitle('Pincode Not ServiceAble'); 
+WareHouseNotification.setSenderId(Userinfo.getUserId()); 
+WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
+WareHouseNotification.setTargetId(cse.id);
+WareHouseNotification.send(WareHouseUsers);
+
+task tsk = new task();
+tsk.subject ='Refund the Money To Customer';
+tsk.Priority = 'High';
+tsk.ActivityDate = System.today().addDays(2);
+tsk.whatId =   cse.Id;
+tsk.OwnerId = refundTeamTaskUsers[0];
+taskList.add(tsk);
+}
+}
+
+if (!mailList.isEmpty()) {
+//Messaging.sendEmail(mailList);
+}
+Insert taskList;
+system.debug('taskList:::::::::>' + taskList);
+
+} */
+    
+    
     
     
     //this method is not used anywhere
- /*   public static void sendEmailToContactOwnerAndSendNotificationToOMSTeam(List<Case> caseList, map<Id,Case> oldMapCase){
-        EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Order_Issue_Pin_Code_Unserviceable_Refund_Initiated'];
-        List<CustomNotificationType> TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_pincode_not_serviceable'];
-        Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
-        List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-        List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
-        
-        String str = temp.HTMLValue;
-        String body = temp.Body;
-        
-        Set<Id> setOfId = new Set<Id>();
-        Set<Id> setOfAccId = new Set<Id>();
-        Set<Id> setOfOrderId = new Set<Id>();
-        for (Case cs : caseList) {
-            if(cs.AccountId != null){
-                setOfAccId.add(cs.AccountId);
-            }else if(cs.ContactId != null){
-                setOfId.add(cs.ContactId);
-            }
-            setOfOrderId.add(cs.OrderId__c);
-        }
-        System.debug('setOfOrderId:::::::::>' + setOfOrderId);
-        System.debug('setOfId:::::::::>' + setOfId);
-        System.debug('setOfAccId:::::::::>' + setOfAccId);
-        List<User> userList = [SELECT Id, Name, Profile.Name,Email FROM User WHERE Profile.Name = 'Order Management Team'];
-        System.debug('userList:::::::::>' + userList);
-        Set<String> OrderManagementTeamUsers = new Set<String>();
-        List<String> OMTEmail = new List<String>();
-        List<Id> OrderManagementTeamTaskUsers = new List<Id>();
-        for (User usr : userList) {
-            OrderManagementTeamUsers.add(usr.Id);
-            OrderManagementTeamTaskUsers.add(usr.Id);
-            OMTEmail.add(usr.Email);
-        }
-        System.debug('OrderManagementTeamUsers:::::::::>' + OrderManagementTeamUsers);
-        System.debug('OrderManagementTeamTaskUsers:::::::::>' + OrderManagementTeamTaskUsers);
-        
-        List<String> emailString1 = new List<String>();
-        List<Decimal> ordNumber = new List<Decimal>();
-        Map<Id, Contact> mapOfContact = new Map<Id, Contact>();
-        Map<Id, Account> mapOfAccount = new Map<Id, Account>();
-        
-        List<Contact> conList = [SELECT Id, Name, Email FROM Contact WHERE Id IN :setOfId];
-        List<Account> accList = [SELECT Id, Name, Email__c FROM Account WHERE Id IN: setOfAccId];
-        
-        Map<Id, Order> mapOfOrd = new Map<Id, Order>();
-        List<Order> orderList = [SELECT Id, CreatedDate, OrderNumber FROM Order WHERE Id IN :setOfOrderId];
-        for (Order ord : orderList) {
-            if (!mapOfOrd.containsKey(ord.Id)) {
-                mapOfOrd.put(ord.Id, ord);
-            }
-        }
-        
-        for (Contact con : conList) {
-            mapOfContact.put(con.Id, con);
-        }
-        for (Account acc : accList) {
-            mapOfAccount.put(acc.Id, acc);
-        }
-        List<String> emailString = new List<String>();
-        
-        List<Task> taskList = new List<Task>();
-        for (Case cse : caseList) {
-            if (cse.Reason_for_RTO__c != null) {
-                if(cse.Reason_for_RTO__c != oldMapCase.get(cse.Id).Reason_for_RTO__c){
-                    Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-                    Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                    
-                    if (cse.AccountId != null) {
-                        body = body.replace('{!Case.Account}', mapOfAccount.get(cse.AccountId).Name);
-                    }
-                    else if (cse.ContactId != null) {
-                        body = body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-                    }
-                    if (cse.OrderId__c != null) {
-                        body = body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-                    }
-                    if (cse.CreatedDate != null) {
-                        body = body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-                    }
-                    mail.setSubject(temp != null ? temp.Subject : '');
-                    mail.setPlainTextBody(body);
-                    mail.setTemplateId(temp != null ? temp.Id : null);
-                    mail.setSaveAsActivity(true);
-                    mail.setWhatId(cse.Id);
-                    mail.setToAddresses(OMTEmail);
-                    mailList.add(mail);
-                    
-                    notification.setBody('Dear OrderManagement, Please take a look at this Order as the it is been returing to Origin. Please do not deliver the Order and initiate the refund as early as possible.');
-                    notification.setTitle('Return to Origin');
-                    notification.setSenderId(UserInfo.getUserId());
-                    notification.setNotificationTypeId(TemplateInfoDetail[0].Id);
-                    notification.setTargetId(cse.Id);
-                    notification.send(OrderManagementTeamUsers);
-                    
-                    Task tsk = new Task();
-                    tsk.Subject = 'Check the Order Which Is Delivered';
-                    tsk.Priority = 'High';
-                    tsk.ActivityDate = System.today().addDays(2);
-                    tsk.WhatId = cse.Id;
-                    tsk.OwnerId = OrderManagementTeamTaskUsers[0];
-                    taskList.add(tsk);
-                }
-            }
-        }
-        
-        if (!mailList.isEmpty()) {
-            // Messaging.sendEmail(mailList);
-        }
-        Insert taskList;
-        System.debug('taskList:::::::::>' + taskList);
-    } */
+    /*  public static void sendEmailToUserAndNotificationToUserDelayInDelivery(List<Case> caseList, map<Id,Case> oldMapCase) {
+EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Urgent_Customer_Unresponsive_After_3_Attempted_Calls_Regarding_Delayed_Order'];
+List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_dealy_delivery'];
+Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
+List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
+
+String str = temp.HTMLValue;
+String body = temp.body;
+
+set<Id> setOfId = new set<Id>();
+set<Id> setOfOrderId = new set<Id>();
+for(case cs : caseList){
+setOfId.add(cs.contactId);
+setOfOrderId.add(cs.OrderId__c);
+}
+List<User> userList = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'Refund Team'];
+set<String> refundTeamUsers = new set<String>();
+List<Id> refundTeamTaskUsers = new List<Id>();
+for(User usr : userList){
+refundTeamUsers.add(usr.Id);
+refundTeamTaskUsers.add(usr.Id);
+}
+
+
+List<User> userListForWareHouse = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'WareHouse Team'];
+set<String> WareHouseUsers = new set<String>();
+for(User usr : userListForWareHouse){
+WareHouseUsers.add(usr.Id);
+}
+
+List<User> usersListForOwner = [SELECT Id,Name,Email From User];
+Map<Id,User> mapOfUser = new Map<Id,User>();
+for(User usr : usersListForOwner){
+mapOfUser.put(usr.Id,usr);
+}
+List<String> emailString1 = new List<String>();
+List<decimal> ordNumber = new List<decimal>();
+Map<Id,Contact> mapOfContact = new Map<Id,Contact>();
+
+List<Contact> conList =[SELECT Id,Name,Email From Contact Where Id IN:setOfId];
+
+Map<Id,Order> mapOfOrd = new Map<Id,Order>();
+List<Order> orderList = [SELECT Id,CreatedDate,OrderNumber From Order Where Id IN:setOfOrderId];
+for(Order ord : orderList){
+if(!mapOfOrd.containsKey(ord.Id)){
+mapOfOrd.put(Ord.Id,Ord);
+}
+}
+
+for(Contact con : conList){
+mapOfContact.put(con.Id, con);
+}
+List<String> emailString = new List<String>();
+
+List<task> taskList = new List<task>();
+for (Case cse : caseList) {
+
+if(cse.OutBound_Dealy_In_Delivery__c != oldMapCase.get(cse.Id).OutBound_Dealy_In_Delivery__c){
+Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+Messaging.CustomNotification notification = new Messaging.CustomNotification();
+Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
+
+if (cse.ContactId != null) {
+Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
+} 
+if (cse.OrderId__c != null) {
+Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
+}
+if (cse.CreatedDate != null) {
+Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
+}
+if (cse.OwnerId != null) {
+Body = Body.replace('{!Case.OwnerFullName}', mapOfUser.get(cse.OwnerId).Name);
+}
+
+
+if(mapOfContact.get(cse.ContactId).Email != null){
+emailString.add(mapOfContact.get(cse.ContactId).Email);
+}
+mail.setSubject(temp != null ? temp.Subject : '');
+mail.setPlainTextBody(Body);
+mail.setTemplateId(temp != null ? temp.Id : null);
+mail.setSaveAsActivity(true);
+mail.setWhatId(cse.Id);
+mail.setToAddresses(emailString);
+mailList.add(mail);
+
+notification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
+notification.setTitle('Delay in Delivery'); 
+notification.setSenderId(Userinfo.getUserId()); 
+notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
+notification.setTargetId(cse.id);
+notification.send(refundTeamUsers);
+
+WareHouseNotification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
+WareHouseNotification.setTitle('Delay in Delivery'); 
+WareHouseNotification.setSenderId(Userinfo.getUserId()); 
+WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
+WareHouseNotification.setTargetId(cse.id);
+WareHouseNotification.send(WareHouseUsers);
+
+task tsk = new task();
+tsk.subject ='Delay in Delivery';
+tsk.Priority = 'High';
+tsk.ActivityDate = System.today().addDays(2);
+tsk.whatId =   cse.Id;
+tsk.OwnerId = refundTeamTaskUsers[0];
+taskList.add(tsk);
+
+}
+if(cse.Inbound_Dealy_In_Delivery__c != oldMapCase.get(cse.Id).Inbound_Dealy_In_Delivery__c){
+// else if (cse.Inbound_Dealy_In_Delivery__c == true) {
+Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+Messaging.CustomNotification notification = new Messaging.CustomNotification();
+Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
+
+if (cse.ContactId != null) {
+Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
+}
+
+if (cse.OrderId__c != null) {
+Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
+}
+if (cse.CreatedDate != null) {
+Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
+}
+if (cse.OwnerId != null) {
+Body = Body.replace('{!Case.OwnerFullName}', mapOfUser.get(cse.OwnerId).Name);
+}
+if(mapOfContact.get(cse.ContactId).Email != null){
+emailString.add(mapOfContact.get(cse.ContactId).Email);
+}
+mail.setPlainTextBody(Body);
+mail.setTemplateId(temp != null ? temp.Id : null);
+mail.setSaveAsActivity(true);
+mail.setWhatId(cse.Id);
+mail.setToAddresses(emailString);
+mailList.add(mail);
+system.debug('mailList:::::::::>' + mailList);
+
+notification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
+notification.setTitle('Delay in Delivery'); 
+notification.setSenderId(Userinfo.getUserId()); 
+notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
+notification.setTargetId(cse.id);
+notification.send(refundTeamUsers);   
+system.debug('notification:::::::::>' + notification);
+
+WareHouseNotification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
+WareHouseNotification.setTitle('Delay in Delivery'); 
+WareHouseNotification.setSenderId(Userinfo.getUserId()); 
+WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
+WareHouseNotification.setTargetId(cse.id);
+WareHouseNotification.send(WareHouseUsers);
+
+task tsk = new task();
+tsk.subject ='Delay in Delivery';
+tsk.Priority = 'High';
+tsk.ActivityDate = System.today().addDays(2);
+tsk.whatId =   cse.Id;
+tsk.OwnerId = refundTeamTaskUsers[0];
+taskList.add(tsk);
+}
+}
+
+if (!mailList.isEmpty()) {
+//  Messaging.sendEmail(mailList);
+}
+Insert taskList;
+system.debug('taskList:::::::::>' + taskList);
+
+} */
+    
+    
+    //this method is not used anywhere
+    /*   public static void sendEmailToContactOwnerAndSendNotificationToOMSTeam(List<Case> caseList, map<Id,Case> oldMapCase){
+EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Order_Issue_Pin_Code_Unserviceable_Refund_Initiated'];
+List<CustomNotificationType> TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_pincode_not_serviceable'];
+Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
+List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
+
+String str = temp.HTMLValue;
+String body = temp.Body;
+
+Set<Id> setOfId = new Set<Id>();
+Set<Id> setOfAccId = new Set<Id>();
+Set<Id> setOfOrderId = new Set<Id>();
+for (Case cs : caseList) {
+if(cs.AccountId != null){
+setOfAccId.add(cs.AccountId);
+}else if(cs.ContactId != null){
+setOfId.add(cs.ContactId);
+}
+setOfOrderId.add(cs.OrderId__c);
+}
+System.debug('setOfOrderId:::::::::>' + setOfOrderId);
+System.debug('setOfId:::::::::>' + setOfId);
+System.debug('setOfAccId:::::::::>' + setOfAccId);
+List<User> userList = [SELECT Id, Name, Profile.Name,Email FROM User WHERE Profile.Name = 'Order Management Team'];
+System.debug('userList:::::::::>' + userList);
+Set<String> OrderManagementTeamUsers = new Set<String>();
+List<String> OMTEmail = new List<String>();
+List<Id> OrderManagementTeamTaskUsers = new List<Id>();
+for (User usr : userList) {
+OrderManagementTeamUsers.add(usr.Id);
+OrderManagementTeamTaskUsers.add(usr.Id);
+OMTEmail.add(usr.Email);
+}
+System.debug('OrderManagementTeamUsers:::::::::>' + OrderManagementTeamUsers);
+System.debug('OrderManagementTeamTaskUsers:::::::::>' + OrderManagementTeamTaskUsers);
+
+List<String> emailString1 = new List<String>();
+List<Decimal> ordNumber = new List<Decimal>();
+Map<Id, Contact> mapOfContact = new Map<Id, Contact>();
+Map<Id, Account> mapOfAccount = new Map<Id, Account>();
+
+List<Contact> conList = [SELECT Id, Name, Email FROM Contact WHERE Id IN :setOfId];
+List<Account> accList = [SELECT Id, Name, Email__c FROM Account WHERE Id IN: setOfAccId];
+
+Map<Id, Order> mapOfOrd = new Map<Id, Order>();
+List<Order> orderList = [SELECT Id, CreatedDate, OrderNumber FROM Order WHERE Id IN :setOfOrderId];
+for (Order ord : orderList) {
+if (!mapOfOrd.containsKey(ord.Id)) {
+mapOfOrd.put(ord.Id, ord);
+}
+}
+
+for (Contact con : conList) {
+mapOfContact.put(con.Id, con);
+}
+for (Account acc : accList) {
+mapOfAccount.put(acc.Id, acc);
+}
+List<String> emailString = new List<String>();
+
+List<Task> taskList = new List<Task>();
+for (Case cse : caseList) {
+if (cse.Reason_for_RTO__c != null) {
+if(cse.Reason_for_RTO__c != oldMapCase.get(cse.Id).Reason_for_RTO__c){
+Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+Messaging.CustomNotification notification = new Messaging.CustomNotification();
+
+if (cse.AccountId != null) {
+body = body.replace('{!Case.Account}', mapOfAccount.get(cse.AccountId).Name);
+}
+else if (cse.ContactId != null) {
+body = body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
+}
+if (cse.OrderId__c != null) {
+body = body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
+}
+if (cse.CreatedDate != null) {
+body = body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
+}
+mail.setSubject(temp != null ? temp.Subject : '');
+mail.setPlainTextBody(body);
+mail.setTemplateId(temp != null ? temp.Id : null);
+mail.setSaveAsActivity(true);
+mail.setWhatId(cse.Id);
+mail.setToAddresses(OMTEmail);
+mailList.add(mail);
+
+notification.setBody('Dear OrderManagement, Please take a look at this Order as the it is been returing to Origin. Please do not deliver the Order and initiate the refund as early as possible.');
+notification.setTitle('Return to Origin');
+notification.setSenderId(UserInfo.getUserId());
+notification.setNotificationTypeId(TemplateInfoDetail[0].Id);
+notification.setTargetId(cse.Id);
+notification.send(OrderManagementTeamUsers);
+
+Task tsk = new Task();
+tsk.Subject = 'Check the Order Which Is Delivered';
+tsk.Priority = 'High';
+tsk.ActivityDate = System.today().addDays(2);
+tsk.WhatId = cse.Id;
+tsk.OwnerId = OrderManagementTeamTaskUsers[0];
+taskList.add(tsk);
+}
+}
+}
+
+if (!mailList.isEmpty()) {
+// Messaging.sendEmail(mailList);
+}
+Insert taskList;
+System.debug('taskList:::::::::>' + taskList);
+} */
     @AuraEnabled
     public static Case courierRelatedCase(String recId) {
         System.debug('recId ==>' + recId);
@@ -1496,58 +1490,90 @@ public class CaseHelperControllers {
     //     return picklistValByField;
     // }
     
-      
+    
     @AuraEnabled
     public static List<OrderItem> getOrderItems(String OrdId){
         system.debug('OrdId ===========>' +OrdId);
         List<OrderItem> orderItems = new List<OrderItem>(); // Define the list outside the try-catch block
-        
         try {
-            if (OrdId != null) {
-                orderItems = [SELECT Id, Product2.Name, Quantity, Refund_Quantity__c, TotalPrice, Refund_Price__c, Refund_Reason__c, Refund_Reasons__c, Refund_Type__c, SKU__c, Total_Selling_Price__c, Selling_Price__c,Affected_Quantity__c FROM OrderItem WHERE OrderId = :OrdId];
+            
+            Order orderRec = new Order();
+            List<OrderItem> itmList = new List<OrderItem>();
+            Set<Id> subOrderIds = new Set<Id>();
+            
+            if(OrdId != null){
+                orderRec = [SELECT Id, Name, ParentOrder__c FROM Order WHERE Id =: OrdId];
+                System.debug('orderRec==> ' + orderRec);
             }
+            if(orderRec.ParentOrder__c == null){
+                List<Order> subOrderList = [SELECT Id FROM Order WHERE ParentOrder__c =: orderRec.Id];
+                System.debug('subOrderList==> ' + subOrderList);
+                if(!subOrderList.isEmpty()){
+                    for(Order orderRecord : subOrderList){
+                        subOrderIds.add(orderRecord.Id);
+                    }
+                    System.debug('subOrderIds==> ' + subOrderIds);
+                }
+                if(!subOrderIds.isEmpty()){
+                    itmList = [SELECT Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId IN: subOrderIds];
+                }
+            }else{
+                itmList = [SELECT Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId =: OrdId];
+            }
+            
+            return itmList;
+            // if (OrdId != null) {
+            //     orderItems = [SELECT Id, Product2.Name, Quantity, Refund_Quantity__c, TotalPrice, Refund_Price__c, Refund_Reason__c, Refund_Reasons__c, Refund_Type__c, SKU__c, Total_Selling_Price__c, Selling_Price__c,Affected_Quantity__c FROM OrderItem WHERE OrderId = :OrdId];
+            // }
         } catch (Exception e) {
             System.debug('Error Message==> ' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
             return null; // Return null if an exception occurs
         }
-        
-        return orderItems; // Return the list outside the try-catch block
     }
     
     
     @AuraEnabled
-    public static String createCaseInLiveChatTranscript(String RecordTypeName, String Type, String SubType, String AccId, String conId, String Subjt, String conNumber, String recId, Id ownId) {
-        system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'AccId===>'+AccId+ 'conId===>'+conId+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId+ 'ownId===>'+ownId);
+    public static Case createCaseInLiveChatTranscript(String RecordTypeName, String Type, String SubType, String AccId, String conId, String Subjt, String conNumber, String recId, Id ownId, String ordId) {
+        system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'AccId===>'+AccId+ 'conId===>'+conId+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId+ 'ownId===>'+ownId + '      ' + 'ordId=====>'+ ordId);
         try {
             Case newCase = new Case();
-            if (RecordTypeName != null && Type != null && SubType != null) {
                 Set<Id> setOfOwnerId = new Set<Id>();
                 List<Case> cseList = new List<Case>();
-                RecordType rt = [SELECT Id FROM RecordType WHERE DeveloperName = :RecordTypeName LIMIT 1];
+                List<User> usr = new List<User>();
+                List<Order> ordList = new List<Order>();
+                List<Account> accList = new List<Account>();
+               //RecordType rt = [SELECT Id FROM RecordType WHERE DeveloperName = :RecordTypeName LIMIT 1];
                 
-                newCase.RecordTypeId = rt.Id;
-                newCase.Sub_Type__c = Type;
-                newCase.Sub_Sub_Type__c = SubType;
+                // newCase.RecordTypeId = rt.Id;
+                // newCase.Sub_Type__c = Type;
+                // newCase.Sub_Sub_Type__c = SubType;
                 
-                if(AccId != null){
-                    newCase.AccountId = AccId;
+                if(ordId != null){
+                    ordList = [SELECT Id,Name,orderNumber, AccountId From Order Where Id =: ordId Limit 1 ];
+                    if(ordList.size()>0){
+                        newCase.AccountId = ordList[0].AccountId;
+                        
+                    }
+                }else{
+                    if(AccId != null){
+                        newCase.AccountId = AccId;
+                    }
                 }
+                            
                 if(conId != null){
                     newCase.ContactId = conId;
                 }
-                if(Subjt != null){
-                    newCase.Subject = Subjt;
-                }
-                if(AccId != null){
+                newCase.Subject = 'Manual Case Creation';
+                if(conNumber != null){
                     newCase.Contact_Number__c = conNumber;
                 }
-                
                 newCase.Status = 'New';
                 if(ownId != null){
                     newCase.OwnerId = ownId;
+                }else{
+                    newCase.OwnerId = UserInfo.getUserId();
                 }
-                
-                
+                newCase.Communication_Mode__c = 'Chat';
                 insert newCase;
                 setOfOwnerId.add(newCase.OwnerId);
                 cseList.add(newCase);
@@ -1557,7 +1583,6 @@ public class CaseHelperControllers {
                 update LCTRec;
                 System.debug('LCTRec:::::::::::>' + LCTRec);
                 
-                
                 Set<String> setOfUserId = new Set<String>();
                 Messaging.CustomNotification notification = new Messaging.CustomNotification();
                 List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
@@ -1571,11 +1596,14 @@ public class CaseHelperControllers {
                 }
                 System.debug('setOfUserId:::::::::::>' + setOfUserId);
                 
-                User usr = [SELECT Id,Name,Email From User Where Id=:ownId ];
+                if(newCase.OwnerId != null){
+                    usr = [SELECT Id,Name,Email From User Where Id=:newCase.OwnerId Limit 1];
+                }
+                
                 // notification to user
                 notification.setBody('A New Case Has been created. Please check the details.');
                 notification.setTitle('Hi, A New Case Has been created.');
-                notification.setSenderId(usr.Id);
+                notification.setSenderId(usr[0].Id);
                 notification.setNotificationTypeId(customNotiList.Id); 
                 notification.setTargetId(newCase.Id);
                 // email to user
@@ -1586,107 +1614,228 @@ public class CaseHelperControllers {
                 mail.setPlainTextBody(body);
                 mail.setTemplateId(temp.id);
                 //mail.setTargetObjectId(newCase.Id);
-                mail.setToAddresses(new List<String> {usr.Email});
+                mail.setToAddresses(new List<String> {usr[0].Email});
                 mailList.add(mail);
                 
                 System.debug('notification:::::::::::>' + notification);
                 notification.send(new Set<String> { newCase.OwnerId });
-                Messaging.sendEmail(mailList);
+               // Messaging.sendEmail(mailList);
+            List<Messaging.SendEmailResult> sendResults = Messaging.sendEmail(mailList);
+            for(Messaging.SendEmailResult result : sendResults) {
+                System.debug('result === >'+result);
+                if(result.isSuccess()) {
+                    System.debug('Email sent successfully.');
+                    return newCase;
+                } else {
+                    System.debug('Failed to send email: ' + result.getErrors()[0].getMessage());
+                }
+            }
+           // return newCase;
+        } catch (Exception e) {
+            System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
+        }
+         return null;
+    }
+    
+    @AuraEnabled
+    public static Case createCaseFromContact(String Subjt, String conNumber, String recId, String ordId) {
+        system.debug('Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId);        
+        try {
+            
+            List<Order> ord = new List<Order>();
+            List<Contact> con = new List<Contact>();
+            if(recId != null){
+                con = [SELECT Id,Name,AccountId From Contact Where Id =: recId LIMIT 1];
+            }
+            
+            system.debug('ContactAccountId===============>'+ con[0].AccountId );
+
+            if(ordId != null){
+                 ord = [SELECT Id,AccountId From Order where Id =: ordId LIMIT 1];
+                 
+            }
+            
+            
+            
+            Case newCase = new Case();
+            
+            Set<Id> setOfOwnerId = new Set<Id>();
+            List<Case> cseList = new List<Case>();
+            RecordType rt = [SELECT Id FROM RecordType WHERE Name = 'Inbound Case' LIMIT 1];
+            if(ord.size()>0){
+                newCase.OrderId__c = ord[0].Id;
+                newCase.RecordTypeId = rt.Id;
+                if(ord[0].AccountId != null){
+                    newCase.AccountId = ord[0].AccountId;
+                }
+                
+            }else{
+                newCase.RecordTypeId = rt.Id;
+                if(con[0].AccountId != null){
+                    newCase.AccountId = con[0].AccountId;
+                }
                 
             }
-            return 'SUCCESS';
+            
+            
+            newCase.Subject = 'Manual Case Creation';
+            
+            if(conNumber != null){
+                newCase.SuppliedPhone = conNumber;
+            }
+            if(recId != null){
+                newCase.contactId = recId;
+            }
+            
+            newCase.Status = 'New';
+            newCase.OwnerId = UserInfo.getUserId();
+            
+            
+            insert newCase;
+            system.debug('newCaseId==============> '+ newCase.Id);
+            system.debug('Order_SKU_details__c===============>'+ newCase.OwnerId);
+            setOfOwnerId.add(newCase.OwnerId);
+            cseList.add(newCase);
+            System.debug('newCase:::::::::::>' + newCase);
+            
+            
+            Set<String> setOfUserId = new Set<String>();
+            Messaging.CustomNotification notification = new Messaging.CustomNotification();
+            List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+            CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
+            List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
+            EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
+            Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
+            System.debug('userList:::::::::::>' + userList);
+            for (User us : userList) {
+                setOfUserId.add(us.Id);
+            }
+            System.debug('setOfUserId:::::::::::>' + setOfUserId);
+            
+            User usr = [SELECT Id,Name,Email From User Where Id=: newCase.OwnerId];
+            // notification to user
+            notification.setBody('A New Case Has been created. Please check the details.');
+            notification.setTitle('Hi, A New Case Has been created.');
+            notification.setSenderId(usr.Id);
+            notification.setNotificationTypeId(customNotiList.Id); 
+            notification.setTargetId(newCase.Id);
+            // email to user
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+            
+            String body = temp.body;
+            body = body.replace('{!Case.Id}',newCase.Id);
+            mail.setPlainTextBody(body);
+            mail.setTemplateId(temp.id);
+            //mail.setTargetObjectId(newCase.Id);
+            mail.setToAddresses(new List<String> {usr.Email});
+            mailList.add(mail);
+            
+            System.debug('notification:::::::::::>' + notification);
+            notification.send(new Set<String> { newCase.OwnerId });
+            Messaging.sendEmail(mailList);
+            
+            
+            return newCase;
         } catch (Exception e) {
             System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
             return null;
         }
     }
-
+    
     @AuraEnabled
-    public static Case createCaseFromContact(String RecordTypeName, String Type, String SubType, String Subjt, String conNumber, String recId, String ordId) {
-        system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId);        
+    public static Case createCaseFromAccount(String Subjt, String conNumber, String recId, String ordId) {
+        system.debug('Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId + 'ordId====>'+ordId);
         try {
-
-           Contact con = [SELECT Id,Name,AccountId From Contact Where Id =: recId];
-           Order ord = [SELECT Id,AccountId From Order where Id =: ordId];
-           system.debug('ContactAccountId===============>'+ con.AccountId );
-
             Case newCase = new Case();
+            Set<Id> setOfOwnerId = new Set<Id>();
+            List<Order> ordList = new List<Order>();
+            List<Case> cseList = new List<Case>();
+            RecordType rt = [SELECT Id FROM RecordType WHERE Name = 'Inbound Case' LIMIT 1];
+            system.debug('RecordTypeName =============> '+rt.Id );
+            if(ordId != null){
+                 ordList = [SELECT Id,AccountId From Order where Id =: ordId LIMIT 1];
+                 system.debug('ordList =============> '+ordList[0]);
+            }
             
-                Set<Id> setOfOwnerId = new Set<Id>();
-                List<Case> cseList = new List<Case>();
-                RecordType rt = [SELECT Id FROM RecordType WHERE Name = 'General Queries' LIMIT 1];
-                system.debug('RecordTypeName =============> '+rt.Id );
-                RecordType rt1 = [SELECT Id FROM RecordType WHERE Name = 'ORDER RELATED' LIMIT 1];
-                system.debug('RecordTypeName ===========> '+rt1.Id );
-
-                if(ordId != null){
-                    newCase.OrderId__c = ordId;
-                    newCase.RecordTypeId = rt1.Id;
-                    if(ord.AccountId != null){
-                        newCase.AccountId = ord.AccountId;
-                    }
+            
+            if(ordList.size()>0){
+                if(ordList[0] != null){
+                    newCase.OrderId__c = ordList[0].Id;
+                    newCase.RecordTypeId = rt.Id;
+                    newCase.AccountId = recId;
                     
                 }else{
                     newCase.RecordTypeId = rt.Id;
+                    newCase.AccountId = recId;
                 }
                 
-                
                 newCase.Subject = 'Manual Case Creation';
-             
+                
                 if(conNumber != null){
                     newCase.Contact_Number__c = conNumber;
                 }
-                if(recId != null){
-                    newCase.contactId = recId;
-                }
-
+                
                 newCase.Status = 'New';
                 newCase.OwnerId = UserInfo.getUserId();
-                            
-                
-                insert newCase;
-                system.debug('newCaseId==============> '+ newCase.Id);
-                system.debug('Order_SKU_details__c===============>'+ newCase.OwnerId);
-                setOfOwnerId.add(newCase.OwnerId);
-                cseList.add(newCase);
-                System.debug('newCase:::::::::::>' + newCase);
-                
- 
-                Set<String> setOfUserId = new Set<String>();
-                Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-                CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
-                List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
-                EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
-                Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
-                System.debug('userList:::::::::::>' + userList);
-                for (User us : userList) {
-                    setOfUserId.add(us.Id);
+            }
+            else{
+                if(conNumber != null){
+                    newCase.SuppliedPhone = conNumber;
                 }
-                System.debug('setOfUserId:::::::::::>' + setOfUserId);
-                
-                User usr = [SELECT Id,Name,Email From User Where Id=: newCase.OwnerId];
-                // notification to user
-                notification.setBody('A New Case Has been created. Please check the details.');
-                notification.setTitle('Hi, A New Case Has been created.');
-                notification.setSenderId(usr.Id);
-                notification.setNotificationTypeId(customNotiList.Id); 
-                notification.setTargetId(newCase.Id);
-                // email to user
-                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-                
-                String body = temp.body;
-                body = body.replace('{!Case.Id}',newCase.Id);
-                mail.setPlainTextBody(body);
-                mail.setTemplateId(temp.id);
-                //mail.setTargetObjectId(newCase.Id);
-                mail.setToAddresses(new List<String> {usr.Email});
-                mailList.add(mail);
-                
-                System.debug('notification:::::::::::>' + notification);
-                notification.send(new Set<String> { newCase.OwnerId });
-                Messaging.sendEmail(mailList);
-                
+                newCase.RecordTypeId = rt.Id;
+                newCase.AccountId = recId;
+                newCase.Subject = 'Manual Case Creation';
+                newCase.Status = 'New';
+                newCase.OwnerId = UserInfo.getUserId();
+            }
+            
+            
+            
+            
+            
+            insert newCase;
+            system.debug('newCaseId==============> '+ newCase.Id);
+            system.debug('Order_SKU_details__c===============>'+ newCase.OwnerId);
+            setOfOwnerId.add(newCase.OwnerId);
+            cseList.add(newCase);
+            System.debug('newCase:::::::::::>' + newCase);
+            
+            
+            Set<String> setOfUserId = new Set<String>();
+            Messaging.CustomNotification notification = new Messaging.CustomNotification();
+            List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+            CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
+            List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
+            EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
+            Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
+            System.debug('userList:::::::::::>' + userList);
+            for (User us : userList) {
+                setOfUserId.add(us.Id);
+            }
+            System.debug('setOfUserId:::::::::::>' + setOfUserId);
+            
+            User usr = [SELECT Id,Name,Email From User Where Id=:newCase.OwnerId ];
+            // notification to user
+            notification.setBody('A New Case Has been created. Please check the details.');
+            notification.setTitle('Hi, A New Case Has been created.');
+            notification.setSenderId(usr.Id);
+            notification.setNotificationTypeId(customNotiList.Id); 
+            notification.setTargetId(newCase.Id);
+            // email to user
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+            
+            String body = temp.body;
+            body = body.replace('{!Case.Id}',newCase.Id);
+            mail.setPlainTextBody(body);
+            mail.setTemplateId(temp.id);
+            //mail.setTargetObjectId(newCase.Id);
+            mail.setToAddresses(new List<String> {usr.Email});
+            mailList.add(mail);
+            
+            System.debug('notification:::::::::::>' + notification);
+            notification.send(new Set<String> { newCase.OwnerId });
+            Messaging.sendEmail(mailList);
+            
             
             return newCase;
         } catch (Exception e) {
@@ -1694,95 +1843,7 @@ public class CaseHelperControllers {
             return null;
         }
     }
-
-    @AuraEnabled
-    public static Case createCaseFromAccount(String RecordTypeName, String Type, String SubType, String Subjt, String conNumber, String recId, String ordId) {
-        system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId);
-        try {
-            Case newCase = new Case();
-                Set<Id> setOfOwnerId = new Set<Id>();
-                List<Case> cseList = new List<Case>();
-                RecordType rt = [SELECT Id FROM RecordType WHERE Name = 'General Queries' LIMIT 1];
-                system.debug('RecordTypeName =============> '+rt.Id );
-                RecordType rt1 = [SELECT Id FROM RecordType WHERE Name = 'ORDER RELATED' LIMIT 1];
-                system.debug('RecordTypeName ===========> '+rt1.Id );
-                Order ord = [SELECT Id,AccountId From Order where Id =: ordId];
-                
-               
-
-                
-                if(ordId != null){
-                    newCase.OrderId__c = ordId;
-                    newCase.RecordTypeId = rt1.Id;
-                    if(ord.AccountId != null){
-                        newCase.AccountId = ord.AccountId;
-                    }
-                }else{
-                    newCase.RecordTypeId = rt.Id;
-                }
-                
-                newCase.Subject = 'Manual Case Creation';
-
-                if(conNumber != null){
-                    newCase.Contact_Number__c = conNumber;
-                }
-                
-                newCase.Status = 'New';
-                newCase.OwnerId = UserInfo.getUserId();
-                
-                
-                
-                insert newCase;
-                system.debug('newCaseId==============> '+ newCase.Id);
-                system.debug('Order_SKU_details__c===============>'+ newCase.OwnerId);
-                setOfOwnerId.add(newCase.OwnerId);
-                cseList.add(newCase);
-                System.debug('newCase:::::::::::>' + newCase);
-                
- 
-                Set<String> setOfUserId = new Set<String>();
-                Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-                CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
-                List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
-                EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
-                Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
-                System.debug('userList:::::::::::>' + userList);
-                for (User us : userList) {
-                    setOfUserId.add(us.Id);
-                }
-                System.debug('setOfUserId:::::::::::>' + setOfUserId);
-                
-                User usr = [SELECT Id,Name,Email From User Where Id=:newCase.OwnerId ];
-                // notification to user
-                notification.setBody('A New Case Has been created. Please check the details.');
-                notification.setTitle('Hi, A New Case Has been created.');
-                notification.setSenderId(usr.Id);
-                notification.setNotificationTypeId(customNotiList.Id); 
-                notification.setTargetId(newCase.Id);
-                // email to user
-                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-                
-                String body = temp.body;
-                body = body.replace('{!Case.Id}',newCase.Id);
-                mail.setPlainTextBody(body);
-                mail.setTemplateId(temp.id);
-                //mail.setTargetObjectId(newCase.Id);
-                mail.setToAddresses(new List<String> {usr.Email});
-                mailList.add(mail);
-                
-                System.debug('notification:::::::::::>' + notification);
-                notification.send(new Set<String> { newCase.OwnerId });
-                Messaging.sendEmail(mailList);
-                
-            
-            return newCase;
-        } catch (Exception e) {
-            System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
-            return null;
-        }
-    }
-
+    
     @AuraEnabled
     public static List<String> getCaseFieldSetListForCourierIssue(){
         try{
@@ -1800,43 +1861,46 @@ public class CaseHelperControllers {
         }
         return null;
     }
-
-   @AuraEnabled
-   public static List<OrderItem> getOrderIfItHasLineItems(String recId){
+    
+    @AuraEnabled
+    public static List<OrderItem> getOrderIfItHasLineItems(String recId){
         try {
             if(recId != null){
                 Case cserec = [SELECT Id,OrderId__c From Case Where Id=:recId ];
                 Order orderRec = new Order();
                 List<OrderItem> itmList = new List<OrderItem>();
                 Set<Id> subOrderIds = new Set<Id>();
-
+                
                 if(cseRec.OrderId__c != null){
                     orderRec = [SELECT Id, Name, ParentOrder__c FROM Order WHERE Id =: cseRec.OrderId__c];
+                    System.debug('orderRec==> ' + orderRec);
                 }
                 if(orderRec.ParentOrder__c == null){
                     List<Order> subOrderList = [SELECT Id FROM Order WHERE ParentOrder__c =: orderRec.Id];
+                    System.debug('subOrderList==> ' + subOrderList);
                     if(!subOrderList.isEmpty()){
                         for(Order orderRecord : subOrderList){
                             subOrderIds.add(orderRecord.Id);
                         }
+                        System.debug('subOrderIds==> ' + subOrderIds);
                     }
                     if(!subOrderIds.isEmpty()){
-                        itmList = [SELECT Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId IN: subOrderIds];
+                        itmList = [SELECT Brand__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber, Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId IN: subOrderIds];
                     }
                 }else{
-                    itmList = [SELECT Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId =: cserec.OrderId__c];
+                    itmList = [SELECT Brand__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber,  Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId =: cserec.OrderId__c];
                 }
-
+                
                 return itmList;
             }
-        
+            
         } catch (Exception e) {
             System.debug('The Error ::' + e.getMessage() + ' AND Error Line No :' + e.getLineNumber());
         }
         return null;
-   }
-
-   @AuraEnabled
+    }
+    
+    @AuraEnabled
     public static String updateSKUdetailsAndCreateRecordOfSKU( String recId,String ordId, List<Id> ordLinItmList, List<OrderItem> oliList) {
         system.debug('recId===>'+recId+ 'ordId========>'+ordId);
         system.debug('ordLinItmList==============>'+ordLinItmList);
@@ -1844,6 +1908,11 @@ public class CaseHelperControllers {
         try {
             List<String> skuString = new List<String>();
             List<Affected_SKU__c> affectedSKUsList = new List<Affected_SKU__c>(); 
+            // List<User> currUserList = [SELECT Id, Profile.Name FROM User WHERE Id=:UserInfo.getUserId() LIMIT 1];
+            // User currUserRec = new User();
+            // if(!currUserList.isEmpty()){
+            //     currUserRec = currUserList[0];
+            // }
             if(ordLinItmList.Size()>0){
                 update oliList;
                 Map<Id,OrderItem> ordMap = new Map<Id,OrderItem>([SELECT Id,SKU__c,Product_Name__c,Affected_Quantity__c,Quantity,Selling_Price__c,UnitPrice,Total_Selling_Price__c,Brand__c From OrderItem Where Id IN:ordLinItmList ]);
@@ -1858,59 +1927,120 @@ public class CaseHelperControllers {
                     affectedSKU.MRP__c = ordMap.get(key).UnitPrice;
                     affectedSKU.Selling_Price__c = ordMap.get(key).Selling_Price__c;
                     affectedSKU.Affected_Quantity__c = ordMap.get(key).Affected_Quantity__c;
+                    affectedSKU.Created_By__c = 'CS Team';
                     // Add other fields as needed for the Affected_SKU__c object
                     affectedSKUsList.add(affectedSKU);
                 }
             }
             
-           
-
+            
+            
             // Create a comma-separated string from the SKU values
             String commaSeparatedSKUs = String.join(skuString, ';');
             System.debug('commaSeparatedSKUs==> ' + commaSeparatedSKUs);
-
+            
             Case newCase = new Case();
             if (recId != null ) {
-
+                
                 if(skuString.size()>0){
                     newCase.SKU_Details__c = commaSeparatedSKUs;
                 }
                 if(ordId != null){
                     newCase.OrderId__c = ordId;
                 }
-                    newCase.Id = recId;
+                newCase.Id = recId;
                 
                 
                 update newCase;
                 system.debug('newCase.SKU_Details__c==============>'+newCase.SKU_Details__c);
-
-                
-                    List<String> splitSKUs = newCase.SKU_Details__c.split(';');
-                    system.debug('splitSKUs==============>'+splitSKUs);
                 
                 
-
+                List<String> splitSKUs = newCase.SKU_Details__c.split(';');
+                system.debug('splitSKUs==============>'+splitSKUs);
+                
+                
+                
                 // Create a list to store the Affected_SKU__c records
-
+                
                 // Iterate over the split SKUs and create Affected_SKU__c records
-            //   if(splitSKUs.size()>0){
-            //     for (String sku : splitSKUs) {
-            //         Affected_SKU__c affectedSKU = new Affected_SKU__c();
-            //         affectedSKU.Name = sku;
-            //         affectedSKU.Case__c = recId;
-            //         affectedSKU.Brand_Name__c = recId;
-            //         // Add other fields as needed for the Affected_SKU__c object
-            //         affectedSKUsList.add(affectedSKU);
-            //     }
-            //   }
-
+                //   if(splitSKUs.size()>0){
+                //     for (String sku : splitSKUs) {
+                //         Affected_SKU__c affectedSKU = new Affected_SKU__c();
+                //         affectedSKU.Name = sku;
+                //         affectedSKU.Case__c = recId;
+                //         affectedSKU.Brand_Name__c = recId;
+                //         // Add other fields as needed for the Affected_SKU__c object
+                //         affectedSKUsList.add(affectedSKU);
+                //     }
+                //   }
+                
                 // Insert the list of Affected_SKU__c records
                 insert affectedSKUsList;
-              system.debug('affectedSKUsList==============>'+affectedSKUsList);
+                system.debug('affectedSKUsList==============>'+affectedSKUsList);
             }
             return 'SUCCESS';
         } catch (Exception e) {
             System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
+            return null;
+        }
+    }
+    @AuraEnabled
+    public static boolean getRecentProgress(String recId) {
+        system.debug('recId=============>'+recId);
+        try {
+            // Fetch necessary fields in the SOQL query
+            boolean isCpdRemakrs = false;
+            List<Case_Progress_Detail__c> recentProgress = [
+                SELECT Id, OwnerId, IsDeleted, Name, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp,
+                LastActivityDate, LastViewedDate, LastReferencedDate, CS_Remarks__c, WH_Team_Remarks__c, Status__c, Case__c,
+                Current_Action__c
+                FROM Case_Progress_Detail__c
+                WHERE (Case__c = :recId AND Current_Action__c = 'Requested more Info from CS Team')
+                ORDER BY CreatedDate DESC LIMIT 1
+            ];
+            system.debug('recentProgress==============>'+recentProgress);
+            // Check if recentProgress exists and CS_Remarks__c is null
+            if(recentProgress.size()>0){
+                if(recentProgress != null && recentProgress[0].CS_Remarks__c == null){
+                    isCpdRemakrs = true;
+                }
+                system.debug('isCpdRemakrs==============>'+isCpdRemakrs);
+            }
+            
+            return isCpdRemakrs;
+        } catch (Exception e) {
+            // Log specific error details
+            System.debug('Error Message: ' + e.getMessage() + ' Error Line: ' + e.getLineNumber());
+            // Handle the exception according to your logic, e.g., return false or throw a custom exception
+            return false;
+        }
+    }
+    
+    
+    @AuraEnabled
+    public static String updateRecentProgress(String recId, String Remark) {
+        try {
+            Case_Progress_Detail__c recentProgress = [
+                SELECT Id, OwnerId, IsDeleted, Name, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp,
+                LastActivityDate, LastViewedDate, LastReferencedDate, CS_Remarks__c, WH_Team_Remarks__c, Status__c, Case__c,
+                Current_Action__c
+                FROM Case_Progress_Detail__c
+                WHERE Case__c = :recId AND Current_Action__c = 'Requested more Info from CS Team'
+                ORDER BY CreatedDate DESC LIMIT 1
+            ];
+            Case_Progress_Detail__c cpd = new Case_Progress_Detail__c();
+            cpd.Id = recentProgress.id;
+            cpd.CS_Remarks__c = Remark;
+            update cpd;
+            
+            Case cse = new Case();
+            cse.Id = recId;
+            cse.more_Info_Requested__c = false;
+            update cse;
+            
+            return 'SUCCESS';
+        } catch (Exception e) {
+            System.debug('Error Message: ' + e.getMessage() + ' Error Line: ' + e.getLineNumber());
             return null;
         }
     }

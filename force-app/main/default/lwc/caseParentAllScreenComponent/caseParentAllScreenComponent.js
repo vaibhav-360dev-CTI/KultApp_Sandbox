@@ -150,46 +150,46 @@ export default class CaseParentAllScreenComponent extends LightningElement {
                         if (result) {
                               if (result != null) {
                                     this.data = result;
-                                    if (this.data.RecordType.Name == 'Tech') {
+                                    if (this.data.Type == 'Tech') {
                                           this.isTechRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Brand') {
+                                    if (this.data.Type == 'Brand') {
                                           this.isBrandRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Campaign /Reviews') {
+                                    if (this.data.Type == 'Campaign /Reviews') {
                                           this.isCampaignReviewRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Content') {
+                                    if (this.data.Type == 'Content') {
                                           this.isContentRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Customer Profile') {
+                                    if (this.data.Type == 'Customer Profile') {
                                           this.isCustomerProfileRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'General Queries') {
+                                    if (this.data.Type == 'General Queries') {
                                           this.isGeneralQueryRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Marketing') {
+                                    if (this.data.Type == 'Marketing') {
                                           this.isMarketingRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Order Related') {
+                                    if (this.data.Type == 'Order Related') {
                                           this.isOrderRelatedIssues = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Pricing') {
+                                    if (this.data.Type == 'Pricing') {
                                           this.isPricingRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Policies and FAQs') {
+                                    if (this.data.Type == 'Policies and FAQs') {
                                           this.isPolicyFAQRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Pre Order') {
+                                    if (this.data.Type == 'Pre Order') {
                                           this.isPreOrderRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Perfume - category') {
+                                    if (this.data.Type == 'Perfume - category') {
                                           this.isPerfumeCategoryRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Service Related') {
+                                    if (this.data.Type == 'Service Related') {
                                           this.isServiceRealtedRecordType = true;
                                     }
-                                    if (this.data.RecordType.Name == 'Refund') {
+                                    if (this.data.Type == 'Refund') {
                                           this.isRefundRecordType = true;
                                     }
                               }

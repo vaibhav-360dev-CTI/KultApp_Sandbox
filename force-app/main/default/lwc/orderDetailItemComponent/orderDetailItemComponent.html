@@ -10,17 +10,50 @@
                               <td>
                                     <div class="slds-truncate">{orderNumber}</div>
                               </td>
-                        </tr>
-                        <tr>
                               <th style="padding: 5px 20px 5px;">Account Name:</th>
                               <td>
                                     <div class="slds-truncate">{accountName}</div>
+                              </td>
+                              
+                        </tr>
+                        <tr>
+                              <th style="padding: 5px 20px 5px;">Order Date:</th>
+                              <td>
+                                    <div class="slds-truncate">{orderDate}</div>
+                              </td>
+                              <th style="padding: 5px 20px 5px;">Shipping Number:</th>
+                              <td>
+                                    <div class="slds-truncate">{shippingNumber}</div>
                               </td>
                         </tr>
                               <tr>
                                     <th style="padding: 5px 20px 5px;">Order Value:</th>
                                     <td>
                                           <div class="slds-truncate">{orderValue}</div>
+                                    </td>
+                                    <th style="padding: 5px 20px 5px;">Order Status:</th>
+                                    <td>
+                                          <div class="slds-truncate">{orderStatus}</div>
+                                    </td>
+                              </tr>
+                              <tr>
+                                    <th style="padding: 5px 20px 5px;">Payment Id:</th>
+                                    <td>
+                                          <div class="slds-truncate">{paymentId}</div>
+                                    </td>
+                                    <th style="padding: 5px 20px 5px;">Login Number:</th>
+                                    <td>
+                                          <div class="slds-truncate">{loginNumber}</div>
+                                    </td>
+                              </tr>
+                              <tr>
+                                    <th style="padding: 5px 20px 5px;">Coupon Code:</th>
+                                    <td>
+                                          <div class="slds-truncate">{couponCode}</div>
+                                    </td>
+                                    <th style="padding: 5px 20px 5px;">Coupon Discount:</th>
+                                    <td>
+                                          <div class="slds-truncate">{discountValue}</div>
                                     </td>
                               </tr>
                              <!-- <tr>
@@ -53,6 +86,9 @@
                               <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 13%;">
                               <div class="slds-truncate" title="Quantity">Quantity</div>
                               </th>
+                              <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 13%;">
+                                    <div class="slds-truncate" title="Status">Status</div>
+                                    </th>
                   <!-- <th scope="col" style="background-color:#701CC3;color:white;">
                   <div class="slds-truncate" title="Unit Price">Unit Price</div>
                   </th>
@@ -82,6 +118,9 @@
                   </td>
                   <td data-label="Quantity">
                         <div class="slds-truncate" title={item.Quantity}>{item.Quantity}</div>
+                  </td>
+                  <td data-label="Status">
+                        <div class="slds-truncate" title={item.Status__c}>{item.Status__c}</div>
                   </td>
                   <!-- <td data-label="Unit Price">
                         <div class="slds-truncate" title={item.UnitPrice}>{item.UnitPrice}</div>

@@ -306,9 +306,6 @@ export default class CreateCaseFromAccount extends LightningElement {
     handleClick() {
         debugger;
         createCaseFromAccount({
-            RecordTypeName: this.selectedTypeValue,
-            Type: this.selectedRatingValue,
-            SubType: this.selectedIndustryValue,
             Subjt: this.Subject,
             recId: this.recordId,
             ordId: this.selectedRecordIdFromParent,

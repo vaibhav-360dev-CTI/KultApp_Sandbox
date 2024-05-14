@@ -75,6 +75,18 @@
                         onclick="{!c.handleClickRToOrders}" />
                 </div>
             </div>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Refund Cases"
+                        onclick="{!c.handleClickRefundCases}" />
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                  
+                </div>
+            </div>
         </aura:if>
 
         <div class="slds-form-element" aura:id="form-container">

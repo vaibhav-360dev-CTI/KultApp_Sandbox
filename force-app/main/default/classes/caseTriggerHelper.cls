@@ -90,16 +90,18 @@ System.debug(e.getMessage());
             
             
             List<Affected_SKU__c> affectedSKUsToInsert = new List<Affected_SKU__c>();
-            //Map<Id, List<String>> skuListByCaseId = new Map<Id, List<String>>();
             Map<Id, Id> caseIdByOrderId = new Map<Id, Id>();
             List<String> skuListToIterate = new List<String>();
+            List<String> skuOOSqtyListToIterate = new List<String>();
+            Map<Id,Map<String,Integer>> oosQtyBySkuByCaseId = new Map<Id,Map<String,Integer>>();
+            Map<Id, List<String>> skuListByCaseId = new Map<Id, List<String>>();
+            Map<Id, List<String>> skuOOSqtyListByCaseId = new Map<Id, List<String>>();
             
             Set<Id> orderIds = new Set<Id>();
             
             Map<Id, Map<String,OrderItem>> oliBySKUByCaseId = new Map<Id, Map<String,OrderItem>>();
             for(Case caseRec : caseList){
                 if(caseRec.OrderId__c != null){
-                    System.debug('caseRec.OrderId__c==> ' + caseRec.OrderId__c);
                     orderIds.add(caseRec.OrderId__c);
                     if(!caseIdByOrderId.containsKey(caseRec.OrderId__c)){
                         caseIdByOrderId.put(caseRec.OrderId__c, caseRec.Id);
@@ -110,30 +112,47 @@ System.debug(e.getMessage());
                     String SKUDetails = caseRec.SKU_Details__c.replaceAll('; ', ';');
                     skuList = SKUDetails.split(';');
                     skuListToIterate.addAll(skuList);
-                    // if(!skuListByCaseId.containsKey(caseRec.Id)){
-                    //     skuListByCaseId.put(caseRec.Id).addAll(skuList);
-                    // }
+                    skuListByCaseId.put(caseRec.Id, skuList);
+                }
+                if(caseRec.OOS_Quantity__c != null){
+                    List<String> oosQtyList = new List<String>();
+                    String SKUDetailsOOS = caseRec.OOS_Quantity__c.replaceAll('; ', ';');
+                    oosQtyList = SKUDetailsOOS.split(';');
+                    skuOOSqtyListToIterate.addAll(oosQtyList);
+                    skuOOSqtyListByCaseId.put(caseRec.Id, oosQtyList);
                 }
             }
-            System.debug('orderIds==> ' + orderIds);
-            System.debug('caseIdByOrderId==> ' + caseIdByOrderId);
+            for(Id caseId : skuListByCaseId.keySet()){
+                Integer lastSKUOOSindex = 0;
+                for(integer i =0; i<skuListByCaseId.get(caseId).Size(); i++){
+                    if(skuOOSqtyListByCaseId.containsKey(caseId) && skuOOSqtyListByCaseId.get(caseId).size()>=i){
+                        if(!oosQtyBySkuByCaseId.containsKey(caseId)){
+                            oosQtyBySkuByCaseId.put(caseId, new Map<String,Integer> {skuListByCaseId.get(caseId)[i] => Integer.valueOf(skuOOSqtyListByCaseId.get(caseId)[i])});
+                        }else{
+                            oosQtyBySkuByCaseId.get(caseId).put(skuListByCaseId.get(caseId)[i], Integer.valueOf(skuOOSqtyListByCaseId.get(caseId)[i]));
+                        }
+                        lastSKUOOSindex++;
+                    }else if(skuOOSqtyListByCaseId.containsKey(caseId) && skuOOSqtyListByCaseId.get(caseId).size()<i){
+                        if(!oosQtyBySkuByCaseId.containsKey(caseId)){
+                            oosQtyBySkuByCaseId.put(caseId, new Map<String,Integer> {skuListByCaseId.get(caseId)[i] => Integer.valueOf(skuOOSqtyListByCaseId.get(caseId)[lastSKUOOSindex])});
+                        }else{
+                            oosQtyBySkuByCaseId.get(caseId).put(skuListByCaseId.get(caseId)[i], Integer.valueOf(skuOOSqtyListByCaseId.get(caseId)[lastSKUOOSindex]));
+                        }
+                    }
+                }
+            }
             List<OrderItem> oliList = [SELECT Id, OrderId, UnitPrice, ListPrice, TotalPrice, Selling_Price__c, SKU__c, Refunded_Price__c, 
-                                       Brand__c, Product_Name__c, Total_Selling_Price__c, Is_Already_Utilized__c, Quantity FROM OrderItem WHERE OrderId IN: orderIds AND OrderId != null AND SKU__c IN: skuListToIterate];
-            System.debug('oliList==> ' + oliList);
-            System.debug('orderIds==================> ' + orderIds);
-            System.debug('skuListToIterate==================> ' + skuListToIterate);
+                                       Brand__c, Product_Name__c, Total_Selling_Price__c, Is_Already_Utilized__c, Quantity, Order.ParentOrder__c FROM OrderItem WHERE Order.ParentOrder__c IN: orderIds AND OrderId != null AND SKU__c IN: skuListToIterate];
             for(OrderItem oliRec : oliList){
-                if(caseIdByOrderId.containsKey(oliRec.OrderId)){
-                    String caseId = caseIdByOrderId.get(oliRec.OrderId);
+                if(caseIdByOrderId.containsKey(oliRec.Order.ParentOrder__c)){
+                    String caseId = caseIdByOrderId.get(oliRec.Order.ParentOrder__c);
                     if(oliBySKUByCaseId.containsKey(caseId)){
                         oliBySKUByCaseId.get(caseId).put(oliRec.SKU__c, oliRec);
                     }else{
                         oliBySKUByCaseId.put(caseId, new Map<String, OrderItem> {oliRec.SKU__c => oliRec});
                     }
                 }
-            }
-            System.debug('oliBySKUByCaseId==> ' + oliBySKUByCaseId);
-            
+            }            
             for(Id caseId : oliBySKUByCaseId.keySet()){
                 for(String sku : oliBySKUByCaseId.get(caseId).keySet()){
                     Affected_SKU__c affRec = new Affected_SKU__c();
@@ -141,6 +160,12 @@ System.debug(e.getMessage());
                     affRec.Brand_Name__c = oliBySKUByCaseId.get(caseId).get(sku).Brand__c;
                     affRec.MRP__c = oliBySKUByCaseId.get(caseId).get(sku).UnitPrice;
                     affRec.Product_Name__c = oliBySKUByCaseId.get(caseId).get(sku).Product_Name__c;
+                    affRec.Created_By__c = 'WH Team';
+                    if(oosQtyBySkuByCaseId.containsKey(caseId) && oosQtyBySkuByCaseId.get(caseId).containsKey(sku)){
+                        affRec.Affected_Quantity__c = oosQtyBySkuByCaseId.get(caseId).get(sku);
+                    }else{
+                        affRec.Affected_Quantity__c = 0;
+                    }
                     affRec.Name = sku;
                     affRec.Selling_Price__c = oliBySKUByCaseId.get(caseId).get(sku).Selling_Price__c;
                     affRec.Total_Quantity__c = oliBySKUByCaseId.get(caseId).get(sku).Quantity;
@@ -262,6 +287,7 @@ System.debug(e.getMessage());
                         emailList.add(caseRec.SuppliedEmail);
                     }
                 }
+                caseRec.Communication_Mode__c = 'Email';
             }
             List<Account> accList = [SELECT Id, Name, Email__c FROM Account WHERE Email__c IN: emailList ORDER BY LastModifiedDate DESC];
             Map<String, Account> accountsByEmail = new Map<String, Account>();

@@ -14,10 +14,10 @@ public class BulkCaseUploadController {
         if(!bulkQueueList.isEmpty()){
             bulkUploadQueue = bulkQueueList[0];
         }
-        System.debug('typeOfCase==> ' + typeOfCase);
-        Id orderRelatedRecordTypeId = Schema.getGlobalDescribe().get('Case').getDescribe().getRecordTypeInfosByName().get('Order Related').getRecordTypeId();
-        System.debug('fileData === >'+fileData);
-        System.debug('fields === >'+fields);
+        Id orderRelatedRecordTypeId = Schema.getGlobalDescribe().get('Case').getDescribe().getRecordTypeInfosByName().get('Outbound Case').getRecordTypeId();
+        System.debug('fileData CSV === >'+fileData);
+        System.debug('fields CSV === >'+fields);
+        System.debug('typeOfCase CSV === >'+typeOfCase);
         List<Asset> assetListToRecord = new List<Asset>();
         List<case> CaseListToRecord = new List<case>();
         map<String,String> apiNameByLabelName 	= new map<String,String>();
@@ -51,13 +51,16 @@ public class BulkCaseUploadController {
                         if(String.isNotBlank(inputvalues[l])) {
                             String value= inputvalues[l].length()>255 ? inputvalues[l].substring(0,254) : inputvalues[l];
                             if(value != null){
-                                System.debug('value ==== >'+value);
-                                System.debug('Label Name === >'+apiNameByLabelName.get(fields.get(l)));
-                                if(apiNameByLabelName.get(fields.get(l)) == 'Date_Of_Order__c'){
-                                    obj.put(String.valueOf(apiNameByLabelName.get(fields.get(l))),Date.valueOf(value));
+                               // System.debug('value ==== >'+value);
+                              //  System.debug('Label Name === >'+apiNameByLabelName.get(fields.get(l)));
+                                if(apiNameByLabelName.get(fields.get(l)) == 'Record_changed__c'){
+                                obj.put(apiNameByLabelName.get(fields.get(l)),Boolean.ValueOf(value));
+                                }
+                               else if(apiNameByLabelName.get(fields.get(l)) == 'Refund_Amount__c'){
+                                    obj.put(apiNameByLabelName.get(fields.get(l)),Decimal.ValueOf(value));
                                 }
                                 else{
-                                    obj.put(apiNameByLabelName.get(fields.get(l)),value);
+                                obj.put(apiNameByLabelName.get(fields.get(l)),value);
                                 }
                             }
                         }
@@ -66,11 +69,17 @@ public class BulkCaseUploadController {
                 }
             }
             System.debug('recordList Size ==== >'+recordList.size());
+            System.debug('recordList == >'+recordList);
             Set<String> orderNumbersSet = new Set<String>();
             List<Order> orderList = new List<Order>();
             Map<String, Order> orderByOrderNo = new Map<String, Order>();
+            Map<String,Order> mapOfOrderNameOrderRecord = new Map<String,Order>();
+            for(Order ord : [SELECT Id,Name,AccountId FROM Order]){
+                mapOfOrderNameOrderRecord.put(ord.Name,ord);
+            }
             if(recordList.size()>0){
                 for(sObject record : recordList){
+                    System.debug('record details == >'+record);
                     orderNumbersSet.add((String)record.get('Order__c'));
                 }
                 orderList = [SELECT Id, Name, AccountId FROM Order WHERE Name In: orderNumbersSet];
@@ -81,9 +90,9 @@ public class BulkCaseUploadController {
                 }
                 for(sObject record : recordList){
                     Case caseRec = new case();   
-                    if(record.get('Date_Of_Order__c') !=null){
-                        caseRec.Date_Of_Order__c =Date.valueOf((Date)record.get('Date_Of_Order__c'));
-                    }
+                    // if(record.get('Date_Of_Order__c') !=null){
+                    //     caseRec.Date_Of_Order__c =Date.valueOf((Date)record.get('Date_Of_Order__c'));
+                    // }
                     if(record.get('Order__c') !=null){
                         caseRec.Order__c = (String)record.get('Order__c');
                         if(orderByOrderNo.get((String)record.get('Order__c')) != null){
@@ -127,6 +136,60 @@ public class BulkCaseUploadController {
                      if(record.get('Actual_Order_Status__c') !=null){
                         caseRec.Actual_Order_Status__c = (String)record.get('Actual_Order_Status__c');
                     }
+
+                    // Mapping for Refund cases
+                     if(record.get('Email_Id__c') !=null){
+                        caseRec.Email_Id__c = String.valueOf(record.get('Email_Id__c'));
+                     }
+                     if(record.get('SuppliedPhone') !=null){
+                        caseRec.SuppliedPhone = String.valueOf(record.get('SuppliedPhone'));
+                     }
+                     if(record.get('OrderId__c') !=null){
+                       // System.debug('Order Map == >'+mapOfOrderNameOrderRecord.get((String)record.get('OrderId__c')));
+                       // System.debug('Order Record == >'+String.valueOf(record.get('OrderId__c')));
+                       // System.debug('Order Details == >'+mapOfOrderNameOrderRecord.get((String)record.get('OrderId__c')));
+                       // System.debug('Order Id == >'+mapOfOrderNameOrderRecord.get((String)record.get('OrderId__c')).Id);
+                        caseRec.OrderId__c = mapOfOrderNameOrderRecord.get((String)record.get('OrderId__c')).Id !=null ? mapOfOrderNameOrderRecord.get((String)record.get('OrderId__c')).Id : null;
+                     }
+                     if(record.get('Payment_ID__c') !=null){
+                        caseRec.Payment_ID__c = String.valueOf(record.get('Payment_ID__c'));
+                     }
+                     if(record.get('Status') !=null){
+                        caseRec.Status = String.valueOf(record.get('Status'));
+                     }
+                     if(record.get('Coupon_Code__c') !=null){
+                        caseRec.Coupon_Code__c = String.valueOf(record.get('Coupon_Code__c'));
+                     }
+                     if(record.get('Record_changed__c') !=null){
+                         if(record.get('Record_changed__c') == true){
+                            caseRec.Refund_Type__c = 'Full';
+                         }
+                         if(record.get('Record_changed__c') == false){
+                            caseRec.Refund_Type__c = 'Partial';
+                         }
+                     }
+                     if(record.get('Refund_Amount__c') !=null){
+                        caseRec.Refund_Amount__c = Decimal.valueOf(String.valueOf(record.get('Refund_Amount__c')));
+                     }
+                     if(typeOfCase == 'RefundCases'){
+                        if(record.get('Status') !=null){
+                            caseRec.Status	 = String.valueOf(record.get('Status'));
+                        }
+                    }else{
+                        caseRec.Status	 = 'New';
+                    }
+                     String sku1ID = String.valueOf(record.get('SKU_Details__c'));
+                     String sku2ID = String.valueOf(record.get('HashTag__c'));
+                     String appenValue = sku1ID +';'+sku2ID;
+                    System.debug('appenValue == >'+appenValue);
+                    caseRec.SKU_Details__c = appenValue;
+
+                    String skucancelQty1 = String.valueOf(record.get('Item__c'));
+                    String skucancelQty2 = String.valueOf(record.get('Landmark__c'));
+                    String appenValueQty = skucancelQty1 +';'+skucancelQty2;
+                    System.debug('appenValueQty == >'+appenValueQty);
+                    caseRec.OOS_Quantity__c = appenValueQty;
+
                     if(typeOfCase == 'PinCodeService'){
                         caseRec.RecordTypeId = orderRelatedRecordTypeId;
                         caseRec.Subject = 'Pin Code Not Serviceable';
@@ -146,13 +209,14 @@ public class BulkCaseUploadController {
                         caseRec.RecordTypeId = orderRelatedRecordTypeId;
                         caseRec.Subject = 'RTO Orders';
                     }
-                    caseRec.Status	 = 'New';
                     caseRec.Origin	 = 'Bulk Upload';
                     caseRec.OwnerId = bulkUploadQueue.Id;
                     CaseListToRecord.add(caseRec);
                 }  
                 if(CaseListToRecord.size()>0){
                     insert CaseListToRecord;
+                    System.debug('Case CSV Inserted Size == >'+CaseListToRecord.size());
+                    System.debug('Case Insert from CSV == >'+CaseListToRecord);
                     for(Case caseRec : CaseListToRecord){
                         Id userId = userinfo.getUserId();
                         System.debug('caseRec.OwnerId==> ' + caseRec.OwnerId);
@@ -185,7 +249,7 @@ public class BulkCaseUploadController {
     }
 
     // =============================================================================================================================================================================================================
-    // Method for Create Bulk Case Upload using XLSX File
+    // Method for Create Bulk Case Upload using XLSX File,  Note: Before changing any code ask me First
     @AuraEnabled 
     public static String insertBulkCaseXlsxFiel(String jsonString,String docTempName){
         System.debug('docTempName == >'+docTempName);
@@ -198,8 +262,9 @@ public class BulkCaseUploadController {
             Map<string,string> mapOfOrdernoOrderId = new Map<string,string>();
             Map<string,string> mapOfOrderIdAccountId = new Map<string,string>();
             List<Case> caseListToInsert = new List<Case>();
-            Id orderRelatedRecordTypeId = Schema.getGlobalDescribe().get('Case').getDescribe().getRecordTypeInfosByName().get('Order Related').getRecordTypeId();
-            for(Order ord : [SELECT Id,Name,AccountId FROM Order]){
+            Id orderRelatedRecordTypeId = Schema.getGlobalDescribe().get('Case').getDescribe().getRecordTypeInfosByName().get('Outbound Case').getRecordTypeId();
+            system.debug('orderRelatedRecordTypeId == >'+orderRelatedRecordTypeId);
+            for(Order ord : [SELECT Id,Name,AccountId,Account.Name FROM Order]){
                 if(ord.Name !=null){
                     mapOfOrdernoOrderId.put(ord.Name,ord.Id);
                 }
@@ -213,20 +278,19 @@ public class BulkCaseUploadController {
                 Map<String, Object> caseMap = (Map<String, Object>) obj;
                 System.debug('caseMap == >'+caseMap);
                 Case caseRec = new case(); 
-                if(caseMap.get('dateoforder') !=null){
-                    string dateString = String.valueOf(caseMap.get('dateoforder'));
-                    List<String> dateParts = dateString.split('-');
-                    Date myDate = Date.newInstance(
-                                  Integer.valueOf(dateParts[2]), // year
-                                  Integer.valueOf(dateParts[1]), // month
-                                  Integer.valueOf(dateParts[0]) // day
-                            );
-                            System.debug('Date Value == >'+myDate);
-                      if(myDate !=null){
-                        caseRec.Date_Of_Order__c = myDate;
-                      }      
-                }
-
+                // if(caseMap.get('dateoforder') !=null){
+                //     string dateString = String.valueOf(caseMap.get('dateoforder'));
+                //     List<String> dateParts = dateString.split('-');
+                //     Date myDate = Date.newInstance(
+                //                   Integer.valueOf(dateParts[2]), // year
+                //                   Integer.valueOf(dateParts[1]), // month
+                //                   Integer.valueOf(dateParts[0]) // day
+                //             );
+                //             System.debug('Date Value == >'+myDate);
+                //       if(myDate !=null){
+                //         caseRec.Date_Of_Order__c = myDate;
+                //       }      
+                // }
                 if(caseMap.get('orderno') !=null){
                     OrderNo = String.valueOf(caseMap.get('orderno'));
                }
@@ -276,7 +340,61 @@ public class BulkCaseUploadController {
                     if(caseMap.get('orderstatus') == 'Pending' || caseMap.get('orderstatus') == 'Processing' || caseMap.get('orderstatus') == 'Shipped' || caseMap.get('orderstatus') == 'Delivered' || caseMap.get('orderstatus') == 'Cancelled' || caseMap.get('orderstatus') == 'On Hold' || caseMap.get('orderstatus') == 'Completed' || caseMap.get('orderstatus') == 'Returned' ||  caseMap.get('orderstatus') == 'Refunded' || caseMap.get('orderstatus') == 'Other')
                     caseRec.Actual_Order_Status__c = String.valueOf(caseMap.get('orderstatus'));
                 }
-                caseRec.Status	 = 'New';
+
+                // Redund cases Mapping
+                if(caseMap.get('couponcode') !=null){
+                    caseRec.Coupon_Code__c = String.valueOf(caseMap.get('couponcode'));
+                }
+                if(caseMap.get('email') !=null){
+                    caseRec.Email_Id__c = String.valueOf(caseMap.get('email'));
+                }
+                if(caseMap.get('isfullrefund') !=null){
+                    if(caseMap.get('isfullrefund') == true){
+                        caseRec.Refund_Type__c = 'Full';
+                    }
+                    if(caseMap.get('isfullrefund') == false){
+                        caseRec.Refund_Type__c = 'Partial';
+                    }
+                }
+                if(caseMap.get('orderid') !=null){
+                    System.debug('AccountId == >'+mapOfOrderIdAccountId.get(String.valueOf(caseMap.get('orderid'))));
+                    caseRec.AccountId =mapOfOrderIdAccountId.get(String.valueOf(caseMap.get('orderid'))) !=null ? mapOfOrderIdAccountId.get(String.valueOf(caseMap.get('orderid'))) : null;
+                }
+                // if(caseMap.get('phoneno') !=null){
+                //     caseRec.SuppliedPhone = String.valueOf(caseMap.get('phoneno'));
+                // }
+                if(caseMap.get('razorpaypaymentid') !=null){
+                    caseRec.Payment_ID__c = String.valueOf(caseMap.get('razorpaypaymentid'));
+                }
+                if(caseMap.get('refundamount') !=null){
+                    caseRec.Refund_Amount__c = (Decimal)caseMap.get('refundamount');
+                }
+                if(caseMap.get('phoneno') !=null){
+                    caseRec.SuppliedPhone = String.valueOf(caseMap.get('phoneno'));
+                }
+                if(caseMap.get('orderid') !=null){
+                    caseRec.OrderId__c = mapOfOrdernoOrderId.get(String.valueOf(caseMap.get('orderid'))) != null ? mapOfOrdernoOrderId.get(String.valueOf(caseMap.get('orderid'))) : null;
+                }
+                if(docTempName =='RefundCases'){
+                    if(caseMap.get('easyecomorderstatus') !=null){
+                        caseRec.Status = String.valueOf(caseMap.get('easyecomorderstatus'));
+                    }
+                }else{
+                    caseRec.Status	 = 'New';
+                }
+
+                String sku1ID = String.valueOf(caseMap.get('sku1id'));
+                String sku2ID = String.valueOf(caseMap.get('sku2id'));
+                String appenValue = sku1ID +';'+sku2ID;
+                System.debug('appenValue == >'+appenValue);
+                caseRec.SKU_Details__c = appenValue;
+
+                String skucancelQty1 = String.valueOf(caseMap.get('sku1cancelledquantity'));
+                String skucancelQty2 = String.valueOf(caseMap.get('sku2cancelledquantity'));
+                String appenValueQty = skucancelQty1 +';'+skucancelQty2;
+                System.debug('appenValueQty == >'+appenValueQty);
+                caseRec.OOS_Quantity__c = appenValueQty;
+
                 caseRec.Origin	 = 'Bulk Upload';
                 if(docTempName == 'PinCodeService'){
                     caseRec.RecordTypeId = orderRelatedRecordTypeId;

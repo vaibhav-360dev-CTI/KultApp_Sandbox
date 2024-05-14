@@ -55,8 +55,8 @@
                                 selected="{!option==v.caseRec.Customer_s_Request__c}" />
                         </aura:iteration>
                     </lightning:select>
-                    <lightning:input name="remarks" label="Enter Remarks" type="text"
-                        value="{!v.caseRec.CSE_Remarks__c}" required="true"></lightning:input>
+                    <lightning:textarea name="remarks" label="Enter Remarks" type="text" class="textArea"
+                        value="{!v.caseRec.CSE_Remarks__c}" required="true"></lightning:textarea>
                     <aura:if isTrue="{!v.showAddressField}">
                         <lightning:input type="text" label="Street"
                             value="{!v.caseRec.Address_With_Pin_Code__Street__s}" />
@@ -102,8 +102,8 @@
                                 class="columnChild" disabled="true" />
                             <!-- <lightning:input type="text" label="Case Type" value="{!v.caseRec.Sub_Type__c}" class="columnChild"/> -->
                         </div>
-                        <lightning:input name="remarks" label="Enter Remarks" type="text"
-                            value="{!v.caseRec.CSE_Remarks__c}" required="true"></lightning:input>
+                        <lightning:textarea name="remarks" label="Enter Remarks" type="text"
+                            value="{!v.caseRec.CSE_Remarks__c}" required="true"></lightning:textarea>
                     </aura:set>
                 </aura:if>
             </aura:set>

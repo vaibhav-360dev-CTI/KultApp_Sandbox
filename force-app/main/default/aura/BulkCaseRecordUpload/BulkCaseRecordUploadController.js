@@ -56,6 +56,15 @@
         component.set("v.showScondScreen",true);
         component.set("v.showFirstScreen",false);
     },
+
+    handleClickRefundCases: function (component, event, helper) {
+        debugger;
+        var tempName = 'RefundCases';
+        component.set("v.tempNameToDownload",tempName);
+        component.set("v.showScondScreen",true);
+        component.set("v.showFirstScreen",false);
+    },
+
     handleClickDelayInDelivery : function(component,event,helper){
         debugger;
         var tempName = 'DeleayInDelivery';

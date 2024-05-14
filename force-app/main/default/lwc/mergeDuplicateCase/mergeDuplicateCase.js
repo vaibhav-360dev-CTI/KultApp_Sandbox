@@ -35,7 +35,7 @@ export default class MergeDuplicateCase extends LightningElement {
     connectedCallback() {
         setTimeout(() => {
             this.callApexMethod();
-            this.callApexMethod2();
+            //this.callApexMethod2();
         }, 300);
     }
 

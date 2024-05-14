@@ -6,22 +6,22 @@
         lineDivider =  '\n';
         var tempName =  component.get("v.docTempName"); 
         if(tempName == 'OutOfStock'){
-            keys = ['Order No','Date Of Order','Shipping Mobile No','Reason','Item','OOS Quantity','OOS SKU Code','Remarks'];
+            keys = ['Order No','Shipping Mobile No','Reason','Item','OOS Quantity','OOS SKU Code','Remarks'];
         }
         if(tempName == 'PinCodeService'){
-             keys = ['Order No','Date Of Order','Shipping Mobile No','Reason','Current PIN Code'];
+             keys = ['Order No','Shipping Mobile No','Reason','Current PIN Code'];
         }
         if(tempName == 'DeliveryIssue'){
-             keys = ['Order No','Date Of Order','Shipping Mobile No','Reason','Current PIN Code','City Name'];
+             keys = ['Order No','Shipping Mobile No','Reason','Current PIN Code','City Name'];
         }
          if(tempName == 'LostInTransit'){
-             keys = ['Order No','Date Of Order','Shipping Mobile No','Reason','Courier Partner','AWB Number'];
+             keys = ['Order No','Shipping Mobile No','Reason','Courier Partner','AWB Number'];
         }
          if(tempName == 'DeleayInDelivery'){
-             keys = ['Order No','Date Of Order','Shipping Mobile No','Reason','Courier Partner','AWB Number'];
+             keys = ['Order No','Shipping Mobile No','Reason','Courier Partner','AWB Number'];
         }
         if(tempName == 'RToOrders'){
-             keys = ['Order No','Date Of Order','Shipping Mobile No','Reason','Remarks','Order Status'];
+             keys = ['Order No','Shipping Mobile No','Reason','Remarks','Order Status'];
         }
         
         csvStringResult = '';

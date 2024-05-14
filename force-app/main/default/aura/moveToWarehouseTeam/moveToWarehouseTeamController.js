@@ -39,7 +39,7 @@
                 }
                 component.set('v.countryList', countryOptions);
                 component.set('v.statesByCountry', statesByCountry);
-                if(caseRec.Sub_Type__c == null || caseRec.Sub_Sub_Type__c == null){
+                if(caseRec.Sub_Type__c == null || caseRec.Type == null){
                     helper.showToast('Please Enter Case Details Before Moving the Case', 'Alert', 'alert');
                     var dismissActionPanel = $A.get("e.force:closeQuickAction");
                     dismissActionPanel.fire();

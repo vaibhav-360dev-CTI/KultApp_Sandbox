@@ -3,6 +3,7 @@ public class CustomLookupLwcController {
     @AuraEnabled(cacheable=true)
     public static List<sObject> getLookupValues(  String searchKeyWord, String objectAPIName, String whereCondition, String fieldNames, Integer customLimit ) {
         try{
+            System.debug('whereCondition==> ' + whereCondition);
             String searchKey = '%'+ searchKeyWord + '%';        
             List<sObject> returnList = new List<sObject>();
             String sQuery = 'SELECT Id, Name';

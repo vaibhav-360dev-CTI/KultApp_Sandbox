@@ -6,6 +6,7 @@ import getFieldDependencies from '@salesforce/apex/CaseHelperControllers.depende
 import getOrderItems from '@salesforce/apex/CaseHelperControllers.getOrderItems';
 import createCaseInLiveChatTranscript from '@salesforce/apex/CaseHelperControllers.createCaseInLiveChatTranscript';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import CaseBaseURL from '@salesforce/label/c.CaseBaseURL';
 import { RefreshEvent } from 'lightning/refresh';
 import { getRecordNotifyChange } from "lightning/uiRecordApi";
 
@@ -25,6 +26,7 @@ export default class CustomRoutePage extends LightningElement {
     selectedUsr;
     inpName;
     selectedOrd;
+    CaseBaseURL = CaseBaseURL;
     @track orderHasItemAvailable = false;
     @track AllOrderItems = [];
     @track isModalOpen = true;
@@ -32,6 +34,9 @@ export default class CustomRoutePage extends LightningElement {
     @track selectedOrderId = [];
     @track show1stPage = true;
     @track show2ndPage = false;
+    @track show3rdPage = false;
+    @track withoutOrder = true;
+    @track withOrder = false;
     data;
     error;
 
@@ -72,7 +77,7 @@ export default class CustomRoutePage extends LightningElement {
     }
     callAllOrderItems() {
         debugger;
-        getOrderItems({ OrdId: this.selectedOrd })
+        getOrderItems({ OrdId: this.selectedRecordIdFromParent })
 
             .then(result => {
                 result.forEach(item => {
@@ -162,6 +167,31 @@ export default class CustomRoutePage extends LightningElement {
         }
     }
 
+    hanldeProgressValueChange(event) {
+        debugger;
+        this.selectedRecordIdFromParent = event.detail;
+        if(this.selectedRecordIdFromParent != 'NULL'){
+        if(this.selectedRecordIdFromParent != null && this.selectedRecordIdFromParent != '' && this.selectedRecordIdFromParent != undefined){
+            this.withOrder = true;
+            this.withoutOrder = false;
+        }
+        this.callAllOrderItems();
+        }
+        if(this.selectedRecordIdFromParent == 'NULL'){
+             this.withoutOrder = true;
+             this.withOrder = false;
+        }else{
+             this.withoutOrder = false;
+             this.withOrder = true;
+        }
+        
+    }
+
+    hanldeAccountValueChange(event){
+        debugger;
+        this.selectedAcc = event.detail;
+    }
+
     handleRatingChange(event) {
         debugger;
         try {
@@ -187,6 +217,7 @@ export default class CustomRoutePage extends LightningElement {
     closeAction() {
         debugger;
         this.dispatchEvent(new CloseActionScreenEvent());
+        
     }
 
     closeModal() {
@@ -195,7 +226,16 @@ export default class CustomRoutePage extends LightningElement {
     }
     handleNext() {
         debugger;
-        this.show2ndPage = true;
+        if(this.selectedRecordIdFromParent != null){
+            this.show2ndPage = true;
+            this.withOrder = true;
+            this.withoutOrder = false;
+        }if(this.selectedRecordIdFromParent == null){
+            this.show3rdPage = true;
+            this.withOrder = false;
+            this.withoutOrder = true;
+        }
+        
         this.show1stPage = false;
     }
 
@@ -203,6 +243,11 @@ export default class CustomRoutePage extends LightningElement {
         debugger;
         this.show1stPage = true;
         this.show2ndPage = false;
+        this.show3rdPage = false;
+        this.withOrder = false;
+        this.withoutOrder = true;
+        getRecordNotifyChange([{recordId: this.recordId}]);
+        this.dispatchEvent(new RefreshEvent());
     }
     handlesChange(event) {
         debugger;
@@ -243,9 +288,9 @@ export default class CustomRoutePage extends LightningElement {
         if (this.inpName == 'selectedContact') {
             this.selectedCon = event.detail.recordId;
         }
-        if (this.inpName == 'selectedAccount') {
-            this.selectedAcc = event.detail.recordId;
-        }
+        // if (this.inpName == 'selectedAccount') {
+        //     this.selectedAcc = event.detail.recordId;
+        // }
         if (this.inpName == 'selectedUser') {
             this.selectedUsr = event.detail.recordId;
         }
@@ -260,63 +305,67 @@ export default class CustomRoutePage extends LightningElement {
 
     handleClick() {
         debugger;
-        if (this.selectedTypeValue != null && this.selectedTypeValue != 'Undefined' && this.selectedTypeValue != ' ') {
-            if (this.selectedRatingValue != null && this.selectedRatingValue != 'Undefined' && this.selectedRatingValue != ' ') {
-                if (this.selectedIndustryValue != null && this.selectedIndustryValue != 'Undefined' && this.selectedIndustryValue != ' ') {
-                    createCaseInLiveChatTranscript({
-                        RecordTypeName: this.selectedTypeValue,
-                        Type: this.selectedRatingValue,
-                        SubType: this.selectedIndustryValue,
-                        Subjt: this.Subject,
-                        recId: this.recordId,
-                        ownId: this.selectedUsr,
-                        AccId: this.selectedAcc,
-                        conId: this.selectedCon,
-                        conNumber: this.contacts.Contact_Number__c
-                    })
-                        .then(result => {
-                            if (result) {
-                                this.data = result;
-                                this.isModalOpen = false;
-                                const event = new ShowToastEvent({
-                                    title: 'Case Created ',
-                                    variant: 'success',
-                                    message: 'The case has been created successfully.'
-                                });
-                                this.dispatchEvent(event);
-                                this.dispatchEvent(new CloseActionScreenEvent());
-                                this.dispatchEvent(new RefreshEvent());
-                                getRecordNotifyChange([{ recordId: this.recordId }]);
-                            }
-                        })
-                        .catch(error => {
-                            this.error = error;
-                            console.log('error == >' + error);
-                        });
-                } else {
+        createCaseInLiveChatTranscript({
+            // RecordTypeName: this.selectedTypeValue,
+            // Type: this.selectedRatingValue,
+            // SubType: this.selectedIndustryValue,
+            Subjt: this.Subject,
+            recId: this.recordId,
+            ownId: this.selectedUsr,
+            AccId: this.selectedAcc,
+            conId: this.selectedCon,
+            ordId: this.selectedRecordIdFromParent,
+            conNumber: this.contacts.Contact_Number__c
+        })
+            .then(result => {
+                if (result) {
+                    this.data = result;
+                    this.isModalOpen = false;
                     const event = new ShowToastEvent({
-                        title: 'Case Creation is Unsuccessfull',
-                        variant: 'error',
-                        message: 'Please Fill the Sub-Type.'
+                        title: 'Case Created ',
+                        variant: 'success',
+                        message: 'The case has been created successfully.'
                     });
                     this.dispatchEvent(event);
+                    this.dispatchEvent(new CloseActionScreenEvent());
+                    this.dispatchEvent(new RefreshEvent());
+                    getRecordNotifyChange([{ recordId: this.recordId }]);
+                    this.dispatchEvent(new RefreshEvent());
+                    window.location.replace(this.CaseBaseURL + result.Id + '/view');
                 }
-            } else {
-                const event = new ShowToastEvent({
-                    title: 'Case Creation is Unsuccessfull',
-                    variant: 'error',
-                    message: 'Please Fill the Type .'
-                });
-                this.dispatchEvent(event);
-            }
-        }
-        else {
-            const event = new ShowToastEvent({
-                title: 'Case Creation is Unsuccessfull',
-                variant: 'error',
-                message: 'Please Fill the Record type.'
+            })
+            .catch(error => {
+                this.error = error;
+                console.log('error == >' + error);
             });
-            this.dispatchEvent(event);
-        }
+        // if (this.selectedTypeValue != null && this.selectedTypeValue != 'Undefined' && this.selectedTypeValue != ' ') {
+        //     if (this.selectedRatingValue != null && this.selectedRatingValue != 'Undefined' && this.selectedRatingValue != ' ') {
+        //         if (this.selectedIndustryValue != null && this.selectedIndustryValue != 'Undefined' && this.selectedIndustryValue != ' ') {
+                    
+        //         } else {
+        //             const event = new ShowToastEvent({
+        //                 title: 'Case Creation is Unsuccessfull',
+        //                 variant: 'error',
+        //                 message: 'Please Fill the Sub-Type.'
+        //             });
+        //             this.dispatchEvent(event);
+        //         }
+        //     } else {
+        //         const event = new ShowToastEvent({
+        //             title: 'Case Creation is Unsuccessfull',
+        //             variant: 'error',
+        //             message: 'Please Fill the Type .'
+        //         });
+        //         this.dispatchEvent(event);
+        //     }
+        // }
+        // else {
+        //     const event = new ShowToastEvent({
+        //         title: 'Case Creation is Unsuccessfull',
+        //         variant: 'error',
+        //         message: 'Please Fill the Record type.'
+        //     });
+        //     this.dispatchEvent(event);
+        // }
     }
 }

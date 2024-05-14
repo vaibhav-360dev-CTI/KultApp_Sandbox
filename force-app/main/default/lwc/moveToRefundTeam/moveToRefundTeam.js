@@ -3,7 +3,8 @@ import getOrderLineItems from '@salesforce/apex/moveToRefundTeamController.getOr
 import updateOrderAndCaseFields from '@salesforce/apex/moveToRefundTeamController.updateOrderAndCaseFields';
 import { getPicklistValues, getObjectInfo } from 'lightning/uiObjectInfoApi';
 import Case from '@salesforce/schema/Case';
-import refundReasons from '@salesforce/schema/Case.Refund_Reasons__c';
+import OrderItem from '@salesforce/schema/OrderItem';
+import refundReasons from '@salesforce/schema/OrderItem.Refund_Reasons__c';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { RefreshEvent } from 'lightning/refresh';
@@ -23,6 +24,7 @@ export default class MoveToRefundTeam extends LightningElement {
     @track contactNumber;
     @track isFullSelected = false;
     @track isPartialSelected = false;
+    @track isSpecialCaseRefundSelected = false;
     @track productName;
     @track totalQuantity;
     @track refundQuantity;
@@ -50,7 +52,9 @@ export default class MoveToRefundTeam extends LightningElement {
 
     @track refundOptions = [
         { label: 'Full', value: 'Full' },
-        { label: 'Partial', value: 'Partial' }];
+        { label: 'Partial', value: 'Partial' },
+        { label: 'Special Case Refund', value: 'Special Case Refund'}];
+        
 
 
     @track refundtypeOLIOptions = [
@@ -82,7 +86,10 @@ export default class MoveToRefundTeam extends LightningElement {
         debugger;
         this.OliRefundReason = event.target.value;
         const rowIndex = parseInt(event.target.dataset.rowIndex);
-        this.records[rowIndex].OliRefundReason = event.target.value;
+        //this.records[rowIndex].OliRefundReason = event.target.value;
+        for(var i in this.records){
+            this.records[i].OliRefundReason = event.target.value;
+        }
     }
 
     handelOLIRefundReasonChange1(event) {
@@ -97,7 +104,10 @@ export default class MoveToRefundTeam extends LightningElement {
         this.inpName = event.target.name;
         if (this.inpName == 'RefundReasonFull') {
             const rowIndex = parseInt(event.target.dataset.rowIndex);
-        this.records[rowIndex].refundreasonPickListValue = event.target.value;
+        //this.records[rowIndex].refundreasonPickListValue = event.target.value;
+        for(var i in this.records){
+            this.records[i].refundreasonPickListValue = event.target.value;
+        }
         }
         if (this.inpName == 'RefundReasonPartial') {
         const rowIndex = parseInt(event.target.dataset.rowIndex);
@@ -123,9 +133,9 @@ export default class MoveToRefundTeam extends LightningElement {
 
 
     // Wire service to get object info and picklist values
-    @wire(getObjectInfo, { objectApiName: Case })
+    @wire(getObjectInfo, { objectApiName: OrderItem })
     objectInfo;
-    @wire(getPicklistValues, { recordTypeId: '$objectInfo.data.defaultRecordTypeId', fieldApiName: refundReasons })
+    @wire(getPicklistValues, { recordTypeId: '012000000000000AAA', fieldApiName: refundReasons })
     wiredIndustryData({ error, data }) {
         if (data) {
             this.optionsCategory = data.values;
@@ -133,100 +143,6 @@ export default class MoveToRefundTeam extends LightningElement {
             console.error('Error in Industry picklist field', JSON.stringify(error));
         }
     }
-
-
-    // @wire(getOrderLineItems, { caseId: '$recordId' })
-    // wiredAccount({ error, data }) {
-    //     debugger;
-    //     if (data) {
-    //         if(data.orderRecord == null){
-    //             const event = new ShowToastEvent({
-    //                 title: 'Error',
-    //                 message: 'No Order Found on the Case.',
-    //                 variant: 'error',
-    //             });
-    //             this.dispatchEvent(event);
-    //             this.dispatchEvent(new CloseActionScreenEvent());
-    //             getRecordNotifyChange([{ recordId: this.recordId }]);
-    //         }
-    //         this.caseRefund = data.orderRecord.Refund_Type__c;
-    //         this.refundReason = data.orderRecord.Refund_Reason__c;
-    //         this.Coupon = data.orderRecord.Coupon__c;
-    //         this.ContactPhone = data.caseRecord.Contact_Number__c;
-    //         this.refundteamMemeber = data.caseRecord.RefundTeamMember__c;
-    //         this.userdata = data.caseRecord.RefundTeamMember__c;
-    //         this.refundamount = data.caseRecord.OrderId__r.Refund_Amount__c;
-    //         this.paidamount = data.caseRecord.OrderId__r.Paid_Amount__c;
-
-    //         if ((data.caseRecord.Sub_Type__c == undefined || data.caseRecord.Sub_Type__c == null || data.caseRecord.Sub_Type__c == '') || (data.caseRecord.Sub_Sub_Type__c == undefined || data.caseRecord.Sub_Sub_Type__c == null || data.caseRecord.Sub_Sub_Type__c == '')) {
-    //                 const event = new ShowToastEvent({
-    //                     title: 'Alert',
-    //                     message: 'Please Enter Case Details before Assigning to Refund Team.',
-    //                     variant: 'warning',
-    //                 });
-    //                 this.dispatchEvent(event);
-    //                 this.dispatchEvent(new CloseActionScreenEvent());
-    //                 getRecordNotifyChange([{ recordId: this.recordId }]);
-    //         }
-
-
-    //         if (this.caseRefund == 'Full') {
-    //             this.refundtypeOli = 'Full';
-    //             this.isFullSelected = true;
-    //             this.isPartialSelected = false;
-    //         } else if (this.caseRefund === 'Partial') {
-    //             this.isFullSelected = false;
-    //             this.isPartialSelected = true;
-    //         } else {
-    //             this.isFullSelected = false;
-    //             this.isPartialSelected = false;
-    //         }
-
-    //         this.records = data.orderItems.map(item => ({
-    //             productName: item.Product2.Name,
-    //             Id: item.Id,
-    //             totalQuantity: item.Quantity,
-    //             refundQuantity: item.Quantity,
-    //             //totalprice: item.TotalPrice,
-    //             isAlreadyUtilized : item.Is_Already_Utilized__c,
-    //             totalprice: item.Total_Selling_Price__c,
-    //             refundreasonPickListValue: item.Refund_Reasons__c,
-    //              refundPrice: item.TotalPrice,
-    //             skudetail: item.SKU__c,
-    //             OliRefundReason: item.Refund_Reason__c,
-    //             refundtypeOli: 'Full'
-    //         }));
-    //         debugger;
-
-    //         this.records2 = data.orderItems.map(item => ({
-    //             productName: item.Product2.Name,
-    //             Id: item.Id,
-    //             totalQuantity: item.Quantity,
-    //             refundQuantity: item.Refund_Quantity__c,
-    //             //totalprice: item.TotalPrice,
-    //             isAlreadyUtilized : item.Is_Already_Utilized__c,
-    //             totalprice: item.Total_Selling_Price__c,
-    //              refundPrice: item.Refund_Price__c,
-    //             skudetail: item.SKU__c,
-    //             OliRefundReason: item.Refund_Reason__c,
-    //             refundtypeOli: item.Refund_Type__c,
-    //             refundreasonPickListValue: item.Refund_Reasons__c,
-    //             editable: true,
-    //             checkboxVal2: false,
-    //             disableReason: true
-    //         }));
-
-    //     } else{
-    //         const event = new ShowToastEvent({
-    //             title: 'Error',
-    //             message: 'No Order Found on the Case.',
-    //             variant: 'error',
-    //         });
-    //         this.dispatchEvent(event);
-    //         this.dispatchEvent(new CloseActionScreenEvent());
-    //         getRecordNotifyChange([{ recordId: this.recordId }]);
-    //     }
-    // }
 
 
     connectedCallback() {
@@ -273,7 +189,7 @@ export default class MoveToRefundTeam extends LightningElement {
                     this.refundamount = data.caseRecord.OrderId__r.Refund_Amount__c;
                     this.paidamount = data.caseRecord.OrderId__r.Paid_Amount__c;
 
-                    if ((data.caseRecord.Sub_Type__c == undefined || data.caseRecord.Sub_Type__c == null || data.caseRecord.Sub_Type__c == '') || (data.caseRecord.Sub_Sub_Type__c == undefined || data.caseRecord.Sub_Sub_Type__c == null || data.caseRecord.Sub_Sub_Type__c == '')) {
+                    if ((data.caseRecord.Sub_Type__c == undefined || data.caseRecord.Sub_Type__c == null || data.caseRecord.Sub_Type__c == '') || (data.caseRecord.Type == undefined || data.caseRecord.Type == null || data.caseRecord.Type == '')) {
                         const event = new ShowToastEvent({
                             title: 'Alert',
                             message: 'Please Enter Case Details before Assigning to Refund Team.',
@@ -288,12 +204,22 @@ export default class MoveToRefundTeam extends LightningElement {
                         this.refundtypeOli = 'Full';
                         this.isFullSelected = true;
                         this.isPartialSelected = false;
+                        this.isSpecialCaseRefundSelected = false;
                     } else if (this.caseRefund === 'Partial') {
+                        this.refundtypeOli = 'Partial';
                         this.isFullSelected = false;
                         this.isPartialSelected = true;
-                    } else {
+                        this.isSpecialCaseRefundSelected = false;
+                    } else if(this.caseRefund === 'Special Case Refund'){
+                        this.refundtypeOli = 'Special Case Refund';
+                        this.isFullSelected = false;
+                        this.isPartialSelected = true;
+                        this.isSpecialCaseRefundSelected = false;
+                    }
+                    else {
                         this.isFullSelected = false;
                         this.isPartialSelected = false;
+                        this.isSpecialCaseRefundSelected = false;
                     }
 
                     this.records = data.orderItems.map(item => ({
@@ -303,11 +229,12 @@ export default class MoveToRefundTeam extends LightningElement {
                         refundQuantity: item.Quantity,
                         //totalprice: item.TotalPrice,
                         isAlreadyUtilized: item.Is_Already_Utilized__c,
-                        totalprice: item.Total_Selling_Price__c,
+                        totalprice: item. UnitPrice,                      
                         refundreasonPickListValue: item.Refund_Reasons__c,
                         refundPrice: item.TotalPrice,
                         skudetail: item.SKU__c,
                         OliRefundReason: item.Refund_Reason__c,
+                        sellingprice: item.Selling_Price__c,
                         refundtypeOli: 'Full'
                     }));
                     debugger;
@@ -319,12 +246,13 @@ export default class MoveToRefundTeam extends LightningElement {
                         refundQuantity: item.Refund_Quantity__c,
                         //totalprice: item.TotalPrice,
                         isAlreadyUtilized: item.Is_Already_Utilized__c,
-                        totalprice: item.Total_Selling_Price__c,
+                        totalprice: item.UnitPrice,     //Total_Selling_Price__c,
                         refundPrice: item.Refund_Price__c,
                         skudetail: item.SKU__c,
                         OliRefundReason: item.Refund_Reason__c,
                         refundtypeOli: item.Refund_Type__c,
                         refundreasonPickListValue: item.Refund_Reasons__c,
+                        sellingprice: item.Selling_Price__c,
                         editable: true,
                         checkboxVal2: false,
                         disableReason: true
@@ -365,8 +293,9 @@ export default class MoveToRefundTeam extends LightningElement {
             this.refundtypeOli = 'Full';
             this.isFullSelected = true;
             this.isPartialSelected = false;
+            this.isSpecialCaseRefundSelected = false;
         }
-        else {
+        else if(event.target.value == 'Partial'){
             this.caseRefund = 'Partial';
             for (var i = 0; i < this.records2.length; i++) {
                 if(this.records2[i].refundQuantity == null){
@@ -376,6 +305,20 @@ export default class MoveToRefundTeam extends LightningElement {
             this.refundtypeOli = 'Partial';
             this.isFullSelected = false;
             this.isPartialSelected = true;
+            this.isSpecialCaseRefundSelected = false;
+        }
+
+        else{
+            this.caseRefund = 'Special Case Refund';
+            for (var i = 0; i < this.records2.length; i++) {
+                if(this.records2[i].refundQuantity == null){
+                    this.records2[i].refundQuantity = 0;
+                }
+            }
+            this.refundtypeOli = 'Partial';
+            this.isFullSelected = false;
+            this.isPartialSelected = true;
+            this.isSpecialCaseRefundSelected = false;
         }
 
     }
@@ -492,10 +435,10 @@ export default class MoveToRefundTeam extends LightningElement {
         // }
 
 
-        if (this.userdata == undefined || this.userdata == null || this.userdata == '') {
-            alert("Please Select Refund Team Member");
-            return null;
-        }
+        // if (this.userdata == undefined || this.userdata == null || this.userdata == '') {
+        //     alert("Please Select Refund Team Member");
+        //     return null;
+        // }
 
         // if (this.caseRefund == 'Full') {
         //     if (this.OliRefundReason == undefined || this.OliRefundReason == null || this.OliRefundReason == '') {
@@ -541,7 +484,7 @@ export default class MoveToRefundTeam extends LightningElement {
 
 
         let updatedRecords = [];
-        if (this.caseRefund == 'Partial') {
+        if (this.caseRefund == 'Partial' || this.caseRefund == 'Special Case Refund') {
             var isAtleastOneSelected = false;
             for (let i = 0; i < this.records2.length; i++) {
                 let obj = this.records2[i];
@@ -630,7 +573,7 @@ export default class MoveToRefundTeam extends LightningElement {
             refundReason: this.refundReason,
             coupon: this.Coupon,
             refundValue :this.refundreasonPickListValue,
-            refundTeamMemberId: this.userdata,
+            //refundTeamMemberId: this.userdata,
             paidamount: this.paidamount,
             //contactNumber : this.ContactPhone
             orderItemsToUpdate: oliList

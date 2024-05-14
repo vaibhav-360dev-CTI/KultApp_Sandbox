@@ -9,6 +9,7 @@ export default class JsonTable extends LightningElement {
     hidecourierDeliveryIssue = true;
     hidelostinTransit = true;
     hideRTOOrder = true;
+    showRefundTable = false;
     getSerialNumber(index) {
         return index + 1;
     }
@@ -48,6 +49,12 @@ export default class JsonTable extends LightningElement {
             this.hideOutOfStock = false;
         } else {
             this.hideRTOOrder = false;
+        }
+
+        if (this.Namedoc == 'RefundCases') {
+            this.showRefundTable = true;
+        } else {
+            this.showRefundTable = false;
         }
 
     }

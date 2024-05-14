@@ -112,15 +112,6 @@
                 });
                 toastEvent.fire();
                  window.location.reload();
-                /*
-                this.LightningAlert.open({
-                    message: 'Record saved successfully!',
-                    theme: 'success',
-                    label: 'SUCCESS!',
-                }).then(function() { 
-                    window.location.reload();
-                });
-                */
             }
             else if (state === "INCOMPLETE") {
                 // do something

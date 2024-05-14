@@ -65,8 +65,8 @@
 
 		 	<template if:true={SendUpdate}>
 			<template for:each={ListOfCaseRecords} for:item="cs" for:index="index">
-				<lightning-input key={cs.Id} type="text" variant="standard" name="Describe Info Update"  value={updateDesc}
-					label="Describe Info Update" onchange ={handeldescribeUpdate} required></lightning-input>
+				<lightning-input key={cs.Id} type="text" variant="standard" name="Mention Update"  value={updateDesc}
+					label="Mention Update" onchange ={handeldescribeUpdate} required></lightning-input>
 
 					<div key={cs.Id} class="slds-m-around_medium">
 						<lightning-input type="file" 
@@ -103,6 +103,9 @@
 					<template if:true={wareHouseOrderRelated}>
 						<lightning-input key={cs.Id} type="text" label="AWB Number" name="awbNumber" value={awbNumber} onchange ={handleAWBNumber}></lightning-input>
 						<lightning-input key={cs.Id} type="text" label="FOC Order Id" name="focOrder" value={focOrderId} onchange ={handleFOCorderId}></lightning-input>
+					</template>
+					<template if:true={refundResolved}>
+						<lightning-input key={cs.Id} type="text" label="Refund Amount" name="refundAmt" value={refundAmount} onchange ={handleRefundAmt}></lightning-input>
 					</template>
 			</template>
 		</template>

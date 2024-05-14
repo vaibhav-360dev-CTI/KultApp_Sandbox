@@ -32,6 +32,8 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
     @track PaidAmount = false;
     ordersId;
     @api recordId;
+    @track discountAmount;
+    @track couponCode;
 
     @track allKeys = '';
     @track message;
@@ -76,22 +78,27 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
 
     connectedCallback() {
 
-        var url = window.location.href.toString();
-        const queryParams = url.split("&");
-        const recordIdParam = queryParams.find(param => param.includes("recordId"));
+        // var url = window.location.href.toString();
+        // const queryParams = url.split("&");
+        // const recordIdParam = queryParams.find(param => param.includes("recordId"));
 
-        if (recordIdParam) {
-            const recordIdKeyValue = recordIdParam.split("=");
-            if (recordIdKeyValue.length === 2) {
-                const recordId = recordIdKeyValue[1];
-                this.recordId = recordId;
-            } else {
-                console.error("Invalid recordId parameter format");
-            }
-        } else {
-            console.error("recordId parameter not found in the URL");
-        }
-        this.doSearch();
+        // if (recordIdParam) {
+        //     const recordIdKeyValue = recordIdParam.split("=");
+        //     if (recordIdKeyValue.length === 2) {
+        //         const recordId = recordIdKeyValue[1];
+        //         this.recordId = recordId;
+        //     } else {
+        //         console.error("Invalid recordId parameter format");
+        //     }
+        // } else {
+        //     console.error("recordId parameter not found in the URL");
+        // }
+        // setTimeout(() => {
+        //     alert(this.recordId);
+        // }, 50);
+        setTimeout(() => {
+            this.doSearch();
+        }, 100);
         //this.callAllOrderItems1();
     }
 
@@ -185,6 +192,8 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                 if (this.CaseOrderAndOrderLineItem[0].OrderId != null) {
                     this.ordersId = this.CaseOrderAndOrderLineItem[0].OrderId;
                 }
+                this.discountAmount = this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.Coupon_Discount__c;
+                this.couponCode = this.CaseOrderAndOrderLineItem[0].Order.ParentOrder__r.Coupon_Code__c;
             }else{
                 if (this.CaseOrderAndOrderLineItem[0].Order.Name != null) {
                     this.orderNumberOrName = this.CaseOrderAndOrderLineItem[0].Order.Name;
@@ -206,11 +215,13 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                 if (this.CaseOrderAndOrderLineItem[0].OrderId != null) {
                   
             }
+            this.discountAmount = this.CaseOrderAndOrderLineItem[0].Order.Coupon_Discount__c;
+                this.couponCode = this.CaseOrderAndOrderLineItem[0].Order.Coupon_Code__c;
         }
 
                 this.CaseOrderAndOrderLineItem.forEach(item => {
                     this.AllOrderItems.push({
-                        productName: item.Product2.Name,
+                        productName: item.Product_Name__c,
                         Id: item.Id,
                         Affected_Quantity__c: item.Affected_Quantity__c,
                         totalQuantity: item.Quantity,
