@@ -43,7 +43,7 @@ export default class AssignToMarketingTeam extends LightningElement {
             marketingTeamCaseController({ recId: this.recordId })
                 .then((result) => {
                     this.CaseRecords = result;
-                    if(this.caseRecords.Sub_Type__c == null || this.caseRecords.Sub_Sub_Type__c == null){
+                    if(this.caseRecords.Sub_Type__c == null || this.caseRecords.Type == null){
                         const event = new ShowToastEvent({
                             title: 'Alert',
                             message: 'Please Enter Case Details before Assigning to Marketing Team',
@@ -126,8 +126,7 @@ export default class AssignToMarketingTeam extends LightningElement {
 
     handleSave() {
         debugger;
-        if ((this.userdata != null && this.userdata != ' ' && this.userdata != undefined)
-            && (this.marketingReason  != null && this.marketingReason  != ' ' && this.marketingReason != undefined)) {
+        if (this.marketingReason  != null && this.marketingReason  != ' ' && this.marketingReason != undefined) {
             userUpdate({
                 recId: this.recordId,
                 UserName: this.userdata,

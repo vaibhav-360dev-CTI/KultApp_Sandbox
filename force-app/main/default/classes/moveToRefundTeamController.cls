@@ -24,10 +24,10 @@ public class moveToRefundTeamController {
                     }
                 }
                 if(!subOrderIds.isEmpty()){
-                    orderItems = [SELECT Id, Product2.Name,Product_Name__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId IN: subOrderIds];
+                    orderItems = [SELECT Id, Product2.Name,Product_Name__c, Brand__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId IN: subOrderIds];
                 }
             }else{
-                orderItems = [SELECT Id, Product2.Name,Product_Name__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId =: orderRecord.Id];
+                orderItems = [SELECT Id, Product2.Name,Product_Name__c, Brand__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId =: orderRecord.Id];
             }
             System.debug('orderItems=====>'+orderItems);
             return new RefundWrapper(caseRecord, orderRecord, orderItems);
@@ -57,6 +57,8 @@ public class moveToRefundTeamController {
                 Case caseRecord = caseList[0];
                 if(caseRecord.CS_Team_Member__c == null && string.valueOf(caseRecord.OwnerId).startsWith('005')){
                     caseRecord.CS_Team_Member__c = caseRecord.OwnerId;
+                }else if(caseRecord.CS_Team_Member__c == null && string.valueOf(caseRecord.OwnerId).startsWith('00G')){
+                    caseRecord.CS_Team_Member__c = userInfo.getUserId();
                 }
                 CSteamId = caseRecord.CS_Team_Member__c;
                 caseRecord.OwnerId = refundQueue.Id;
@@ -109,7 +111,7 @@ public class moveToRefundTeamController {
                         for(OrderItem ori : orditm){
                             refundAmountForEachItem = refundAmountForEachItem + ori.Refund_Price__c;
 
-                            if(ori.Is_Already_Utilized__c != true){
+                            if(ori.Is_Already_Utilized__c != true && ori.Refund_Price__c != 0){
                                 Affected_SKU__c affectedSKUrec = new Affected_SKU__c();
                                 affectedSKUrec.Name = ori.SKU__c;
                                 affectedSKUrec.Brand_Name__c = ori.Brand__c;
@@ -117,6 +119,9 @@ public class moveToRefundTeamController {
                                 affectedSKUrec.Product_Name__c = ori.Product_Name__c;
                                 affectedSKUrec.Case__c = caseRecord.Id;
                                 affectedSKUrec.Created_By__c = 'CS Team';
+                                affectedSKUrec.Affected_Quantity__c = ori.Refund_Quantity__c;
+                                affectedSKUrec.Total_Quantity__c = ori.Quantity;
+                                affectedSKUrec.Selling_Price__c = ori.Selling_Price__c;
                                 affectedSKUsToInsert.add(affectedSKUrec);
                             }
                             //ori.Refund_Reasons__c = refundValue;

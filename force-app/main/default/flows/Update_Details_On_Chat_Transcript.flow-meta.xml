@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <interviewLabel>Update Details On Chat Transcript {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Update Details On Chat Transcript</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Chat_Transcript_with_Order_Number</name>
+        <label>Update Chat Transcript with Order Number</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <filters>
+            <field>ChatKey</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>chatKey</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Order_Number__c</field>
+            <value>
+                <elementReference>orderNumber</elementReference>
+            </value>
+        </inputAssignments>
+        <object>LiveChatTranscript</object>
+    </recordUpdates>
+    <startElementReference>Update_Chat_Transcript_with_Order_Number</startElementReference>
+    <status>Active</status>
+    <variables>
+        <name>chatKey</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>orderNumber</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

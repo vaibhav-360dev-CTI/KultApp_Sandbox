@@ -1,5 +1,5 @@
 trigger TriggerOnCase on Case (before insert, before update, after update, after insert) {   
-    /*if (Trigger.isAfter && (Trigger.isInsert || Trigger.isUpdate)) {
+    if (Trigger.isAfter && (Trigger.isInsert || Trigger.isUpdate)) {
         caseTriggerHelper.updateUserFieldsOnReassignment(Trigger.new, Trigger.oldMap);   
         
         if(trigger.isUpdate && trigger.isAfter){
@@ -8,7 +8,7 @@ trigger TriggerOnCase on Case (before insert, before update, after update, after
             //referBackToCsTeamController.sendEmailToUserAndNotificationToUserReasonForLostInTransit(Trigger.new,Trigger.oldMap);
             //CaseHelperControllers.sendEmailToContactOwnerAndSendNotificationToOMSTeam(Trigger.new,Trigger.oldMap); 
            caseTriggerHelper.resetTypeAndSubtypeOnRecordTypeChange(Trigger.new, Trigger.oldMap);  
-            
+           caseTriggerHelper.resetAlreadyUtilized(Trigger.new, Trigger.oldMap); 
         }     
     }
     if(trigger.isInsert && trigger.isBefore){
@@ -19,6 +19,6 @@ trigger TriggerOnCase on Case (before insert, before update, after update, after
     }
     if((trigger.isInsert && trigger.isBefore) || (trigger.isUpdate && trigger.isBefore)){
         caseTriggerHelper.handleCases(trigger.new);
-    }*/
+    }
    
 }

@@ -2,11 +2,14 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
     <aura:attribute name="admCSVFileFormat" type="Bulk_Case_Upload_Mapping__mdt"/>
     <aura:attribute name="docTempName" type="string"/>
-    
+    <aura:attribute name="showDownload" type="boolean" default="true"/>
+
     <div style="width:100%;padding: 25px">
+        <aura:if isTrue="{!v.showDownload}">
         <div style="float:right;width:112%">
             <lightning:button iconName="utility:download"  iconPosition="left"  label="Download Format"  onclick="{!c.downloadFormat}"  class="slds-button slds-button_brand"/>        
         </div>
+    </aura:if>
     </div>
     <br/><br/>
     

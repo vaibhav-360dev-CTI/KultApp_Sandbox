@@ -90,7 +90,7 @@ System.debug('caseToInsert==> ' + caseToInsert);
                     }   
                 }
             }
-            totalTasksList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate, Status, Priority, IsHighPriority, OwnerId, Description, IsDeleted, AccountId, IsClosed, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp, IsArchived, CallDurationInSeconds, CallType, CallDisposition, CallObject, ReminderDateTime, IsReminderSet, RecurrenceActivityId, IsRecurrence, RecurrenceStartDateOnly, RecurrenceEndDateOnly, RecurrenceTimeZoneSidKey, RecurrenceType, RecurrenceInterval, RecurrenceDayOfWeekMask, RecurrenceDayOfMonth, RecurrenceInstance, RecurrenceMonthOfYear, RecurrenceRegeneratedType, TaskSubtype, CompletedDateTime, Exotel_CTI__Call_Direction__c, Exotel_CTI__Call_Duration__c, Exotel_CTI__Call_Sid__c, Exotel_CTI__Call_Status__c, Exotel_CTI__End_Time__c, Exotel_CTI__From__c, Exotel_CTI__Leg1_Status__c, Exotel_CTI__Leg2_Status__c, Exotel_CTI__Recording_URL__c, Exotel_CTI__Start_Time__c, Exotel_CTI__To__c, Exotel_CTI__Virtual_Number__c, No_Of_Missed_Calls__c FROM Task WHERE (WhoId In: contactIds OR 
+            totalTasksList = [SELECT Id, WhoId, WhatId, WhoCount, Case__c, WhatCount, Subject, ActivityDate, Status, Priority, IsHighPriority, OwnerId, Description, IsDeleted, AccountId, IsClosed, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp, IsArchived, CallDurationInSeconds, CallType, CallDisposition, CallObject, ReminderDateTime, IsReminderSet, RecurrenceActivityId, IsRecurrence, RecurrenceStartDateOnly, RecurrenceEndDateOnly, RecurrenceTimeZoneSidKey, RecurrenceType, RecurrenceInterval, RecurrenceDayOfWeekMask, RecurrenceDayOfMonth, RecurrenceInstance, RecurrenceMonthOfYear, RecurrenceRegeneratedType, TaskSubtype, CompletedDateTime, Exotel_CTI__Call_Direction__c, Exotel_CTI__Call_Duration__c, Exotel_CTI__Call_Sid__c, Exotel_CTI__Call_Status__c, Exotel_CTI__End_Time__c, Exotel_CTI__From__c, Exotel_CTI__Leg1_Status__c, Exotel_CTI__Leg2_Status__c, Exotel_CTI__Recording_URL__c, Exotel_CTI__Start_Time__c, Exotel_CTI__To__c, Exotel_CTI__Virtual_Number__c, No_Of_Missed_Calls__c FROM Task WHERE (WhoId In: contactIds OR 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       WhatId IN: accountIds) AND Subject LIKE 'Missed Call %' AND Exotel_CTI__Call_Direction__c = 'Inbound' AND CreatedDate >= TODAY  ORDER BY CreatedDate ASC];
             for(Task taskRec : totalTasksList){
                 if(taskRec.WhoId != null && String.valueOf(taskRec.WhoId).startsWithIgnoreCase('003')){
@@ -181,7 +181,9 @@ System.debug('caseToInsert==> ' + caseToInsert);
     
     public static void createCaseOnFirstMissedCall(Task taskRec){
         try{
-            List<Group> missedCallQueueList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId, OwnerId, DoesSendEmailToMembers, DoesIncludeBosses, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp FROM Group WHERE DeveloperName = 'Missed_Call_Queue' LIMIT 1];
+            List<Group> missedCallQueueList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId, OwnerId, DoesSendEmailToMembers, DoesIncludeBosses, 
+                                               CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp 
+                                               FROM Group WHERE DeveloperName = 'Missed_Call_Queue' LIMIT 1];
             Group missedCallGroup = new Group();
             if(!missedCallQueueList.isEmpty()){
                 missedCallGroup = missedCallQueueList[0];
@@ -198,6 +200,11 @@ System.debug('caseToInsert==> ' + caseToInsert);
             caseRec.Priority = 'High';
             caseRec.OwnerId = missedCallGroup.Id;
             insert caseRec;
+            
+            if(taskRec.Case__c == null){
+                taskRec.Case__c = caseRec.Id;
+            }
+            update taskRec;
             sendingCustomNotification(taskRec.OwnerId, caseRec.Id, 'Case Created for Missed Call', 'You have missed a customer\'s call');
         }catch(exception e){
             System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
@@ -328,8 +335,8 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     System.debug('Inside singleTaskList=========>'+singleTaskList);
                     createDate = Date.ValueOf(singleTaskList[0].CreatedDate);
                     tasList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber,CreatedDate,Exotel_CTI__From__c,Exotel_CTI__Call_Direction__c,Exotel_CTI__To__c,Exotel_CTI__Start_Time__c FROM Task Where  Day_Only(CreatedDate) =: createDate 
-                    AND Case__c = null AND  Exotel_CTI__Call_Direction__c != null ORDER BY CreatedDate ASC];
-
+                               AND Case__c = null AND  Exotel_CTI__Call_Direction__c != null ORDER BY CreatedDate ASC];
+                    
                     if(!tasList.isEmpty()){
                         for(Task ts : tasList){
                             if(ts.Id != singleTaskList[0].Id){
@@ -389,15 +396,15 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     wrap.CurrentTaskList = tskList;
                     System.debug('tskList == >'+tskList);
                     
-                    cseList = [SELECT Id,CaseNumber,CreatedDate,Origin,AccountId From Case Where AccountId =: accId AND (Origin ='Inbound Phone' OR Origin ='Outbound Phone' OR Origin = 'Inbound Missed Call')  AND status != 'Closed'];
+                    cseList = [SELECT Id,CaseNumber,CreatedDate,Origin,AccountId From Case Where AccountId =: accId];
                     if(cseList.Size()>0){
                         wrap.caseList = cseList;
                     }
                     System.debug('cseList == >'+cseList);
-
+                    
                     taskList  = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount,AccountId, Subject, ActivityDate,Case__c,Case__r.CaseNumber,CreatedDate,Exotel_CTI__From__c,Exotel_CTI__To__c,Exotel_CTI__Start_Time__c,Exotel_CTI__Call_Direction__c FROM Task WHERE Case__c = null AND Day_Only(CreatedDate) =: createDate AND Exotel_CTI__Call_Direction__c != null];
                     System.debug('taskList == >'+taskList);
-
+                    
                     if(taskList.Size()>0){
                         for(Task ts : taskList){
                             if(ts.Id != tskList[0].Id){
@@ -444,6 +451,7 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                 String CaseId;
                 String relatedTaskIdList;
                 List<String> stringList = new List<String>();
+                List<String> CurrentstringList = new List<String>();
                 List<Task> currentTasks = new List<Task>();
                 List<Task> AllTaskRelatedToCurrentTask = new List<Task>();
                 List<Task> AllTaskRelatedToCurrentTaskWithNoCase = new List<Task>();
@@ -452,8 +460,11 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                 
                 Map<String, Object> jsonMap = (Map<String, Object>) JSON.deserializeUntyped(jsonData);
                 if(String.valueOf(jsonMap.get('TaskId')) !=null){
+                    //TaskId = String.valueOf(jsonMap.get('TaskId'));
                     TaskId = String.valueOf(jsonMap.get('TaskId'));
+                    CurrentstringList = TaskId.substring(1, TaskId.length() - 1).split(', ');
                     System.debug('TaskId ============>' + TaskId);
+                    System.debug('CurrentstringList ============>' + CurrentstringList);
                 }
                 if(String.valueOf(jsonMap.get('CaseId')) !=null){
                     CaseId = String.valueOf(jsonMap.get('CaseId'));
@@ -470,17 +481,18 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     System.debug('TaskId 1 ============>' + TaskId);
                     // Set<Id> taskIdset = new Set<Id>();
                     // taskIdset.add(TaskId);
-                     TaskId = TaskId.replace('(', '').replace(')', '');
+                    // TaskId = TaskId.replace('(', '').replace(')', '');
                     System.debug('TaskId 2 ============>' + TaskId);
-                    tskList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber FROM Task Where Id =:TaskId];
+                    tskList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber FROM Task Where Id IN:CurrentstringList];
                     System.debug('tskList ============>' + tskList);
                     if(tskList.Size()>0){
                         CurrentTaskCaseId = tskList[0].Case__c;
                     }
+                    update tskList;
                     System.debug('CurrentTaskCaseId ============>' + CurrentTaskCaseId);
                     // task With Cases
                     AllTaskRelatedToCurrentTask = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber FROM Task Where Id IN: stringList];
-
+                    
                     System.debug('AllTaskRelatedToCurrentTask ============>' + AllTaskRelatedToCurrentTask);
                     if(AllTaskRelatedToCurrentTask.Size()>0){
                         for(Task ts : AllTaskRelatedToCurrentTask){
@@ -493,12 +505,15 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     update AllTaskRelatedToCurrentTask;
                     System.debug('AllTaskRelatedToCurrentTask ============>' + AllTaskRelatedToCurrentTask);
                 }else if(CaseId != null){
+                    System.debug('Case Id Not Null ============>' + CaseId);
                     // task With No Cases
                     TaskId = TaskId.replace('(', '').replace(')', '');
+                    System.debug('Task Id Not Null ============>' + TaskId);
                     CaseId = CaseId.replace('(', '').replace(')', '');
-                    tskList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber FROM Task Where Id =: TaskId];
+                    System.debug('Case Id Not Null ============>' + CaseId);
+                    tskList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber FROM Task Where Id IN: CurrentstringList];
                     System.debug('tskList ============>' + tskList);
-
+                    
                     if(tskList.Size()>0){
                         for(Task ts : tskList){
                             ts.Case__c = CaseId;
@@ -507,10 +522,10 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     
                     update tskList;
                     System.debug('tskList ============>' + tskList);
-
+                    
                     AllTaskRelatedToCurrentTaskWithNoCase = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,
-                    Case__c,Case__r.CaseNumber FROM Task Where Id IN: stringList];
-
+                                                             Case__c,Case__r.CaseNumber FROM Task Where Id IN: stringList];
+                    
                     System.debug('AllTaskRelatedToCurrentTaskWithNoCase ============>' + AllTaskRelatedToCurrentTaskWithNoCase);
                     
                     if(AllTaskRelatedToCurrentTaskWithNoCase.Size()>0){

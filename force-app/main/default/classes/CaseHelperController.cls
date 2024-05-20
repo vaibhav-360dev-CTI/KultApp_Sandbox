@@ -142,10 +142,10 @@ public class CaseHelperController {
                     }
                 }
                 if(!subOrderIds.isEmpty()){
-                    itmList = [SELECT Id,Status__c,Order.ParentOrder__r.Status,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c, Order.Account.Phone, Order.ParentOrder__r.Delivery_Mobile_Number__c, Order.ParentOrder__r.EffectiveDate, Order.ParentOrder__r.Coupon_Code__c, Order.ParentOrder__r.Coupon_Discount__c, Order.ParentOrder__r.Payment_Id__c  FROM OrderItem  Where OrderId IN: subOrderIds];
+                    itmList = [SELECT Id,Order.Name, Order.Status, Status__c,Order.ParentOrder__r.Status,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c, Order.Account.Phone, Order.ParentOrder__r.Delivery_Mobile_Number__c, Order.ParentOrder__r.EffectiveDate, Order.ParentOrder__r.Coupon_Code__c, Order.ParentOrder__r.Coupon_Discount__c, Order.ParentOrder__r.Payment_Id__c  FROM OrderItem  Where OrderId IN: subOrderIds];
                 }
             }else{
-                itmList = [SELECT Id,Status__c,Order.ParentOrder__r.Status,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c, Order.Account.Phone, Order.ParentOrder__r.Delivery_Mobile_Number__c, Order.ParentOrder__r.EffectiveDate, Order.ParentOrder__r.Coupon_Code__c, Order.ParentOrder__r.Coupon_Discount__c, Order.ParentOrder__r.Payment_Id__c FROM OrderItem  Where OrderId =: orderId];
+                itmList = [SELECT Id,Order.Name, Order.Status,Status__c,Order.ParentOrder__r.Status,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c, Order.Account.Phone, Order.ParentOrder__r.Delivery_Mobile_Number__c, Order.ParentOrder__r.EffectiveDate, Order.ParentOrder__r.Coupon_Code__c, Order.ParentOrder__r.Coupon_Discount__c, Order.ParentOrder__r.Payment_Id__c FROM OrderItem  Where OrderId =: orderId];
             }
             if(itmList.size()>0){
                 return itmList;

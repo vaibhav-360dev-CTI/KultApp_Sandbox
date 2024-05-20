@@ -10,6 +10,18 @@ public class CaseHelperControllers {
         
         return profileNames;
     }
+
+    @AuraEnabled
+    public static void closeCase(String caseId){
+        try {
+            Case caseRec = new Case();
+            caseRec.Id = caseId;
+            caseRec.Status = 'Closed';
+            update caseRec;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
     @AuraEnabled(cacheable=true)
     public static boolean manualCaseShare(String recordId, String userOrGroupId){
         CaseShare cshare = new CaseShare();
@@ -1362,23 +1374,6 @@ System.debug('taskList:::::::::>' + taskList);
                 if (cse.Reason_for_RTO__c != null) {
                     body1 = body1.replace('{!Case.Reason_for_RTO__c}', cse.Reason_for_RTO__c);
                 }
-                // if(mapOfAccount.get(cse.AccountId).Email__c != null){
-                //     emailString.add(mapOfAccount.get(cse.AccountId).Email__c);
-                // }
-                // else if(mapOfContact.get(cse.ContactId).Email != null){
-                //     emailString.add(mapOfContact.get(cse.ContactId).Email);
-                // }else if(cse.Email_Id__c != null){
-                //     emailString.add(cse.Email_Id__c);
-                // }
-                
-                // mail.setSubject(temp != null ? temp.Subject : '');
-                // mail.setPlainTextBody(Body);
-                // mail.setTemplateId(temp != null ? temp.Id : null);
-                // mail.setSaveAsActivity(true);
-                // mail.setWhatId(cse.Id);
-                // //mail.setorgwideemailaddressid(owea.id);
-                // mail.setToAddresses(emailString);
-                // mailList.add(mail);
                 
                 mailToRefundUser.setSubject(Reftemp != null ? Reftemp.Subject : '');
                 mailToRefundUser.setPlainTextBody(body1);
@@ -1407,9 +1402,6 @@ System.debug('taskList:::::::::>' + taskList);
             if(mailListToCsTeam.size()>0){
                 Messaging.SendEmail(mailListToCsTeam);
             }
-            //if(mailList.size()>0){
-            //     Messaging.SendEmail(mailList);
-            // }
             if(taskList.size()>0){
                 Insert taskList;
             }
@@ -1566,6 +1558,7 @@ System.debug('taskList:::::::::>' + taskList);
                 newCase.Subject = 'Manual Case Creation';
                 if(conNumber != null){
                     newCase.Contact_Number__c = conNumber;
+                    newCase.SuppliedPhone = conNumber;
                 }
                 newCase.Status = 'New';
                 if(ownId != null){
@@ -1682,6 +1675,7 @@ System.debug('taskList:::::::::>' + taskList);
             
             if(conNumber != null){
                 newCase.SuppliedPhone = conNumber;
+                newCase.Contact_Number__c = conNumber;
             }
             if(recId != null){
                 newCase.contactId = recId;
@@ -1773,6 +1767,7 @@ System.debug('taskList:::::::::>' + taskList);
                 
                 if(conNumber != null){
                     newCase.Contact_Number__c = conNumber;
+                    newCase.SuppliedPhone = conNumber;                    
                 }
                 
                 newCase.Status = 'New';
@@ -1781,6 +1776,7 @@ System.debug('taskList:::::::::>' + taskList);
             else{
                 if(conNumber != null){
                     newCase.SuppliedPhone = conNumber;
+                    newCase.Contact_Number__c = conNumber;
                 }
                 newCase.RecordTypeId = rt.Id;
                 newCase.AccountId = recId;
@@ -2036,6 +2032,7 @@ System.debug('taskList:::::::::>' + taskList);
             Case cse = new Case();
             cse.Id = recId;
             cse.more_Info_Requested__c = false;
+            cse.Last_Response__c = System.Now();
             update cse;
             
             return 'SUCCESS';

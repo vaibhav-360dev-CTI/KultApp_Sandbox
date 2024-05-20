@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <email>vaibhav.chauhan@utilitarianlabs.com</email>
+    <name>non business hours</name>
+    <queueMembers>
+        <users>
+            <user>aisha.k@kult.app</user>
+            <user>cenya.t@kult.app</user>
+            <user>jovina.f@kult.app</user>
+            <user>natasha.g@kult.app</user>
+            <user>nisha.n@kult.app</user>
+            <user>prajakta.r@kult.app</user>
+            <user>rachael.c@kult.app</user>
+            <user>taniya.r@kult.app</user>
+            <user>vanessa.p@kult.app</user>
+            <user>zeba.m@kult.app</user>
+        </users>
+    </queueMembers>
+    <queueRoutingConfig>Chat_Support_v2</queueRoutingConfig>
+    <queueSobject>
+        <sobjectType>Call_Logs_Custom__c</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>Case</sobjectType>
+    </queueSobject>
+</Queue>

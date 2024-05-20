@@ -266,6 +266,7 @@ public class InstaDmUtilityClass {
     
     
     public static dateTime getDateTime(String strDatetime){
+        strDatetime = strDatetime.remove('+0000');
         List<String> datetimeParts = strDatetime.split('T');
         String datePart = datetimeParts[0];
         String timePart = datetimeParts[1];

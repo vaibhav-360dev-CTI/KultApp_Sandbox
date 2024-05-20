@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>BulkCaseUploadURL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BulkCaseUploadURL</shortDescription>
+        <value>https://kultapp--kultapp.sandbox.lightning.force.com/lightning/n/Bulk_Case_Upload</value>
+    </labels>
+    <labels>
+        <fullName>CaseBaseURL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CaseBaseURL</shortDescription>
+        <value>https://ruby-customization-1508--kultapp.sandbox.lightning.force.com/lightning/r/Case/</value>
+    </labels>
+    <labels>
+        <fullName>CaseURL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CaseURL</shortDescription>
+        <value>https://ruby-customization-1508--kultapp.sandbox.lightning.force.com/lightning/r/Case/</value>
+    </labels>
+    <labels>
+        <fullName>profile_names</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>profile names</shortDescription>
+        <value>Customer Service Manager,Customer Service Executive,Refund Team,WareHouse Team,Marketing Team,Order Management Team</value>
+    </labels>
+</CustomLabels>

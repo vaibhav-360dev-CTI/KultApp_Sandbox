@@ -21,6 +21,8 @@ export default class BulkCaseRecordUploadXlsx extends LightningElement {
      showTable = false;
      showUploadFile = true;
      @api docTempName;
+     @api refundType;
+     @api showDownload;
      BulkCaseUploadURL = BulkCaseUploadURL;
      strAcceptedFormats = [".xls", ".xlsx"];
      strUploadFileName;
@@ -84,6 +86,7 @@ export default class BulkCaseRecordUploadXlsx extends LightningElement {
                     let data = JSON.parse(JSON.stringify(this.objExcelToJSON));
                     let objList = [];
                     let index = 0;
+                    var orderNumbers = [];
                     for (var i = 0; i < data.length; i++) {
                          index += 1;
 
@@ -97,38 +100,41 @@ export default class BulkCaseRecordUploadXlsx extends LightningElement {
                          // // Create the desired format
                          // const formattedDate = `${day}-${month}-${year}`;
 
-                         var obj = {
-                              "orderno": data[i]["Order No"],
-                              // "dateoforder": formattedDate,
-                              "shippingmobileno": data[i]["Shipping Mobile No"],
-                              "reason": data[i]["Reason"],
-                              "item": data[i]["Item"],
-                              "oosquantity": data[i]["OOS Quantity"],
-                              "oosskucode": data[i]["OOS SKU Code"],
-                              "remarks": data[i]["Remarks"],
-                              "currentpincode": data[i]["Current PIN Code"],
-                              "cityname": data[i]["City Name"],
-                              "awbnumber": data[i]["AWB Number"],
-                              "courierpartner": data[i]["Courier Partner"], // 
-                              "orderstatus": data[i]["Order Status"],
-                              "couponcode": data[i]["Coupon Code"],
-                              "easyecomorderstatus": data[i]["Easyecom Order Status"],
-                              "email": data[i]["Email"],
-                              "isfullrefund": data[i]["Is Full Refund"],
-                              "name": data[i]["Name"],
-                              "orderid": data[i]["Order Id"],
-                              "phoneno": data[i]["Phone No"],
-                              "razorpaypaymentid": data[i]["Razorpay Payment ID"],
-                              "refundamount": data[i]["Refund Amount"],
-                              "sku1cancelledquantity": data[i]["SKU 1 Cancelled Quantity"],
-                              "sku1id": data[i]["SKU 1 ID"],
-                              "sku1orderquantity": data[i]["SKU 1 Order Quantity"],
-                              "sku2cancelledquantity": data[i]["SKU 2 Cancelled Quantity"],
-                              "sku2id": data[i]["SKU 2 ID"],
-                              "sku2orderquantity": data[i]["SKU 2 Order Quantity"],
-                              "sno": index
-                         };
-                         objList.push(obj);
+                         if(!orderNumbers.includes(data[i]["Order No"])){
+                              var obj = {
+                                   "orderno": data[i]["Order No"],
+                                   // "dateoforder": formattedDate,
+                                   "shippingmobileno": data[i]["Shipping Mobile No"],
+                                   "reason": data[i]["Reason"],
+                                   "item": data[i]["Item"],
+                                   "oosquantity": data[i]["OOS Quantity"],
+                                   "oosskucode": data[i]["OOS SKU Code"],
+                                   "remarks": data[i]["Remarks"],
+                                   "currentpincode": data[i]["Current PIN Code"],
+                                   "cityname": data[i]["City Name"],
+                                   "awbnumber": data[i]["AWB Number"],
+                                   "courierpartner": data[i]["Courier Partner"], // 
+                                   "orderstatus": data[i]["Order Status"],
+                                   "couponcode": data[i]["Coupon Code"],
+                                   "easyecomorderstatus": data[i]["Easyecom Order Status"],
+                                   "email": data[i]["Email"],
+                                   "isfullrefund": data[i]["Is Full Refund"],
+                                   "name": data[i]["Name"],
+                                   "orderid": data[i]["Order Id"],
+                                   "phoneno": data[i]["Phone No"],
+                                   "razorpaypaymentid": data[i]["Razorpay Payment ID"],
+                                   "refundamount": data[i]["Refund Amount"],
+                                   "sku1cancelledquantity": data[i]["SKU 1 Cancelled Quantity"],
+                                   "sku1id": data[i]["SKU 1 ID"],
+                                   "sku1orderquantity": data[i]["SKU 1 Order Quantity"],
+                                   "sku2cancelledquantity": data[i]["SKU 2 Cancelled Quantity"],
+                                   "sku2id": data[i]["SKU 2 ID"],
+                                   "sku2orderquantity": data[i]["SKU 2 Order Quantity"],
+                                   "sno": index
+                              };
+                              objList.push(obj);
+                              orderNumbers.push(data[i]["Order No"]);
+                         }
                     }
                     console.log('data == ' + objList);
                     this.jsonData = objList;
@@ -173,7 +179,7 @@ export default class BulkCaseRecordUploadXlsx extends LightningElement {
                }
           }
           if (pincodelistSize.length == 0 && mobilelistsize.length == 0) {
-               insertBulkCaseXlsxFiel({ jsonString: JSON.stringify(this.jsonData), docTempName: this.docTempName })
+               insertBulkCaseXlsxFiel({ jsonString: JSON.stringify(this.jsonData), docTempName: this.docTempName , refundType:this.refundType, showDownload:this.showDownload})
                     .then(result => {
                          if (result) {
                               this.showToast();

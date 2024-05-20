@@ -36,6 +36,9 @@
 								<div class="slds-truncate" title="CheckBox"></div>
 							</th>
 							<th scope="col">
+								<div class="slds-truncate" title="Item">Brand</div>
+							</th>
+							<th scope="col">
 								<div class="slds-truncate" title="Item">Item</div>
 							</th>
 							<th scope="col">
@@ -76,6 +79,13 @@
 								<td key={opls.Id}>
 									<lightning-input class="slds-p-left_xx-small" type="checkbox" checked={checkboxVal}
 										disabled={isCheckboxDisabled}> </lightning-input>
+								</td>
+								<td key={opls.Id}>
+
+									<lightning-input type="Test" variant="standard" value={opls.brandName}
+										class="custom-input" name="brandName" label=""
+										disabled></lightning-input>
+
 								</td>
 								<td key={opls.Id}>
 
@@ -163,6 +173,9 @@
 								<div class="slds-truncate" title="CheckBox"></div>
 							</th>
 							<th scope="col">
+								<div class="slds-truncate" title="Item">Brand</div>
+							</th>
+							<th scope="col">
 								<div class="slds-truncate" title="Item">Item</div>
 							</th>
 							<th scope="col">
@@ -204,6 +217,13 @@
 									<lightning-input data-row-index={index} class="slds-p-left_xx-small" type="checkbox"
 										checked={opls.checkboxVal2} onchange={handleCheckboxChange2}>
 									</lightning-input>
+								</td>
+								<td key={opls.Id}>
+
+									<lightning-input type="Test" variant="standard" value={opls.brandName}
+										class="custom-input" name="brandName" label=""
+										disabled></lightning-input>
+
 								</td>
 								<td key={opls.Id}>
 									<lightning-input type="Text" variant="standard" value={opls.productName}

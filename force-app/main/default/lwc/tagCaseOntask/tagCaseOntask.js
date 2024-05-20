@@ -7,9 +7,6 @@ import taggedCase from '@salesforce/apex/taskTriggerHelper.taggedCase';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-
-
-
 const Taskcolumns = [
     { label: 'CaseNumber', fieldName: 'CaseNumber', type: 'AutoNumber' },
     { label: 'Subject', fieldName: 'Subject', type: 'text' },
@@ -40,28 +37,26 @@ export default class TagCaseOntask extends LightningElement {
     wrapObject = {};
     result;
     error;
+    resultData;
     @track value = '';
 
     get AllCases() {
         return this.items;
     }
-
-
     @api childcompname = 'CloseScreenAction';
-
-
-
 
     connectedCallback() {
         debugger;
-      //  loadStyle(this, modal);
+        loadStyle(this, modal);
         setTimeout(() => {
-            this.callApexMethod1();
-            this.callApexMethod2();
+            
         }, 700);
+
+        this.callApexMethod1();
+        this.callApexMethod2();
     }
 
-
+    
 
     callApexMethod1() {
         debugger;
@@ -73,26 +68,33 @@ export default class TagCaseOntask extends LightningElement {
                             this.thisTask = result.CurrTaskList;
                             this.preSelectedRows.push(this.thisTask[0].Id);
                             this.show1stPage = true;
+
+                            this.thisTask.forEach(element => {
+                                if(element.Case__r !=undefined ){
+                                    if (element.Case__r.CaseNumber != null) {
+                                        element.CaseNumber = element.Case__r.CaseNumber;
+                                    }
+                                }
+                            });
                         }
-                        result.CurrTaskList.forEach(element => {
-                            if (element.Case__r.CaseNumber) {
-                                element.CaseNumber = element.Case__r.CaseNumber;
-                            }
-                        });
+                        
                     }
                     if (result.taskList != undefined) {
                         for (i = 0; i < result.taskList.length; i++) {
                             this.TaskData = result.taskList;
                             this.showUnder1stPage = true;
+
+
+                            this.TaskData.forEach(element => {
+                                if (element.Exotel_CTI__Call_Direction__c == 'Inbound') {
+                                    element.customerPhone = element.Exotel_CTI__From__c;
+                                }
+                                if (element.Exotel_CTI__Call_Direction__c == 'OutBound') {
+                                    element.customerPhone = element.Exotel_CTI__To__c;
+                                }
+                            });
                         }
-                        result.taskList.forEach(element => {
-                            if (element.Exotel_CTI__Call_Direction__c == 'Inbound') {
-                                element.customerPhone = element.Exotel_CTI__From__c;
-                            }
-                            if(element.Exotel_CTI__Call_Direction__c == 'OutBound'){
-                                element.customerPhone = element.Exotel_CTI__To__c;
-                            }
-                        });
+                        
                     }
                 }
                 this.error = undefined;
@@ -120,15 +122,18 @@ export default class TagCaseOntask extends LightningElement {
                         for (i = 0; i < result.tuskList.length; i++) {
                             this.TaskData = result.tuskList;
                             this.showUnder2ndPage = true;
+
+
+                            this.TaskData.forEach(element => {
+                                if (element.Exotel_CTI__Call_Direction__c == 'Inbound') {
+                                    element.customerPhone = element.Exotel_CTI__From__c;
+                                }
+                                if (element.Exotel_CTI__Call_Direction__c == 'OutBound') {
+                                    element.customerPhone = element.Exotel_CTI__To__c;
+                                }
+                            });
                         }
-                        result.tuskList.forEach(element => {
-                            if (element.Exotel_CTI__Call_Direction__c == 'Inbound') {
-                                element.customerPhone = element.Exotel_CTI__From__c;
-                            }
-                            if(element.Exotel_CTI__Call_Direction__c == 'OutBound'){
-                                element.customerPhone = element.Exotel_CTI__To__c;
-                            }
-                        });
+                        
                     }
                     if (result.caseList != undefined) {
                         this.data = result.caseList;
@@ -167,7 +172,7 @@ export default class TagCaseOntask extends LightningElement {
     }
     closeAction() {
         debugger;
-        
+
         const storeEvent = new CustomEvent('myfirstevent', {
             detail: 'CloseQuickAction'
         }
@@ -175,7 +180,6 @@ export default class TagCaseOntask extends LightningElement {
         this.dispatchEvent(storeEvent)
         this.dispatchEvent(new CloseActionScreenEvent());
     }
-
 
     handleSave() {
         debugger;
@@ -212,6 +216,5 @@ export default class TagCaseOntask extends LightningElement {
                 });
                 this.dispatchEvent(event);
             })
-
     }
 }

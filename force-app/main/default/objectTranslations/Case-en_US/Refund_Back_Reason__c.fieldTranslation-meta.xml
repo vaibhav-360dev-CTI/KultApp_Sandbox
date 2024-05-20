@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label></label>
+    <name>Refund_Back_Reason__c</name>
+    <picklistValues>
+        <masterLabel>Need More Information</masterLabel>
+        <translation></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Request Approve</masterLabel>
+        <translation></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Request Rejected</masterLabel>
+        <translation></translation>
+    </picklistValues>
+</CustomFieldTranslation>

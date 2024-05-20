@@ -5,6 +5,7 @@ import getOrderItems from '@salesforce/apex/CaseHelperControllers.getOrderItems'
 import updateSKUdetailsAndCreateRecordOfSKU from '@salesforce/apex/CaseHelperControllers.updateSKUdetailsAndCreateRecordOfSKU';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { RefreshEvent } from 'lightning/refresh';
+import { getRecordNotifyChange } from "lightning/uiRecordApi";
 
 
 export default class UpdateSKUDetailsOnCase extends LightningElement {
@@ -272,6 +273,14 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                 this.show2ndPage = true;
                 this.show1stPage = false;
                 this.error = 'Order not found'; // You can set an error message here
+                const event = new ShowToastEvent({
+                    title: 'Error',
+                    message: 'No Order Found on the Case.',
+                    variant: 'error',
+                });
+                this.dispatchEvent(event);
+                this.dispatchEvent(new CloseActionScreenEvent());
+                getRecordNotifyChange([{ recordId: this.recordId }]);
             }
         }).catch(error => {
             this.error = error;
@@ -398,6 +407,7 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                     this.dispatchEvent(event);
                     this.dispatchEvent(new CloseActionScreenEvent());
                     this.dispatchEvent(new RefreshEvent());
+                    getRecordNotifyChange([{ recordId: this.recordId }]);
                 }
             })
             .catch(error => {

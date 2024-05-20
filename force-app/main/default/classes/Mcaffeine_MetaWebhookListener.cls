@@ -402,7 +402,7 @@ global without sharing class Mcaffeine_MetaWebhookListener {
                     System.debug('--- e.Message:'+e.getMessage());
                 } */
             }else {
-                Case newMentionCase = new Case(Brand__c = PAGE_NAME, Type_of_Post__c = 'Tags/Mentions', Description = (String)fbMentionObject.get('message'), Origin = ORIGIN, Subject= 'New mention on FB from: '+ (String)fbMentionObject.get('sender_name') != null ? (String)fbMentionObject.get('sender_name') : '', RecordTypeId = RECORD_TYPE_ID, OwnerId = RECORD_OWNER_ID);
+                Case newMentionCase = new Case(Brand__c = PAGE_NAME, Type_of_Post__c = 'Mentions', Description = (String)fbMentionObject.get('message'), Origin = ORIGIN, Subject= 'New mention on FB from: '+ (String)fbMentionObject.get('sender_name') != null ? (String)fbMentionObject.get('sender_name') : '', RecordTypeId = RECORD_TYPE_ID, OwnerId = RECORD_OWNER_ID);
                 //Case_Communication__c cm = new Case_Communication__c(Activity_Content__c = (String)fbMentionObject.get('message'), Activity_Author__c = (String)fbMentionObject.get('sender_name')/* , OwnerId = RECORD_OWNER_ID */);
                 try {
                     insert newMentionCase;

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignments>
+        <name>Send_Information_To_Bot</name>
+        <label>Send Information To Bot</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>botMessage</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>The Order Amount is {!orderValue}</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <interviewLabel>Get Order Information {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Get Order Information</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Find_Order</name>
+        <label>Find Order</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Send_Information_To_Bot</targetReference>
+        </connector>
+        <filters>
+            <field>OrderNumber</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Order_Number</elementReference>
+            </value>
+        </filters>
+        <object>Order</object>
+        <outputAssignments>
+            <assignToReference>Order_Number</assignToReference>
+            <field>OrderNumber</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>orderValue</assignToReference>
+            <field>TotalAmount</field>
+        </outputAssignments>
+    </recordLookups>
+    <startElementReference>Find_Order</startElementReference>
+    <status>Active</status>
+    <variables>
+        <name>botMessage</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>Order_Number</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>orderValue</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <scale>2</scale>
+    </variables>
+</Flow>

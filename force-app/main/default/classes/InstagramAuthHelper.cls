@@ -180,6 +180,7 @@ public class InstagramAuthHelper {
     }
     
     public static dateTime getDateTime (String dateTimeString){
+        dateTimeString = dateTimeString.remove('+0000');
         List<String> dateTimeParts = dateTimeString.split('T');
         
         // Extract date part
@@ -274,7 +275,7 @@ public class InstagramAuthHelper {
                 }
                 newcase.recordtypeId = caseRecordTypeId;
                 newcase.Priority = 'High';
-                newcase.Type_of_Post__c = 'Tags/Mentions';
+                newcase.Type_of_Post__c = 'Mentions';
                 newcase.Subject = 'Mention Post from instagram.Related to '+postInfo.username+'. Created Date-Time : '+newcase.Created_Time__c;
                 newcase.Description = postInfo.caption;
                 if(!commentsOnPostByPostId.keyset().contains(newCase.Post_Id__c)){

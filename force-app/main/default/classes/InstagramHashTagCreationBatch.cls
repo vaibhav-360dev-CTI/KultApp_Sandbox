@@ -28,12 +28,12 @@ public class InstagramHashTagCreationBatch  implements Database.Batchable<sObjec
     List<String> casePostIds                                                 = new List<String>();
     List<Case> ExistingCaseRecords                                           = new List<Case>();
     //Getting the record Type Id
-    private static Id caseRecordTypeId                                       = Schema.SObjectType.case.getRecordTypeInfosByName().get('Instagram').getRecordTypeId();
+    private static Id caseRecordTypeId                                       = Schema.SObjectType.case.getRecordTypeInfosByName().get('Social Media').getRecordTypeId();
     
     public Database.QueryLocator start(Database.BatchableContext context) {
         String origin = 'Instagram';
         String Brand='Hyphen';
-        String query = 'Select id,subject,Description,Caption__c,Post_Id__c,(Select Activity_Content__c,Activity_ID__c,case__c,Case__r.Post_Id__c,Activity_Author__c,Post_Url__c,Activity_Created_DateTime__c from Case_Communications__r) from case where Origin = :origin and recordTypeId = :caseRecordTypeId AND Brand__c=:Brand';
+        String query = 'Select id,subject,Description,Caption__c,Post_Id__c,(Select Activity_Content__c,Activity_ID__c,case__c,Case__r.Post_Id__c,Activity_Author__c,Platform_URL__c ,Activity_Created_DateTime__c from Case_Communications__r) from case where Origin = :origin and recordTypeId = :caseRecordTypeId AND Brand__c=:Brand';
         return Database.getQueryLocator(query);
     }
     

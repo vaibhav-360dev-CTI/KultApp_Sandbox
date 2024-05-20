@@ -184,12 +184,14 @@ public with sharing class taskHelperController {
                 
                 if(conNumber != null){
                     newCase.SuppliedPhone = conNumber;
+                    newCase.Contact_Number__c = conNumber;
                 }
                 newCase.Status = 'New';
                 newCase.OwnerId = UserInfo.getUserId();
             }else{
                 newCase.RecordTypeId = rt.Id;
                 newCase.Contact_Number__c = conNumber;
+                newCase.SuppliedPhone = conNumber;
                 newCase.Subject = 'Call - Manual Case Creation';
                 newCase.Communication_Mode__c = 'Call';
                 newCase.Status = 'New';
@@ -197,9 +199,6 @@ public with sharing class taskHelperController {
                 if(ts.size()>0){
                     newCase.AccountId = ts[0].AccountId;
                 }
-                System.debug('Contact_Number__cElse======>'+newCase.Contact_Number__c);
-                
-                System.debug('newCase=====>'+newCase);
             }
             
             insert newCase;

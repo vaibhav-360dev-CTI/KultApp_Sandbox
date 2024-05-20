@@ -1,4 +1,14 @@
 ({
+    doInit: function(component, event, helper){
+        debugger;
+        let currentUser = $A.get("$SObjectType.CurrentUser.Email");
+        if(currentUser == 'rachael.c@kult.app' || currentUser == 'natasha.g@kult.app'){
+            component.set('v.NotRefundMember', false);
+        }else{
+            component.set('v.NotRefundMember', true);
+        }
+    },
+
     onchange: function(component, event, helper) {
         debugger;
         event.stopPropagation();

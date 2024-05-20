@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Service RelatedRT</label>
+    <protected>false</protected>
+    <values>
+        <field>RecordType__c</field>
+        <value xsi:type="xsd:string">Service Related</value>
+    </values>
+    <values>
+        <field>Types__c</field>
+        <value xsi:type="xsd:string">Serviceable Area or PIN Code,Complaint About Rider or CSE,Happy Customer,Service feedback,Looking for a Job,Missed / Incomplete Conversation</value>
+    </values>
+</CustomMetadata>

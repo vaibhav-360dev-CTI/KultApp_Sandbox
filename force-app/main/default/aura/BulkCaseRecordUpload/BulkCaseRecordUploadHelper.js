@@ -34,6 +34,7 @@
             };
             reader.onload = function(e) {
                 debugger;
+                var objectNumbers = [];
                 var data=e.target.result;
                 component.set("v.fileContentData",data);
                 console.log("file data"+JSON.stringify(data));
@@ -56,11 +57,19 @@
                     }
                     content += "</tr></thead>";
                     for (var i=1; i<allTextLines.length; i++) {
+                        var enterRow = true;
                         filecontentdata = allTextLines[i].split(',');
                         if(filecontentdata[0]!=''){
                             content +="<tr>";
                             for(var j=0;j<filecontentdata.length;j++){
-                                content +='<td>'+filecontentdata[j]+'</td>';
+                                if(j == 0 && !objectNumbers.includes(filecontentdata[j])){
+                                    content +='<td>'+filecontentdata[j]+'</td>';
+                                    objectNumbers.push(filecontentdata[j]);
+                                }else if(j == 0 && objectNumbers.includes(filecontentdata[j])){
+                                    enterRow = false;
+                                }if(j != 0 && enterRow){
+                                    content +='<td>'+filecontentdata[j]+'</td>';
+                                }
                             }
                             content +="</tr>";
                         }
@@ -91,13 +100,24 @@
         var fieldsList = headers;
         
         var typeOfCase = component.get('v.tempNameToDownload');
-        
-        action.setParams({ 
-            fileData : component.get("v.fileContentData"),
-            sobjectName:'Case', 
-            fields:fieldsList,
-            typeOfCase:component.get('v.tempNameToDownload')
-        });
+
+        if(component.get('v.NotRefundMember')){
+            action.setParams({ 
+                fileData : component.get("v.fileContentData"),
+                sobjectName:'Case', 
+                fields:fieldsList,
+                typeOfCase:component.get('v.tempNameToDownload'),
+                refundType:'Null'
+            });
+        }else{
+            action.setParams({ 
+                fileData : component.get("v.fileContentData"),
+                sobjectName:'Case', 
+                fields:fieldsList,
+                typeOfCase:component.get('v.tempNameToDownload'),
+                refundType:component.get('v.value')
+            });
+        }
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {

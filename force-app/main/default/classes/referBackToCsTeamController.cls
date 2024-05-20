@@ -49,7 +49,7 @@ public without sharing class referBackToCsTeamController {
         
         try {
             if(String.isNotBlank(caseId)){
-                Case caseRec = [SELECT Id, CS_Team_Member__c,CaseNumber, OwnerId FROM Case WHERE Id=: caseId LIMIT 1]; //SELECT Id, OwnerId, User.ManagerId FROM Case WHERE Id = '500F300000DLFGLIA5'
+                Case caseRec = [SELECT Id, CS_Team_Member__c,CaseNumber, OwnerId, Is_With_Refund_Team__c FROM Case WHERE Id=: caseId LIMIT 1]; //SELECT Id, OwnerId, User.ManagerId FROM Case WHERE Id = '500F300000DLFGLIA5'
                 String OwnersId= caseRec.CS_Team_Member__c != null ? caseRec.CS_Team_Member__c : userInfo.getUserId();
                 List<User> userList = [SELECT Id,Email,Name From User Where Profile.Name = 'Customer Service Executive' AND Id=:OwnersId LIMIT 1];
                 User userRec = new User();
@@ -142,18 +142,19 @@ public without sharing class referBackToCsTeamController {
                     }
 
                     if(referBackReason == 'Resolved'){
-                        caseToUpdate.Is_With_Refund_Team__c = false;
-                        if(caseRec.CS_Team_Member__c != null && caseRec.CS_Team_Member__c != ''){
+                        if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('005')){
+                            caseToUpdate.RefundTeamMember__c = caseRec.OwnerId;
+                        }else if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('00G')){
+                            caseToUpdate.RefundTeamMember__c = userInfo.getUserId();
+                        }
+                        if(caseRec.CS_Team_Member__c != null && String.valueOf(caseRec.CS_Team_Member__c) != ''){
                             caseToUpdate.OwnerId = caseRec.CS_Team_Member__c;
                         }else if(userRec.Id != null){
-                            caseToUpdate.OwnerId = userRec.Id;
+                            caseToUpdate.OwnerId = userRec.Id;                     
                         }else{
-                            System.debug('Inside');
                             caseToUpdate.OwnerId = caseRec.OwnerId;
-                            System.debug('userInfo.getUserId()==> ' + userInfo.getUserId());
+                            
                         }
-                        System.debug('caseRec.CS_Team_Member__c==> ' + caseRec.CS_Team_Member__c);
-                        System.debug('userRec==> ' + userRec);
                         Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
                 cpdRec.Status__c = referBackReason == 'Resolved' ? 'Resolved' : 'In Progress';
                 cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? resolutionRemarks : describeInformationNeeded;
@@ -172,6 +173,7 @@ public without sharing class referBackToCsTeamController {
                             }else{
                                 notification.send(new Set<String> { caseRec.OwnerId });
                             }
+                            caseToUpdate.Is_With_Refund_Team__c = false;
                     }
                     caseToUpdate.Refer_Back_Reason__c = referBackReason;
                     List<CaseShare> existingShares = [SELECT Id, UserOrGroup.Name FROM CaseShare WHERE CaseId = :caseToUpdate.Id AND UserOrGroupId = :currUserId AND RowCause != 'Owner'];

@@ -8,7 +8,7 @@
 
 public class BulkCaseUploadController {
     @AuraEnabled
-    public static void processData(String fileData,String sobjectName,List<String> fields, String typeOfCase){
+    public static void processData(String fileData,String sobjectName,List<String> fields, String typeOfCase, String refundType){
         List<Group> bulkQueueList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId FROM Group WHERE DeveloperName = 'Bulk_Upload_Queue' LIMIT 1];
         Group bulkUploadQueue = new Group();
         if(!bulkQueueList.isEmpty()){
@@ -18,11 +18,18 @@ public class BulkCaseUploadController {
         System.debug('fileData CSV === >'+fileData);
         System.debug('fields CSV === >'+fields);
         System.debug('typeOfCase CSV === >'+typeOfCase);
+        System.debug('refundType === >'+refundType);
+        List<Group> refundQueueList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId FROM Group WHERE DeveloperName = 'Refund_Team_Queue' LIMIT 1];
+            Group refundQueue = new Group();
+        if(!refundQueueList.isEmpty()){
+            refundQueue = refundQueueList[0];
+        }
         List<Asset> assetListToRecord = new List<Asset>();
         List<case> CaseListToRecord = new List<case>();
         map<String,String> apiNameByLabelName 	= new map<String,String>();
         Map<String,String> mapIfContEmailConId = new Map<String,String>();
         Map<String,String> mapOfProductNameProdId = new Map<String,String>();
+        Set<String> orderIdSet = new Set<String>();
         
         for(Contact con : [SELECT Id,Email FROM Contact]){
             if(con.Email !=null){
@@ -59,7 +66,7 @@ public class BulkCaseUploadController {
                                else if(apiNameByLabelName.get(fields.get(l)) == 'Refund_Amount__c'){
                                     obj.put(apiNameByLabelName.get(fields.get(l)),Decimal.ValueOf(value));
                                 }
-                                else{
+                                else if (apiNameByLabelName.get(fields.get(l)) != null){
                                 obj.put(apiNameByLabelName.get(fields.get(l)),value);
                                 }
                             }
@@ -89,7 +96,8 @@ public class BulkCaseUploadController {
                     }
                 }
                 for(sObject record : recordList){
-                    Case caseRec = new case();   
+                    if(!orderIdSet.contains((String)record.get('Order__c'))){
+                        Case caseRec = new case();   
                     // if(record.get('Date_Of_Order__c') !=null){
                     //     caseRec.Date_Of_Order__c =Date.valueOf((Date)record.get('Date_Of_Order__c'));
                     // }
@@ -102,6 +110,7 @@ public class BulkCaseUploadController {
                                 caseRec.AccountId = orderRec.AccountId;
                             }
                         }
+                        orderIdSet.add((String)record.get('Order__c'));
                     }
                     if(record.get('Shipping_Mobile_No__c') !=null){
                         caseRec.Shipping_Mobile_No__c	 = (String)record.get('Shipping_Mobile_No__c');
@@ -178,17 +187,33 @@ public class BulkCaseUploadController {
                     }else{
                         caseRec.Status	 = 'New';
                     }
-                     String sku1ID = String.valueOf(record.get('SKU_Details__c'));
-                     String sku2ID = String.valueOf(record.get('HashTag__c'));
-                     String appenValue = sku1ID +';'+sku2ID;
+                    String appenValue = '';
+                    String appenValueQty = '';
+                    if(record.get('SKU_Details__c') != null){
+                        String sku1ID = String.valueOf(record.get('SKU_Details__c'));
+                        appenValue = appenValue + sku1ID + ';'; 
+                    }
+                    if(record.get('HashTag__c') != null){
+                        String sku2ID = String.valueOf(record.get('HashTag__c'));   
+                        appenValue = appenValue + sku2ID; 
+                    }
                     System.debug('appenValue == >'+appenValue);
-                    caseRec.SKU_Details__c = appenValue;
-
-                    String skucancelQty1 = String.valueOf(record.get('Item__c'));
-                    String skucancelQty2 = String.valueOf(record.get('Landmark__c'));
-                    String appenValueQty = skucancelQty1 +';'+skucancelQty2;
+                    if(appenValue != ''){
+                        caseRec.SKU_Details__c = appenValue;
+                    }
+                    if(record.get('Item__c') != null){
+                        String skucancelQty1 = String.valueOf(record.get('Item__c'));
+                        appenValueQty = appenValueQty + skucancelQty1 + ';';
+                    }
+                    if(record.get('Item__c') != null){
+                        String skucancelQty2 = String.valueOf(record.get('Landmark__c'));
+                        appenValueQty = appenValueQty + skucancelQty2;
+                    }
                     System.debug('appenValueQty == >'+appenValueQty);
-                    caseRec.OOS_Quantity__c = appenValueQty;
+                    if(appenValueQty != ''){
+                        caseRec.OOS_Quantity__c = appenValueQty;
+                    }
+                    caseRec.OwnerId = bulkUploadQueue.Id;
 
                     if(typeOfCase == 'PinCodeService'){
                         caseRec.RecordTypeId = orderRelatedRecordTypeId;
@@ -208,10 +233,25 @@ public class BulkCaseUploadController {
                     }else if(typeOfCase == 'RToOrders'){
                         caseRec.RecordTypeId = orderRelatedRecordTypeId;
                         caseRec.Subject = 'RTO Orders';
+                    }else if(typeOfCase == 'RefundCases'){
+                        caseRec.RecordTypeId = orderRelatedRecordTypeId;
+                        caseRec.Subject = 'Monitoring Report - Refund Case';
+                        caseRec.OwnerId = refundQueue.Id;
+                        if(refundType == 'Full'){
+                            caseRec.Refund_Type__c = 'Full';
+                            caseRec.Subject = 'Monitoring Report - Refund Case';
+                            caseRec.Type = 'Monitoring Report - Full';
+                            caseRec.Sub_Type__c = 'Monitoring Report - Full';
+                        }else if(refundType == 'Partial'){
+                            caseRec.Subject = 'Monitoring Report - Refund Case';
+                            caseRec.Refund_Type__c = 'Partial';
+                            caseRec.Type = 'Monitoring Report - Partial';
+                            caseRec.Sub_Type__c = 'Monitoring Report - Partial';
+                        }
                     }
                     caseRec.Origin	 = 'Bulk Upload';
-                    caseRec.OwnerId = bulkUploadQueue.Id;
                     CaseListToRecord.add(caseRec);
+                    }
                 }  
                 if(CaseListToRecord.size()>0){
                     insert CaseListToRecord;
@@ -251,12 +291,17 @@ public class BulkCaseUploadController {
     // =============================================================================================================================================================================================================
     // Method for Create Bulk Case Upload using XLSX File,  Note: Before changing any code ask me First
     @AuraEnabled 
-    public static String insertBulkCaseXlsxFiel(String jsonString,String docTempName){
+    public static String insertBulkCaseXlsxFiel(String jsonString,String docTempName, String refundType, Boolean showDownload){
         System.debug('docTempName == >'+docTempName);
         List<Group> bulkQueueList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId FROM Group WHERE DeveloperName = 'Bulk_Upload_Queue' LIMIT 1];
         Group bulkUploadQueue = new Group();
         if(!bulkQueueList.isEmpty()){
             bulkUploadQueue = bulkQueueList[0];
+        }
+        List<Group> refundQueueList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId FROM Group WHERE DeveloperName = 'Refund_Team_Queue' LIMIT 1];
+            Group refundQueue = new Group();
+        if(!refundQueueList.isEmpty()){
+            refundQueue = refundQueueList[0];
         }
         try{
             Map<string,string> mapOfOrdernoOrderId = new Map<string,string>();
@@ -278,6 +323,11 @@ public class BulkCaseUploadController {
                 Map<String, Object> caseMap = (Map<String, Object>) obj;
                 System.debug('caseMap == >'+caseMap);
                 Case caseRec = new case(); 
+                if(!showDownload){
+                    caseRec.Refund_Type__c = refundType;
+                    caseRec.Type = 'Monitoring Report - ' + refundType;
+                    caseRec.Sub_Type__c = 'Monitoring Report - ' + refundType;
+                }
                 // if(caseMap.get('dateoforder') !=null){
                 //     string dateString = String.valueOf(caseMap.get('dateoforder'));
                 //     List<String> dateParts = dateString.split('-');
@@ -319,7 +369,7 @@ public class BulkCaseUploadController {
                     caseRec.OOS_Quantity__c	= String.valueOf(caseMap.get('oosquantity')); 
                 }
                 if(caseMap.get('oosskucode') !=null){
-                    caseRec.OOS_SKU_Code__c	= String.valueOf(caseMap.get('oosskucode'));
+                    caseRec.SKU_Details__c	= String.valueOf(caseMap.get('oosskucode'));
                 }
                 if(caseMap.get('remarks') !=null){
                     caseRec.CSE_Remarks__c = String.valueOf(caseMap.get('remarks'));
@@ -348,7 +398,7 @@ public class BulkCaseUploadController {
                 if(caseMap.get('email') !=null){
                     caseRec.Email_Id__c = String.valueOf(caseMap.get('email'));
                 }
-                if(caseMap.get('isfullrefund') !=null){
+                if(caseMap.get('isfullrefund') !=null && showDownload){
                     if(caseMap.get('isfullrefund') == true){
                         caseRec.Refund_Type__c = 'Full';
                     }
@@ -383,19 +433,34 @@ public class BulkCaseUploadController {
                     caseRec.Status	 = 'New';
                 }
 
-                String sku1ID = String.valueOf(caseMap.get('sku1id'));
-                String sku2ID = String.valueOf(caseMap.get('sku2id'));
-                String appenValue = sku1ID +';'+sku2ID;
-                System.debug('appenValue == >'+appenValue);
-                caseRec.SKU_Details__c = appenValue;
+                String appenValue = '';
+                if(caseMap.get('sku1id') != null){
+                    String sku1ID = String.valueOf(caseMap.get('sku1id'));
+                    appenValue = appenValue + sku1ID + ';';
+                }
+                if(caseMap.get('sku2id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku2id'));
+                    appenValue = appenValue + sku2ID;
+                }
+                if(appenValue != ''){
+                    caseRec.SKU_Details__c = appenValue;
+                }
 
-                String skucancelQty1 = String.valueOf(caseMap.get('sku1cancelledquantity'));
-                String skucancelQty2 = String.valueOf(caseMap.get('sku2cancelledquantity'));
-                String appenValueQty = skucancelQty1 +';'+skucancelQty2;
-                System.debug('appenValueQty == >'+appenValueQty);
-                caseRec.OOS_Quantity__c = appenValueQty;
+                String appenValueQty = '';
+                if(caseMap.get('sku1cancelledquantity') != null){
+                    String skucancelQty1 = String.valueOf(caseMap.get('sku1cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty1 + ';';
+                }
+                if(caseMap.get('sku1cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku2cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2;
+                }
+                if(appenValueQty != ''){
+                    caseRec.OOS_Quantity__c = appenValueQty;
+                }
 
                 caseRec.Origin	 = 'Bulk Upload';
+                caseRec.OwnerId = bulkUploadQueue.Id;
                 if(docTempName == 'PinCodeService'){
                     caseRec.RecordTypeId = orderRelatedRecordTypeId;
                     caseRec.Subject = 'Pin Code Not Serviceable';
@@ -414,8 +479,11 @@ public class BulkCaseUploadController {
                 }else if(docTempName == 'RToOrders'){
                     caseRec.RecordTypeId = orderRelatedRecordTypeId;
                     caseRec.Subject = 'RTO Orders';
+                }else if(docTempName == 'RefundCases'){
+                    caseRec.RecordTypeId = orderRelatedRecordTypeId;
+                    caseRec.Subject = 'Monitoring Report - Refund Case';
+                    caseRec.OwnerId = refundQueue.Id;
                 }
-                caseRec.OwnerId = bulkUploadQueue.Id;
                 caseListToInsert.add(caseRec);
             }
             if(caseListToInsert.size()>0){

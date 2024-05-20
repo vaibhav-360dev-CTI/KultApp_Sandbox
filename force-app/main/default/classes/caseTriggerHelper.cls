@@ -212,7 +212,7 @@ System.debug(e.getMessage());
                 //     newCaseRec.CS_Team_Member__c = oldMap.get(caseRec.Id).OwnerId;
                 // }
                 if(usersById.containsKey(caseRec.OwnerId)){
-                    if(usersById.get(caseRec.OwnerId).Profile.Name == 'Customer Service Executive'){
+                    if(usersById.get(caseRec.OwnerId).Profile.Name == 'Customer Service Executive' && caseRec.CS_Team_Member__c == null){
                         System.debug('test');
                         newCaseRec.CS_Team_Member__c = caseRec.OwnerId;
                     }else if(usersById.get(caseRec.OwnerId).Profile.Name == 'WareHouse Team'){
@@ -220,6 +220,8 @@ System.debug(e.getMessage());
                     }else if(usersById.get(caseRec.OwnerId).Profile.Name == 'Marketing Team'){
                         newCaseRec.Marketing_Team__c = caseRec.OwnerId;
                     }else if(usersById.get(caseRec.OwnerId).Profile.Name == 'Refund Team'){
+                        newCaseRec.RefundTeamMember__c = caseRec.OwnerId;
+                    }else if(caseRec.Is_With_Refund_Team__c && string.valueOf(caseRec.OwnerId).startsWith('005')){
                         newCaseRec.RefundTeamMember__c = caseRec.OwnerId;
                     }
                     caseToUpdate.add(newCaseRec);
@@ -482,6 +484,28 @@ System.debug(e.getMessage());
                 }else {
                     System.debug('No coupon found for case with OrderId ' + cs.OrderId__c);
                 }
+            }
+        }
+
+        public static void resetAlreadyUtilized(List<case> caseList, Map<Id, Case> oldMap){
+            try{
+                List<OrderItem> ordListToUpdate = new List<OrderItem>();
+                Set<Id> orderIds = new Set<Id>();
+                for(case csRec : caseList){
+                    if(csRec.OrderId__c != oldMap.get(csRec.Id).OrderId__c){
+                        orderIds.add(csRec.OrderId__c);
+                    }
+                }
+                List<OrderItem> orderItemList = [SELECT Id, Is_Already_Utilized__c FROM OrderItem WHERE OrderId IN: orderIds OR Order.ParentOrder__c IN: orderIds];
+                for(OrderItem ordRec : orderItemList){
+                    ordRec.Is_Already_Utilized__c = false;
+                    ordListToUpdate.add(ordRec);
+                }
+                if(!ordListToUpdate.isEmpty()){
+                    update ordListToUpdate;
+                }
+            }catch(exception e){
+                System.debug('Error:: ' + e.getMessage() + ' at Line :: ' + e.getLineNumber());
             }
         }
         

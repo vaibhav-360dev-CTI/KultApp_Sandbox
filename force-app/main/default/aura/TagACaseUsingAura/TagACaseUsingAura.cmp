@@ -15,5 +15,7 @@
         }
     </aura:html>
     <aura:attribute name="recordId" type="String" />
-    <c:tagCaseOntask recordId="{!v.recordId}" onmyfirstevent="{!c.handleLWCEvent}"></c:tagCaseOntask>
+    <!-- c:tagCaseOntask recordId="{!v.recordId}" onmyfirstevent="{!c.handleLWCEvent}"></c:tagCaseOntask -->
+    
+    <c:tagCasesOnTask recordId="{!v.recordId}" onmyfirstevent="{!c.handleLWCEvent}"></c:tagCasesOnTask>
 </aura:component>

@@ -21,9 +21,16 @@
     <aura:attribute name="showFourthscreen" type="Boolean" default="false" />
     <aura:attribute name="showFifthscreen" type="Boolean" default="false" />
     <aura:attribute name="HideUploadSixscreen" type="Boolean" default="true" />
+    <aura:attribute name="NotRefundMember" type="Boolean" default="true" />
     <aura:attribute name="tempNameToDownload" type="String" />
     <aura:attribute name="docTempName" type="string" />
     <aura:attribute name="class" type="String" />
+    <aura:attribute name="options" type="List" default="[
+    {'label': 'Full', 'value': 'Full'},
+    {'label': 'Partial', 'value': 'Partial'}
+    ]"/>
+    <aura:attribute name="value" type="String" default="Full"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
     <div style="background: white;">
 
         <aura:if isTrue="{!v.showMain}">
@@ -47,6 +54,7 @@
         </aura:if>
 
         <aura:if isTrue="{!v.showFirstScreen}">
+            <aura:if isTrue="{!v.NotRefundMember}">
             <div class="slds-grid slds-gutters">
                 <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
                     <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Out of Stock"
@@ -75,8 +83,14 @@
                         onclick="{!c.handleClickRToOrders}" />
                 </div>
             </div>
+            <aura:set attribute="else">
             <div class="slds-grid slds-gutters">
                 <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
+                    <lightning:radioGroup name="radioGroup"
+                          label="Radio Group"
+                          options="{! v.options }"
+                          value="{! v.value }"
+                          type="radio"/>
                     <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Refund Cases"
                         onclick="{!c.handleClickRefundCases}" />
                 </div>
@@ -87,6 +101,8 @@
                   
                 </div>
             </div>
+        </aura:set>
+        </aura:if>
         </aura:if>
 
         <div class="slds-form-element" aura:id="form-container">
@@ -120,7 +136,7 @@
                                     </aura:if>
                                     <!-- <aura:if isTrue="{!v.showFifthscreen}"> -->
                                     <c:bulkCaseRecordUploadXlsx aura:id="lwcComponent"
-                                        docTempName="{!v.tempNameToDownload}"></c:bulkCaseRecordUploadXlsx>
+                                        docTempName="{!v.tempNameToDownload}" showDownload="{!v.NotRefundMember}" refundType="{!v.value}"></c:bulkCaseRecordUploadXlsx>
                                     <!-- </aura:if> -->
                                 </span>
                             </div>
@@ -128,7 +144,7 @@
                             <aura:if isTrue="{!v.HideUploadSixscreen}">
                                 <div class="slds-col slds-size_2-of-4.5">
                                     <span>
-                                        <c:BulkCaseRecordTemp docTempName="{!v.tempNameToDownload}" />
+                                        <c:BulkCaseRecordTemp docTempName="{!v.tempNameToDownload}" showDownload="{!v.NotRefundMember}"/>
                                     </span>
                                 </div>
                             </aura:if>

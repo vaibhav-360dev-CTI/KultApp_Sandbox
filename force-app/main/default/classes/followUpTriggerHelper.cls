@@ -2,7 +2,7 @@ public class followUpTriggerHelper {
     public static void updateCaseOnFollowUpCreation(List<Follow_Up_Request__c> followUpRequestList){
         Set<Id> setOfCaseId = new Set<Id>();
         for(Follow_Up_Request__c fur :followUpRequestList){
-            if(fur.Case__c != null){
+            if(fur.Case__c != null && fur.Follow_Up_Status__c == 'Open'){
                 setOfCaseId.add(fur.Case__c);
             }
         }

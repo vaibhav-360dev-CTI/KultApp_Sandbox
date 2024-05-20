@@ -203,18 +203,116 @@ public without sharing class moveToWarehouseController {
     
     @AuraEnabled
     public static String showErrorToAddSkuDetails(String recId) {
-    try {
-        List<Affected_SKU__c> affSKUList = [SELECT Id, Case__c FROM Affected_SKU__c WHERE Id = :recId];
-        if (affSKUList.size() > 0) {
-            return 'SUCCESS';
-        } else {
-            return 'No affected SKUs found.';
+        try {
+            List<Affected_SKU__c> affSKUList = [SELECT Id, Case__c FROM Affected_SKU__c WHERE Id = :recId];
+            if (affSKUList.size() > 0) {
+                return 'SUCCESS';
+            } else {
+                return 'No affected SKUs found.';
+            }
+        } catch (Exception e) {
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            return null;
         }
-    } catch (Exception e) {
-        System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
-        return null;
     }
-}
+    
+    @AuraEnabled
+    public static string AssignToAdminQueue(string RecId, String reassignReason){
+        System.debug('recId===============>'+RecId + '   ' + 'reassignReason==========>'+reassignReason );
+        try {
+            if(RecId != null){
+                List<Group> queueList = [select Id from Group where Type = 'Queue' AND DeveloperNAME = 'Admin_Queue' ];
+                String queueId;
+                if(queueList != null){
+                    queueId = queueList[0].Id;
+                }
+                System.debug('queueList' + queueList);
+                List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,OwnerId From Case Where Id =: RecId Limit 1];
+                for(Case cse : csList){
+                    if(reassignReason != null){
+                        cse.MT_Assignment_Reason__c = reassignReason;
+                        cse.OwnerId = queueId;
+                        System.debug('OwnerId===========>' + cse.OwnerId);
+                    }
+                    Case_Progress_Detail__c cpd = new Case_Progress_Detail__c();
+                    cpd.CS_Remarks__c = reassignReason;
+                    cpd.Status__c = 'In Progress';
+                    cpd.Case__c = cse.Id;
+                    cpd.Current_Action__c = 'Move To Admin';
+                    Insert cpd;
+                    System.debug('cpd' + cpd);
+                }
+                update csList;
+                System.debug('csList==========>' + csList);
+                
+                return 'SUCCESS';
+            }
+        } catch (Exception e) {
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            
+        }return null;
+    }
+
+    @AuraEnabled
+    public static string reAssignCaseToCSTeam(string recId, String reAssignmnetReason, Id usrId){
+        System.debug('recId===============>'+recId + '   ' + 'reassginmentReason==========>'+reAssignmnetReason + '     '+'usrId==========>'+usrId);
+        try {
+            if(recId != null){
+                
+                List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,CS_Team_Member__c,OwnerId From Case Where Id =: recId Limit 1];
+                for(Case cse : csList){
+                    if(reAssignmnetReason != null){
+                        cse.MT_Assignment_Reason__c = reAssignmnetReason;
+                        cse.OwnerId = usrId;
+                        cse.CS_Team_Member__c = usrId;
+                        System.debug('csList==========>' + cse.CS_Team_Member__c);
+                        System.debug('csList==========>' + cse.OwnerId);
+
+                        Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                        notification.setBody('A New Case Has Been Assigned To You'); 
+                        notification.setTitle('New Case Assignment'); 
+                        CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];  
+                        notification.setNotificationTypeId(type.id); 
+                        notification.setTargetId(cse.Id);
+                        notification.send(new Set<String> { cse.OwnerId });
+                    }
+                    Case_Progress_Detail__c cpd = new Case_Progress_Detail__c();
+                    cpd.CS_Remarks__c = reAssignmnetReason;
+                    cpd.Status__c = 'In Progress';
+                    cpd.Case__c = cse.Id;
+                    cpd.Current_Action__c = 'Move To CS Team';
+                    cpd.OwnerId = usrId;
+                    Insert cpd;
 
 
+
+                }
+                
+                update csList;
+                System.debug('csList==========>' + csList);
+                
+                return 'SUCCESS';
+            }
+        } catch (Exception e) {
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            
+        }return null;
+    }
+
+
+    @AuraEnabled
+    public static List<User> getAllUser(){
+        try {
+
+            List<User> userList = [SELECT Id, Name, Profile.Name FROM User WHERE Profile.Name = 'Customer Service Executive'];
+            System.debug('userList===========>' + userList);
+            return userList;
+ 
+
+            
+        } catch (Exception e) {
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            return null;
+        }
+    }
 }

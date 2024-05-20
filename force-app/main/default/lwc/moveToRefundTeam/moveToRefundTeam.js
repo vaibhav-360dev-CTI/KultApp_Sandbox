@@ -223,7 +223,8 @@ export default class MoveToRefundTeam extends LightningElement {
                     }
 
                     this.records = data.orderItems.map(item => ({
-                        productName: item.Product2.Name,
+                        productName: item.Product_Name__c,
+                        brandName: item.Brand__c,
                         Id: item.Id,
                         totalQuantity: item.Quantity,
                         refundQuantity: item.Quantity,
@@ -240,7 +241,8 @@ export default class MoveToRefundTeam extends LightningElement {
                     debugger;
 
                     this.records2 = data.orderItems.map(item => ({
-                        productName: item.Product2.Name,
+                        productName: item.Product_Name__c,
+                        brandName: item.Brand__c,
                         Id: item.Id,
                         totalQuantity: item.Quantity,
                         refundQuantity: item.Refund_Quantity__c,

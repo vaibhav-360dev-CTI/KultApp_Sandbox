@@ -14,23 +14,29 @@ public without sharing class marketingTeamCaseController {
     }
 
     @AuraEnabled
-    public static String userUpdate(String recId, String UserName, String MarketingReason) {
+    public static String userUpdate(String recId, String MarketingReason) {
         System.debug('recId=====>' + recId);
-        System.debug('UserName=====>' + UserName);
         System.debug('MarketingReason=====>' + MarketingReason);
         try {
             Set<Id> setOfOwnerId = new Set<Id>();
             List<Case> caseList1 = [SELECT Id, OwnerId, Owner.Email, Owner.Name, ContactId, Contact.Email, CreatedDate, CaseNumber, CS_Team_Member__c FROM Case WHERE Id =:recId];
+            List<User> userList = [SELECt Id, Name FROM User WHERE UserName = 'marketingqueries@kult.app' LIMIT 1];
+            Id userRecId;
+            if(!userList.isEmpty()){
+                userRecId = userList[0].Id;
+            }else{
+                userRecId = UserInfo.getUserId();
+            }
             Case cs = new Case();
             if(!caseList1.isEmpty()){
                 cs = caseList1[0];
             }
-            if(cs.CS_Team_Member__c == null){
+            if(cs.CS_Team_Member__c == null && String.ValueOf(cs.OwnerId).startsWith('005')){
                 cs.CS_Team_Member__c = cs.OwnerId;
             }
             String CSteamId = cs.CS_Team_Member__c;
-            //cs.Marketing_Team__c = UserName;
-            cs.OwnerId = UserName;
+            cs.Marketing_Team__c = userRecId;
+            cs.OwnerId = userRecId;
             cs.MT_Assignment_Reason__c = MarketingReason;
             cs.Marketing__c = true;
             cs.Status = 'In Progress';

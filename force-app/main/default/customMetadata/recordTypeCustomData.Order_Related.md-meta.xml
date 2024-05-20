@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Order Related</label>
+    <protected>false</protected>
+    <values>
+        <field>RecordType__c</field>
+        <value xsi:type="xsd:string">Order Related</value>
+    </values>
+    <values>
+        <field>Types__c</field>
+        <value xsi:type="xsd:string">Order Status,Gift Before Shipping,Gift After Shipping,Cancellation Before Shipping,Cancellation After Shipping,Address Change Before Shipping,Address Change After Shipping,Return &amp; Replacement,Return and Refund,Reverse Pick Up</value>
+    </values>
+</CustomMetadata>
