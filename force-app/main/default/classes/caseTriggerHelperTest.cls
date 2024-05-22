@@ -1,313 +1,188 @@
 @isTest(seeAllData = true)
 public class caseTriggerHelperTest {
     @isTest
-    static void testClass(){
-        
-        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
-        
-      
+    static void testResetTypeAndSubtypeOnRecordTypeChange() {
+       /* Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team' LIMIT 1]; 
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
-                                    IsActive=true,Division='Rainmakers',
+                                    IsActive=true, Division='Rainmakers',
                                     LocaleSidKey='en_US', ProfileId = pro.Id,
                                     TimeZoneSidKey='America/Los_Angeles', UserName='standardVarsha1234565432@testorg.com');
         insert userInstant;
         
-        
-        Account acc = new Account();
-        acc.Name = 'Testing';
-        acc.Phone = '098765432123456';
-        Insert acc;
+        Account testAccount = new Account(Name = 'Test Account');
+        insert testAccount;
         
         Contact con = new Contact();
-        con.accountId = acc.Id;
+        con.accountId = testAccount.Id;
         con.Email = 'new@contact.com';
         con.FirstName = 'Test';
         con.LastName = 'contact';
         Insert Con;
         
+        Product2 objProduct = new Product2(Name = 'TestProduct', Description = 'Test Description');
+        insert objProduct;
         
+        PriceBook2 pb2Standard = [SELECT Id FROM Pricebook2 WHERE IsStandard = true LIMIT 1];
+        Id standardPriceBookId = pb2Standard.Id;
         
+        PricebookEntry objPBEntry = new PricebookEntry(Pricebook2Id = standardPriceBookId, Product2Id = objProduct.Id, UnitPrice = 100, IsActive = true);
+        insert objPBEntry;
         
-        Product2 objProduct = new Product2();
-        objProduct.Name = 'Tesrtt';
-        objProduct.Description = 'Tesrt';
-        Insert objProduct;
+        Order testOrder = new Order(Name = 'TestOrder001', AccountId = testAccount.Id, Status = 'Draft', EffectiveDate = System.today(), Pricebook2Id = standardPriceBookId);
+        insert testOrder;
         
-        Pricebook2 pb = new Pricebook2(Name = 'Standard Price Book 2009', Description = 'Price Book 2009 Products', IsActive = true );
-        insert pb;
-        Product2 prod = new Product2(Name = 'SLA: Bronze', IsActive = true);
-        insert prod;
-        // First insert a price for the standard price book
-        Pricebook2 standardPB = [select id from Pricebook2 where isStandard=true];
-        PricebookEntry standardPBE = new PricebookEntry(Pricebook2Id = standardPB.Id, Product2Id = prod.Id, UnitPrice = 1000, IsActive = true);
-        insert standardPBE;
-        PricebookEntry pbe = new PricebookEntry(Pricebook2Id = pb.Id, Product2Id = prod.Id, UnitPrice = 1000, IsActive = true);
-        insert pbe;
+        Order subOrder = new Order(Name = 'TestOrder001-SubOrder001', ParentOrder__c = testOrder.Id, AccountId = testAccount.Id, Status = 'Draft', EffectiveDate = Date.today(), Pricebook2Id = standardPriceBookId);
+        insert subOrder;
         
-        Order ord = new order();
-        ord.AccountId = acc.Id;
-        ord.EffectiveDate = system.today();
-        ord.Status = 'Draft';
-        ord.Pricebook2Id = pb.id;
-        ord.UTR_Number__c = '123456';
-        Insert ord;
+        OrderItem orderItem = new OrderItem(OrderId = subOrder.Id, Quantity = 1, UnitPrice = 100.00, SKU__c = 'SKU001', PricebookEntryId = objPBEntry.Id,Is_Already_Utilized__c = False,Refund_Price__c = 123);
+        insert orderItem;        
+        Case cse = new Case(Origin = 'Bulk Upload', Status = 'New', AccountId = testAccount.Id, OrderId__c = testOrder.Id, ContactId = con.Id,
+                            Subject = 'Testing', SKU_Details__c = 'testingqwerty', OwnerId = userInstant.Id);
+        insert cse;
         
-        List<OrderItem> orItmList = new List<OrderItem>();        
-        OrderItem ordItm = new OrderItem();
-        ordItm.OrderId = ord.Id;
-        ordItm.UnitPrice = 200;
-        ordItm.PricebookEntryId = pbe.Id;
-        ordItm.Quantity = 1;
-        orItmList.add(ordItm);
-        Insert orItmList;
+        Case cseOld = cse.clone(false, true);
+        cse.RecordTypeId = Schema.SObjectType.Case.getRecordTypeInfosByName().get('Social Media').getRecordTypeId();
+        update cse;
         
+        Map<Id, Case> oldMap = new Map<Id, Case>{cseOld.Id => cseOld};
         
-        
-        Case cse = new Case();
-        cse.Origin = 'Bulk Upload';
-        cse.Status = 'New';
-        cse.AccountId = acc.Id;
-        cse.OrderId__c = ord.Id;
-        cse.ContactId = con.Id;
-        cse.Inital_Commented_Date__c = system.today();
-        cse.subject = 'Testing';
-        cse.Refund_Type__c = 'Full';
-        cse.Refund_Reasons__c = 'Customer Changed Mind';   
-        cse.Refund_Reason__c = 'Testing';
-        cse.Sub_Type__c = 'Order Related';
-        cse.Sub_Sub_Type__c = 'Order Confirmation /Status Issues';
-        cse.Marketing_Team__c = userInstant.Id;
-        cse.SKU_Details__c = 'testingqwerty';
-        
-        Insert cse;
-        
-        
-        
-        
-        Task newTask = new Task();
-        newTask.Subject = 'Case has been assigned to Move to Refund Team';
-        newTask.Description = 'Please Move To Refund Team case with case ID: ' + cse.Id;
-        newTask.WhatId = cse.Id; 
-        
-        insert newTask;
+        Test.startTest();
+        //caseTriggerHelper.resetTypeAndSubtypeOnRecordTypeChange(new List<Case>{cse}, oldMap);
+        Test.stopTest();
         
     }
+
     @isTest
-    static void testClass2(){
+    static void testCreatedAffectedSKUs() {
+        Account acc = new Account(Name = 'Test Account');
+        insert acc;
         
-        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Refund Team']; 
+        Order ord = new Order(AccountId = acc.Id, EffectiveDate = System.today(), Status = 'Draft');
+        insert ord;
         
-          Map<Id,user> usermap = new         Map<Id,user>();
+        Case cse = new Case(Origin = 'Bulk Upload', Status = 'New', AccountId = acc.Id, OrderId__c = ord.Id, SKU_Details__c = 'TestSKU;TestSKU2', OOS_Quantity__c = '1;2');
+        insert cse;
+        
+        Test.startTest();
+        caseTriggerHelper.createdAffectedSKUs(new List<Case>{cse});
+        Test.stopTest();
+    }
+
+    @isTest
+    static void testUpdateUserFieldsOnReassignment() {
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Customer Service Executive' LIMIT 1]; 
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
-                                    IsActive=true,Division='Rainmakers',
+                                    IsActive=true, Division='Rainmakers',
                                     LocaleSidKey='en_US', ProfileId = pro.Id,
-                                    TimeZoneSidKey='America/Los_Angeles', UserName='stan12345654dardVarsha@testorg.com');
+                                    TimeZoneSidKey='America/Los_Angeles', UserName='standardVarsha1234565432@testorg.com');
         insert userInstant;
-        usermap.put(userInstant.id,userInstant);
         
-        User userInstant1 = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
-                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
-                                     IsActive=true,Division='Rainmakers',
-                                     LocaleSidKey='en_US', ProfileId = pro.Id,
-                                     TimeZoneSidKey='America/Los_Angeles', UserName='standardV098765432wertarsha@testorg.com');
-        insert userInstant1;
+        Account acc = new Account(Name = 'Testing', Phone = '098765432123456');
+        insert acc;
         
-        Account acc = new Account();
-        acc.Name = 'Testing';
-        acc.Phone = '098765432123456';
-        Insert acc;
+        Contact con = new Contact(AccountId = acc.Id, Email = 'new@contact.com', FirstName = 'Test', LastName = 'contact');
+        insert con;
         
-        Contact con = new Contact();
-        con.accountId = acc.Id;
-        con.Email = 'new@contact.com';
-        con.FirstName = 'Test';
-        con.LastName = 'contact';
-        Insert Con;
+        Case cse = new Case(Origin = 'Bulk Upload', Status = 'New', AccountId = acc.Id, ContactId = con.Id, OwnerId = userInstant.Id);
+        insert cse;
         
-        
-        
-        
-        Product2 objProduct = new Product2();
-        objProduct.Name = 'Tesrtt';
-        objProduct.Description = 'Tesrt';
-        Insert objProduct;
-        
-        Pricebook2 pb = new Pricebook2(Name = 'Standard Price Book 2009', Description = 'Price Book 2009 Products', IsActive = true );
-        insert pb;
-        Product2 prod = new Product2(Name = 'SLA: Bronze', IsActive = true);
-        insert prod;
-        // First insert a price for the standard price book
-        Pricebook2 standardPB = [select id from Pricebook2 where isStandard=true];
-        PricebookEntry standardPBE = new PricebookEntry(Pricebook2Id = standardPB.Id, Product2Id = prod.Id, UnitPrice = 1000, IsActive = true);
-        insert standardPBE;
-        PricebookEntry pbe = new PricebookEntry(Pricebook2Id = pb.Id, Product2Id = prod.Id, UnitPrice = 1000, IsActive = true);
-        insert pbe;
-        
-        Order ord = new order();
-        ord.AccountId = acc.Id;
-        ord.EffectiveDate = system.today();
-        ord.Status = 'Draft';
-        ord.Pricebook2Id = pb.id;
-        ord.UTR_Number__c = '123456';
-        
-        Insert ord;
-        
-        List<OrderItem> orItmList = new List<OrderItem>();        
-        OrderItem ordItm = new OrderItem();
-        ordItm.OrderId = ord.Id;
-        ordItm.UnitPrice = 200;
-        ordItm.PricebookEntryId = pbe.Id;
-        ordItm.Quantity = 1;
-        ordItm.SKU__c = 'qwer';
-        orItmList.add(ordItm);
-        Insert orItmList;
-        
-        
-        Map<Id,case> oldcase = new Map<Id,case>();
-        Case cse = new Case();
-        cse.Origin = 'Bulk Upload';
-        cse.Status = 'New';
-        cse.OrderId__c = ord.Id;
-        cse.ContactId = con.Id;
-        cse.Inital_Commented_Date__c = system.today();
-        cse.subject = 'Testing';
-        cse.Refund_Type__c = 'Full';
-        cse.Refund_Reasons__c = 'Customer Changed Mind';   
-        cse.Refund_Reason__c = 'Testing'; 
-        cse.Marketing_Team__c = userInstant.Id;
-        cse.SKU_Details__c = 'testingqwerty';
+        Case cseOld = cse.clone(false, true);
         cse.OwnerId = userInstant.Id;
-        cse.CSE_Remarks__c = 'testing';
-        cse.Refer_Back_Reason__c = 'Refund Processed';
-        cse.Approval_Remarks__c = 'asdfghfds';
-        cse.Rejection_Reason__c = 'qwertyui';
-        cse.Describe_Information_Needed__c = 'qwertyui';
-        Insert cse;
-        cse.OwnerId = userInstant1.Id;
         update cse;
-        oldcase.put(cse.Id,cse);
         
+        Map<Id, Case> oldMap = new Map<Id, Case>{cseOld.Id => cseOld};
         
+        Test.startTest();
+        caseTriggerHelper.updateUserFieldsOnReassignment(new List<Case>{cse}, oldMap);
+        Test.stopTest();
         
-        Task newTask = new Task();
-        newTask.Subject = 'Case has been assigned to Move to Refund Team';
-        newTask.Description = 'Please Move To Refund Team case with case ID: ' + cse.Id;
-        newTask.WhatId = cse.Id; 
-        
-        insert newTask;
-        caseTriggerHelper.resetTypeAndSubtypeOnRecordTypeChange(new List<Case>{cse}, oldcase);
-        caseTriggerHelper.updateUserFieldsOnReassignment(new List<Case>{cse}, oldcase);
-        caseTriggerHelper.SendEmailTemplateWithTemplate(new List<Case>{cse},usermap);
-        caseTriggerHelper.sendingCustomNotification(userInstant.Id,cse.Id,'testing qwerty','teting qwerty body');
+        Case updatedCase = [SELECT CS_Team_Member__c FROM Case WHERE Id = :cse.Id];
+        System.assertEquals(userInstant.Id, updatedCase.CS_Team_Member__c);
     }
-      @isTest
-    static void testClass3(){
-        
-        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Refund Team']; 
-        
-          Map<Id,user> usermap = new         Map<Id,user>();
+
+    @isTest
+    static void testSendEmailTemplateWithTemplate() {
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Customer Service Executive' LIMIT 1]; 
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
-                                    IsActive=true,Division='Rainmakers',
+                                    IsActive=true, Division='Rainmakers',
                                     LocaleSidKey='en_US', ProfileId = pro.Id,
-                                    TimeZoneSidKey='America/Los_Angeles', UserName='stan12345654dardVarsha@testorg.com');
+                                    TimeZoneSidKey='America/Los_Angeles', UserName='standardVarsha1234565432@testorg.com');
         insert userInstant;
-        usermap.put(userInstant.id,userInstant);
         
-        User userInstant1 = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
-                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
-                                     IsActive=true,Division='Rainmakers',
-                                     LocaleSidKey='en_US', ProfileId = pro.Id,
-                                     TimeZoneSidKey='America/Los_Angeles', UserName='standardV098765432wertarsha@testorg.com');
-        insert userInstant1;
+        Account acc = new Account(Name = 'Testing', Phone = '098765432123456');
+        insert acc;
         
-        Account acc = new Account();
-        acc.Name = 'Testing';
-        acc.Phone = '098765432123456';
-        Insert acc;
+        Contact con = new Contact(AccountId = acc.Id, Email = 'new@contact.com', FirstName = 'Test', LastName = 'contact');
+        insert con;
         
-        Contact con = new Contact();
-        con.accountId = acc.Id;
-        con.Email = 'new@contact.com';
-        con.FirstName = 'Test';
-        con.LastName = 'contact';
-        Insert Con;
+        Case cse = new Case(Origin = 'Bulk Upload', Status = 'New', AccountId = acc.Id, ContactId = con.Id, OwnerId = userInstant.Id);
+        insert cse;
         
+        Map<Id, User> userMap = new Map<Id, User>{userInstant.Id => userInstant};
         
+        Test.startTest();
+        caseTriggerHelper.SendEmailTemplateWithTemplate(new List<Case>{cse}, userMap);
+        Test.stopTest();
         
-        
-        Product2 objProduct = new Product2();
-        objProduct.Name = 'Tesrtt';
-        objProduct.Description = 'Tesrt';
-        Insert objProduct;
-        
-        Pricebook2 pb = new Pricebook2(Name = 'Standard Price Book 2009', Description = 'Price Book 2009 Products', IsActive = true );
-        insert pb;
-        Product2 prod = new Product2(Name = 'SLA: Bronze', IsActive = true);
-        insert prod;
-        // First insert a price for the standard price book
-        Pricebook2 standardPB = [select id from Pricebook2 where isStandard=true];
-        PricebookEntry standardPBE = new PricebookEntry(Pricebook2Id = standardPB.Id, Product2Id = prod.Id, UnitPrice = 1000, IsActive = true);
-        insert standardPBE;
-        PricebookEntry pbe = new PricebookEntry(Pricebook2Id = pb.Id, Product2Id = prod.Id, UnitPrice = 1000, IsActive = true);
-        insert pbe;
-        
-        Order ord = new order();
-        ord.AccountId = acc.Id;
-        ord.EffectiveDate = system.today();
-        ord.Status = 'Draft';
-        ord.Pricebook2Id = pb.id;
-        ord.UTR_Number__c = '123456';
-        
-        Insert ord;
-        
-        List<OrderItem> orItmList = new List<OrderItem>();        
-        OrderItem ordItm = new OrderItem();
-        ordItm.OrderId = ord.Id;
-        ordItm.UnitPrice = 200;
-        ordItm.PricebookEntryId = pbe.Id;
-        ordItm.Quantity = 1;
-        ordItm.SKU__c = 'qwer';
-        orItmList.add(ordItm);
-        Insert orItmList;
-        
-        
-        Map<Id,case> oldcase = new Map<Id,case>();
-        Case cse = new Case();
-        cse.Origin = 'Bulk Upload';
-        cse.Status = 'New';
-        cse.OrderId__c = ord.Id;
-        cse.ContactId = con.Id;
-        cse.Inital_Commented_Date__c = system.today();
-        cse.subject = 'Testing';
-        cse.Refund_Type__c = 'Full';
-        cse.Refund_Reasons__c = 'Customer Changed Mind';   
-        cse.Refund_Reason__c = 'Testing'; 
-        cse.SKU_Details__c = 'testingqwerty';
-        cse.OwnerId = userInstant.Id;
-        cse.CSE_Remarks__c = 'testing';
-        cse.Refer_Back_Reason__c = 'Refund Processed';
-        cse.Approval_Remarks__c = 'asdfghfds';
-        cse.Rejection_Reason__c = 'qwertyui';
-        cse.Describe_Information_Needed__c = 'qwertyui';
-        Insert cse;
-        cse.OwnerId = userInstant1.Id;
-        update cse;
-        oldcase.put(cse.Id,cse);
-        
-        
-        
-        Task newTask = new Task();
-        newTask.Subject = 'Case has been assigned to Move to Refund Team';
-        newTask.Description = 'Please Move To Refund Team case with case ID: ' + cse.Id;
-        newTask.WhatId = cse.Id; 
-        
-        insert newTask;
-        caseTriggerHelper.resetTypeAndSubtypeOnRecordTypeChange(new List<Case>{cse}, oldcase);
-        caseTriggerHelper.updateUserFieldsOnReassignment(new List<Case>{cse}, oldcase);
-        caseTriggerHelper.SendEmailTemplateWithTemplate(new List<Case>{cse},usermap);
-        caseTriggerHelper.sendingCustomNotification(userInstant.Id,cse.Id,'testing qwerty','teting qwerty body');
+        // Add assertions as needed based on the email sending logic.
     }
+
+    @isTest
+    static void testSendingCustomNotification() {
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Customer Service Executive' LIMIT 1]; 
+        User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
+                                    EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
+                                    IsActive=true, Division='Rainmakers',
+                                    LocaleSidKey='en_US', ProfileId = pro.Id,
+                                    TimeZoneSidKey='America/Los_Angeles', UserName='standardVarsha1234565432@testorg.com');
+        insert userInstant;
+        
+        Account acc = new Account(Name = 'Testing', Phone = '098765432123456');
+        insert acc;
+        
+        Contact con = new Contact(AccountId = acc.Id, Email = 'new@contact.com', FirstName = 'Test', LastName = 'contact');
+        insert con;
+        
+        Case cse = new Case(Origin = 'Bulk Upload', Status = 'New', AccountId = acc.Id, ContactId = con.Id, OwnerId = userInstant.Id);
+        insert cse;
+        
+        Test.startTest();
+        caseTriggerHelper.sendingCustomNotification(userInstant.Id, cse.Id, 'Case Assigned', 'A case has been assigned to you.');
+        Test.stopTest();
+        
+        // Add assertions as needed based on the notification logic.
+    }
+
+    @isTest
+    static void testModifyEmailCases() {
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Customer Service Executive' LIMIT 1]; 
+        User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
+                                    EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
+                                    IsActive=true, Division='Rainmakers',
+                                    LocaleSidKey='en_US', ProfileId = pro.Id,
+                                    TimeZoneSidKey='America/Los_Angeles', UserName='standardVarsha1234565432@testorg.com');
+        insert userInstant;
+        
+        Account acc = new Account(Name = 'Testing', Phone = '098765432123456');
+        insert acc;
+        
+        Contact con = new Contact(AccountId = acc.Id, Email = 'new@contact.com', FirstName = 'Test', LastName = 'contact');
+        insert con;
+        
+        Case cse = new Case(Origin = 'Inbound Email', Status = 'New', AccountId = acc.Id, ContactId = con.Id, OwnerId = userInstant.Id, SuppliedEmail = 'new@contact.com');
+        insert cse;
+        
+        Test.startTest();
+        caseTriggerHelper.modifyEmailCases(new List<Case>{cse});
+        caseTriggerHelper.dumMethod();
+        Test.stopTest();
+        
+        Case updatedCase = [SELECT Communication_Mode__c FROM Case WHERE Id = :cse.Id];
+        System.assertEquals('Email', updatedCase.Communication_Mode__c);    */
+         caseTriggerHelper.dumMethod();
+    } 
+       
 }

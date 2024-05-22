@@ -1,6 +1,5 @@
 @RestResource(urlMapping='/OrderCreation')
 global class WS_OrderCreationv1 {
-    
     @HttpPost
     global static List<ResponseBody> doPost() {
         RestRequest req = RestContext.request;
@@ -23,12 +22,13 @@ global class WS_OrderCreationv1 {
             Map<String, String> accIdByOrderName = new Map<String,String>();
 
             List<Account> accountListTobeUpsert = new List<Account>();
+            Map<String,Integer> itemQuantityBySKU = new Map<String,Integer>();
 
 
             ///////////////////Order APICode Start//////////////////
                 If(!orderRecords.isEmpty()){
                     for(WS_OrderCreation ws_orderInput : orderRecords){
-
+                        System.debug('ws_orderInput==> ' + ws_orderInput);
                         if(ws_orderInput.data.customer_details != null && ws_orderInput.data.customer_details.phone_number != null){
                             if(mapOfPhoneNumberByOrderDetails.containsKey(ws_orderInput.data.customer_details.phone_number)){
                                 mapOfPhoneNumberByOrderDetails.get(ws_orderInput.data.customer_details.phone_number).add(ws_orderInput.data);
@@ -43,8 +43,22 @@ global class WS_OrderCreationv1 {
                                 for(WS_OrderCreation.ItemDetails itemRec : orderRecords1.item_details){
                                     subOrderNameBysubOrderItemName.put(ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku, ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id);
                                     subOrderItemBySubOrderItemName.put(ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku, itemRec);
+                                    String name = ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku;
+                                    if(itemQuantityBySKU.containsKey(name)){
+                                        itemQuantityBySKU.put(name, itemQuantityBySKU.get(name)+1); 
+                                    }else{
+                                        itemQuantityBySKU.put(name, 1); 
+                                    }
                                 }
                             }
+                        }else if(ws_orderInput.data.customer_details != null && ws_orderInput.data.customer_details.phone_number == null){
+                            ResponseBody res = new ResponseBody();
+                                res.status = 'Error';
+                                res.message = 'Order Creation Failed: Customer Data found without Phone Number';
+                                //res.orderId = upsertedOrder.Id;
+                                respBodyList.add(res);
+                                RestContext.response.statusCode = 400;
+                                return respBodyList;
                         }
                         // System.debug('mapOfPhoneNumberByOrderDetails==> ' + mapOfPhoneNumberByOrderDetails);
                         // System.debug('phone_numberSet==> ' + phone_numberSet);
@@ -263,6 +277,7 @@ global class WS_OrderCreationv1 {
                                 //res.orderId = upsertedOrder.Id;
                                 respBodyList.add(res);
                                 }
+                                RestContext.response.statusCode = 400;
                                 return respBodyList;
                             }
                         }
@@ -284,7 +299,8 @@ global class WS_OrderCreationv1 {
                                 ordItemRec.Brand__c = subOrderItemBySubOrderItemName.get(mapKey).brand != null ? subOrderItemBySubOrderItemName.get(mapKey).brand : '';
                                 ordItemRec.UnitPrice = subOrderItemBySubOrderItemName.get(mapKey).mrp != null ? Decimal.valueOf(subOrderItemBySubOrderItemName.get(mapKey).mrp) : 0;
                                 ordItemRec.Selling_Price__c = subOrderItemBySubOrderItemName.get(mapKey).selling_price != null ? subOrderItemBySubOrderItemName.get(mapKey).selling_price : 0;
-                                ordItemRec.Quantity = subOrderItemBySubOrderItemName.get(mapKey).quantity != null ? subOrderItemBySubOrderItemName.get(mapKey).quantity : 0;
+                                //ordItemRec.Quantity = subOrderItemBySubOrderItemName.get(mapKey).quantity != null ? subOrderItemBySubOrderItemName.get(mapKey).quantity : 0;
+                                ordItemRec.Quantity = itemQuantityBySKU.get(mapKey) != null ? itemQuantityBySKU.get(mapKey) : 1;
                                 if(subOrderItemBySubOrderItemName.get(mapKey).refunded_price != '' && subOrderItemBySubOrderItemName.get(mapKey).refunded_price != null)
                                 ordItemRec.Refunded_Price__c = Decimal.valueOf(subOrderItemBySubOrderItemName.get(mapKey).refunded_price);
                                 ordItemRec.SKU__c = subOrderItemBySubOrderItemName.get(mapKey).sku != null ? subOrderItemBySubOrderItemName.get(mapKey).sku : '';
@@ -332,6 +348,7 @@ global class WS_OrderCreationv1 {
                 return respBodyList;
 
             }catch(exception e){
+                System.debug('Error Message==>' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
                 ResponseBody res = new ResponseBody();
                             res.status = 'Error';
                             res.message = e.getMessage();

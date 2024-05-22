@@ -32,10 +32,10 @@ public class CallLogTriggerHelperTest {
         update clg; */
         
         List<Call_Logs_Custom__c> clgList = [SELECT Id, OwnerId, IsDeleted, Name, CreatedDate, CreatedById, 
-                                             LastModifiedDate, LastModifiedById, 
-                                             SystemModstamp, LastActivityDate, LastViewedDate, LastReferencedDate, Case__c, 
-                                             Contact__c, Phone__c, Email__c, Status__c FROM Call_Logs_Custom__c Limit 1];
+                                              Case__c,  Contact__c, Phone__c, Email__c, Status__c FROM Call_Logs_Custom__c Limit 1];
+                                            
         
        CallLogTriggerHelper.collectEmailOrPhoneOfCallLogs(clgList);  
+       CallLogTriggerHelper.dumMethod();
     }
 }

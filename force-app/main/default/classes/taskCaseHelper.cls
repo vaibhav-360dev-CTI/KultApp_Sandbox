@@ -48,4 +48,5 @@ public with sharing class taskCaseHelper {
             return false; // Return false in case of any exception
         }
     }
+    
 }

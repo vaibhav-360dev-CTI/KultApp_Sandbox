@@ -3,7 +3,7 @@ public class RefundControllerTest {
     @isTest
     static void testClass(){
         
-        Profile pro = [SELECT Id FROM Profile WHERE Name='Customer Service Manager']; 
+         Profile pro = [SELECT Id FROM Profile WHERE Name='Customer Service Manager']; 
         
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
@@ -46,8 +46,9 @@ public class RefundControllerTest {
         
         RefundController.getCaseById(cse.Id);
         RefundController.getUsersByProfileName();
-        RefundController.userUpdate(cse.Id,userInstant.Id);
+        RefundController.userUpdate(cse.Id,userInstant.Id); 
         
+        RefundController.dumMethod();
     }
     
     

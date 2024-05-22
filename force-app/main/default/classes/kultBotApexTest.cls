@@ -33,6 +33,7 @@ public class kultBotApexTest {
         Insert Opp1;
         
         kultBotApex.isInWorkHours();
+        //kultBotApex.dumMethod();
         
     }
 }

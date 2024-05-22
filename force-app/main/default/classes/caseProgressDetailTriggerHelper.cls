@@ -57,9 +57,10 @@ public class caseProgressDetailTriggerHelper {
         
         for (Case_Progress_Detail__c cp : createdByProfileDetails) {
             System.debug('cp.CreatedBy.Profile.Name111==> ' + cp.CreatedBy.Profile.Name);
+
+            Case cs = new Case(Id = cp.Case__c);
             if (cp.WH_Team_Remarks__c != null && (cp.CreatedBy.Profile.Name == 'WareHouse Team' || cp.CreatedBy.Profile.Name == 'Customer Service Executive')) {
                 System.debug('cp.CreatedBy.Profile.Name123==> ' + cp.CreatedBy.Profile.Name);
-                Case cs = new Case(Id = cp.Case__c);
                 if (cp.CreatedBy.Profile.Name == 'WareHouse Team') {
                     System.debug('cp.CreatedBy.Profile.Name1`121==> ' + cp.CreatedBy.Profile.Name);
                     cs.Refund_WH_Team_Status__c = 'WH Team - ' + cp.Status__c;
@@ -67,8 +68,11 @@ public class caseProgressDetailTriggerHelper {
                     System.debug('cp.CreatedBy.Profile.Name1qwer==> ' + cp.CreatedBy.Profile.Name);
                     cs.Refund_WH_Team_Status__c = 'Refund Team - ' + cp.Status__c;
                 }
-                caseListToUpdate.add(cs);
             }
+            if(cp.Status__c == 'Responded' || cp.Status__c == 'Resolved'){
+                cs.Last_Response__c = System.Now();
+            }
+            caseListToUpdate.add(cs);
         }
         update caseListToUpdate;
     }

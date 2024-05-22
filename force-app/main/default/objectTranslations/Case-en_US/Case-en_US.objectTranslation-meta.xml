@@ -6,6 +6,10 @@
     </fieldSets>
     <fieldSets>
         <label></label>
+        <name>Field_Set_for_CS_Outbound_Calls</name>
+    </fieldSets>
+    <fieldSets>
+        <label></label>
         <name>Field_set_For_Order_Related</name>
     </fieldSets>
     <fieldSets>
@@ -26,6 +30,10 @@
     <quickActions>
         <label></label>
         <name>Assign_to_MT</name>
+    </quickActions>
+    <quickActions>
+        <label></label>
+        <name>CS_Outbound_Calls</name>
     </quickActions>
     <quickActions>
         <label></label>

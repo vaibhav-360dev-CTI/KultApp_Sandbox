@@ -1,30 +1,12 @@
-@isTest(seeAllData = true)
+@isTest(seeAllData= true)
 public class OrderTriggerHelperTest {
     @isTest
-    static void testClass(){
-        
-        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Marketing Team']; 
-        
-        User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
-                                    EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
-                                    IsActive=true,Division='Rainmakers',
-                                    LocaleSidKey='en_US', ProfileId = pro.Id,
-                                    TimeZoneSidKey='America/Los_Angeles', UserName='standardVarsha1234565432@testorg.com');
-        insert userInstant;
-        
-        Account acc = new Account();
-        acc.Name = 'Testing';
-        acc.Phone = '098765432123456';
-        Insert acc;
-        
-        Contact con = new Contact();
-        con.accountId = acc.Id;
-        con.Email = 'new@contact.com';
-        con.FirstName = 'Test';
-        con.LastName = 'contact';
-        Insert Con;
-        
-        
+    static void setup() {
+        List<OrderItem> orderItems = new List<OrderItem>();
+        Account testAccount = new Account(
+            Name = 'Test Account'
+        );
+        insert testAccount;
         
         
         Product2 objProduct = new Product2();
@@ -32,74 +14,53 @@ public class OrderTriggerHelperTest {
         objProduct.Description = 'Tesrt';
         Insert objProduct;
         
-        Pricebook2 pb = new Pricebook2(Name = 'Standard Price Book 2009', Description = 'Price Book 2009 Products', IsActive = true );
-        insert pb;
-        Product2 prod = new Product2(Name = 'SLA: Bronze', IsActive = true);
-        insert prod;
-        // First insert a price for the standard price book
-        Pricebook2 standardPB = [select id from Pricebook2 where isStandard=true];
-        PricebookEntry standardPBE = new PricebookEntry(Pricebook2Id = standardPB.Id, Product2Id = prod.Id, UnitPrice = 1000, IsActive = true);
-        insert standardPBE;
-        PricebookEntry pbe = new PricebookEntry(Pricebook2Id = pb.Id, Product2Id = prod.Id, UnitPrice = 1000, IsActive = true);
-        insert pbe;
+        PriceBook2 pb2Standard = [Select Id from Pricebook2 where isStandard=true limit 1];
         
-         Order ord1 = new order();
-        ord1.AccountId = acc.Id;
-        ord1.EffectiveDate = system.today();
-        ord1.Status = 'Draft';
-        ord1.Pricebook2Id = pb.id;
-        ord1.UTR_Number__c = '123456';
-        Insert ord1;
+        PricebookEntry objPBEntry = new PricebookEntry();
+        objPBEntry.Pricebook2Id =pb2Standard.id;
+        objPBEntry.Product2Id = objProduct.id;
+        objPBEntry.UnitPrice = 100;  
+        objPBEntry.IsActive = true;
+        Insert objPBEntry;
         
-        Order ord = new order();
-        ord.AccountId = acc.Id;
-        ord.EffectiveDate = system.today();
-        ord.Status = 'Draft';
-        ord.Pricebook2Id = pb.id;
-        ord.UTR_Number__c = '123456';
-        ord.ParentOrder__c = ord1.Id;
-        Insert ord;
+        Order testOrder = new Order(Name='234452',AccountId = testAccount.Id, Status = 'Draft',EffectiveDate=system.today(),Pricebook2Id = pb2Standard.Id,Total_Amount__c=100);
+        insert testOrder;
         
-        List<OrderItem> orItmList = new List<OrderItem>();        
-        OrderItem ordItm = new OrderItem();
-        ordItm.OrderId = ord.Id;
-        ordItm.UnitPrice = 200;
-        ordItm.PricebookEntryId = pbe.Id;
-        ordItm.Quantity = 1;
-        orItmList.add(ordItm);
-        Insert orItmList;
+        Order testOrder1 = new Order(Name='234452',AccountId = testAccount.Id, Status = 'Draft',EffectiveDate=system.today(),Pricebook2Id = pb2Standard.Id,ParentOrder__c = testOrder.Id,Total_Amount__c=100);
+        insert testOrder1;
         
+        OrderItem orderItem1 = new OrderItem(
+            OrderId = testOrder1.Id,
+            Quantity = 1,
+            UnitPrice = 100,
+            SKU__c='Test',
+            PricebookEntryId = objPBEntry.Id
+        );
+        insert orderItem1;
+        orderItems.add(orderItem1);
+        OrderItem orderItem2 = new OrderItem(
+            OrderId = testOrder1.Id,
+            Quantity = 2,
+            UnitPrice = 150,
+            SKU__c='Test',
+            PricebookEntryId = objPBEntry.Id
+        );
         
+        insert orderItem2;
+        orderItems.add(orderItem2);
         
-        Case cse = new Case();
-        cse.Origin = 'Bulk Upload';
-        cse.Status = 'New';
-        cse.AccountId = acc.Id;
-        cse.OrderId__c = ord.Id;
-        cse.ContactId = con.Id;
-        cse.Inital_Commented_Date__c = system.today();
-        cse.subject = 'Testing';
-        cse.Refund_Type__c = 'Full';
-        cse.Refund_Reasons__c = 'Customer Changed Mind';   
-        cse.Refund_Reason__c = 'Testing';
-        cse.Sub_Type__c = 'Order Related';
-        cse.Sub_Sub_Type__c = 'Order Confirmation /Status Issues';
-        cse.Marketing_Team__c = userInstant.Id;
-        cse.SKU_Details__c = 'testingqwerty';
-        cse.MT_Assignment_Reason__c = 'qwertyuiop';
+        Test.startTest();
+        OrderTriggerHelper.UpdateOrderLineItemOnOrder(orderItems);
+        Test.stopTest();
+    }
+    
+    @isTest
+    static void testUpdateOrderLineItemOnOrder() {
+        List<OrderItem> orderItems = [SELECT Id, OrderId, TotalPrice FROM OrderItem];
         
-        Insert cse;
+        Test.startTest();
+        OrderTriggerHelper.UpdateOrderLineItemOnOrder(orderItems);
+        Test.stopTest();
         
-        
-        
-        
-        Task newTask = new Task();
-        newTask.Subject = 'Case has been assigned to Move to Refund Team';
-        newTask.Description = 'Please Move To Refund Team case with case ID: ' + cse.Id;
-        newTask.WhatId = cse.Id; 
-        
-        insert newTask;
-     
-        OrderTriggerHelper.UpdateOrderLineItemOnOrder(orItmList);
     }
 }

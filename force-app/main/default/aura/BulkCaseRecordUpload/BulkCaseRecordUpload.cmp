@@ -30,6 +30,9 @@
     {'label': 'Partial', 'value': 'Partial'}
     ]"/>
     <aura:attribute name="value" type="String" default="Full"/>
+
+    <aura:attribute name="currentUser" type="User"/>
+    <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"  fields="Profile.Name,Name" targetFields="{!v.currentUser}"/>
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
     <div style="background: white;">
 
@@ -54,7 +57,7 @@
         </aura:if>
 
         <aura:if isTrue="{!v.showFirstScreen}">
-            <aura:if isTrue="{!v.NotRefundMember}">
+            <aura:if isTrue="{!or(v.currentUser.Profile.Name == 'System Administrator', v.currentUser.Profile.Name == 'WareHouse Team')}">
             <div class="slds-grid slds-gutters">
                 <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
                     <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Out of Stock"
@@ -83,7 +86,7 @@
                         onclick="{!c.handleClickRToOrders}" />
                 </div>
             </div>
-            <aura:set attribute="else">
+            <aura:if isTrue="{!v.currentUser.Profile.Name == 'System Administrator'}">
             <div class="slds-grid slds-gutters">
                 <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
                     <lightning:radioGroup name="radioGroup"
@@ -101,7 +104,28 @@
                   
                 </div>
             </div>
-        </aura:set>
+        </aura:if>
+            <!-- <aura:set attribute="else"> -->
+        <!-- </aura:set> -->
+        </aura:if>
+        <aura:if isTrue="{!v.currentUser.Profile.Name == 'Customer Service Executive'}">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
+                    <lightning:radioGroup name="radioGroup"
+                          label="Radio Group"
+                          options="{! v.options }"
+                          value="{! v.value }"
+                          type="radio"/>
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Refund Cases"
+                        onclick="{!c.handleClickRefundCases}" />
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                  
+                </div>
+            </div>
         </aura:if>
         </aura:if>
 

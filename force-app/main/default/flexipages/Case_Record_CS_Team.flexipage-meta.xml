@@ -917,7 +917,7 @@
         <componentInstances>
             <componentInstanceProperties>
                 <name>actionNames</name>
-                <value>[&quot;MassAccept&quot;,&quot;Case.Send_Request_Info&quot;,&quot;Case.Close_Refund_Bulk_Upload_Case&quot;,&quot;Case.Case_Re_Open&quot;,&quot;Case.Enter_Case_Details&quot;,&quot;Case.Follow_Up&quot;,&quot;Case.Update_Affected_SKU&quot;,&quot;Case.RefundTeam&quot;,&quot;Case.Move_to_Warehouse_Team&quot;,&quot;Case.Assign_to_MT&quot;,&quot;Case.Case_Closure&quot;,&quot;Case.Create_Child_Case&quot;,&quot;Case.Merge_Duplicate_Case&quot;,&quot;Case.Refer_Back_To_CS_Team&quot;,&quot;Case.Move_To_Admin&quot;,&quot;Case.Re_Assign_Case_To_CS_Team&quot;,&quot;Case.Respond_To_Follow_Up&quot;]</value>
+                <value>[&quot;MassAccept&quot;,&quot;Case.Send_Request_Info&quot;,&quot;Case.Close_Refund_Bulk_Upload_Case&quot;,&quot;Case.Case_Re_Open&quot;,&quot;Case.Enter_Case_Details&quot;,&quot;Case.Follow_Up&quot;,&quot;Case.CS_Outbound_Calls&quot;,&quot;Case.Update_Affected_SKU&quot;,&quot;Case.RefundTeam&quot;,&quot;Case.Move_to_Warehouse_Team&quot;,&quot;Case.Assign_to_MT&quot;,&quot;Case.Case_Closure&quot;,&quot;Case.Create_Child_Case&quot;,&quot;Case.Merge_Duplicate_Case&quot;,&quot;Case.Refer_Back_To_CS_Team&quot;,&quot;Case.Move_To_Admin&quot;,&quot;Case.Re_Assign_Case_To_CS_Team&quot;,&quot;Case.Respond_To_Follow_Up&quot;]</value>
             </componentInstanceProperties>
             <componentInstanceProperties>
                 <name>collapsed</name>

@@ -217,6 +217,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Case.Appointment_Booked__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Case.Approval_Remarks__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -263,6 +268,16 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.CS_Team_Member__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Case.Call_Status__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Case.Callback_Requested__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -502,6 +517,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Case.Interest_Level__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Case.Invoice_Image__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -613,6 +633,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.Order_Number__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Case.Order_Placed__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -893,6 +918,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.Type_Of_Case__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Case.Type_of_Call__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1398,6 +1428,16 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Order.AWB_Number__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Order.Account_Email__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Order.Account_Phone__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>

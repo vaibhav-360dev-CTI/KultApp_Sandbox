@@ -92,8 +92,10 @@ public class marketingTeamCaseControllerTest {
         insert newTask;
         
         marketingTeamCaseController.marketingTeamCase(cse.Id);
-        marketingTeamCaseController.userUpdate(cse.Id,userInstant.Id,cse.MT_Assignment_Reason__c);
-        marketingTeamCaseController.getUsersByProfileName();
+      //  marketingTeamCaseController.userUpdate(cse.Id,userInstant.Id,cse.MT_Assignment_Reason__c);
+        marketingTeamCaseController.getUsersByProfileName(); 
+        
+        marketingTeamCaseController.dumMethod();
         
     }
 }
