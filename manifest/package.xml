@@ -46,10 +46,6 @@
     </types>
     <types>
         <members>*</members>
-        <name>Audience</name>
-    </types>
-    <types>
-        <members>*</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
@@ -71,10 +67,6 @@
     <types>
         <members>*</members>
         <name>BusinessProcess</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>CMSConnectSource</name>
     </types>
     <types>
         <members>*</members>
@@ -103,14 +95,6 @@
     <types>
         <members>*</members>
         <name>Community</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>CommunityTemplateDefinition</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>CommunityThemeDefinition</name>
     </types>
     <types>
         <members>*</members>
@@ -226,23 +210,11 @@
     </types>
     <types>
         <members>*</members>
-        <name>EmbeddedServiceFieldService</name>
-    </types>
-    <types>
-        <members>*</members>
         <name>EscalationRule</name>
     </types>
     <types>
         <members>*</members>
         <name>EscalationRules</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>EventDelivery</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>EventSubscription</name>
     </types>
     <types>
         <members>*</members>
@@ -334,10 +306,6 @@
     </types>
     <types>
         <members>*</members>
-        <name>ManagedTopics</name>
-    </types>
-    <types>
-        <members>*</members>
         <name>MatchingRule</name>
     </types>
     <types>
@@ -346,15 +314,7 @@
     </types>
     <types>
         <members>*</members>
-        <name>ModerationRule</name>
-    </types>
-    <types>
-        <members>*</members>
         <name>NamedCredential</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>Network</name>
     </types>
     <types>
         <members>*</members>
@@ -442,10 +402,6 @@
     </types>
     <types>
         <members>*</members>
-        <name>SharingSet</name>
-    </types>
-    <types>
-        <members>*</members>
         <name>SiteDotCom</name>
     </types>
     <types>
@@ -467,14 +423,6 @@
     <types>
         <members>*</members>
         <name>TopicsForObjects</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>TransactionSecurityPolicy</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>UserCriteria</name>
     </types>
     <types>
         <members>*</members>
