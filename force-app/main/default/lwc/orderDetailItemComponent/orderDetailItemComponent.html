@@ -1,0 +1,145 @@
+<template>
+<lightning-card>
+<div class="slds-box">
+      <div class="slds-grid slds-grid_vertical">
+            <div class="slds-col slds-text-heading_small"
+                  style="padding-top: 0em;padding-bottom: 1em;">
+                  <table style="width:100%;">
+                        <tr>
+                              <th style="padding: 0px 20px 5px;">Order No:</th>
+                              <td>
+                                    <div class="slds-truncate">{orderNumber}</div>
+                              </td>
+                              <th style="padding: 5px 20px 5px;">Account Name:</th>
+                              <td>
+                                    <div class="slds-truncate">{accountName}</div>
+                              </td>
+                              
+                        </tr>
+                        <tr>
+                              <th style="padding: 5px 20px 5px;">Order Date:</th>
+                              <td>
+                                    <div class="slds-truncate">{orderDate}</div>
+                              </td>
+                              <th style="padding: 5px 20px 5px;">Shipping Number:</th>
+                              <td>
+                                    <div class="slds-truncate">{shippingNumber}</div>
+                              </td>
+                        </tr>
+                              <tr>
+                                    <th style="padding: 5px 20px 5px;">Order Value:</th>
+                                    <td>
+                                          <div class="slds-truncate">{orderValue}</div>
+                                    </td>
+                                    <th style="padding: 5px 20px 5px;">Order Status:</th>
+                                    <td>
+                                          <div class="slds-truncate">{orderStatus}</div>
+                                    </td>
+                              </tr>
+                              <tr>
+                                    <th style="padding: 5px 20px 5px;">Payment Id:</th>
+                                    <td>
+                                          <div class="slds-truncate">{paymentId}</div>
+                                    </td>
+                                    <th style="padding: 5px 20px 5px;">Login Number:</th>
+                                    <td>
+                                          <div class="slds-truncate">{loginNumber}</div>
+                                    </td>
+                              </tr>
+                              <tr>
+                                    <th style="padding: 5px 20px 5px;">Coupon Code:</th>
+                                    <td>
+                                          <div class="slds-truncate">{couponCode}</div>
+                                    </td>
+                                    <th style="padding: 5px 20px 5px;">Coupon Discount:</th>
+                                    <td>
+                                          <div class="slds-truncate">{discountValue}</div>
+                                    </td>
+                              </tr>
+                             <!-- <tr>
+                                    <th style="padding: 5px 20px 5px;">Type Of Case:</th>
+                                    <td>
+                                          <div class="slds-truncate">{caseType}</div>
+                                    </td>
+                              </tr> -->
+                  </table>
+            </div>
+      </div>
+<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_header-fixed slds-table_resizable-cols slds-table_fixed-layout">
+      <thead>
+            <tr>
+                  <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;padding-left: 0.5rem;">
+                  <div class="slds-truncate" title="Brand Name" >Brand Name</div>
+                  </th>
+                  <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;">
+                  <div class="slds-truncate" title="Product Name">Product Name</div>
+                  </th>
+                  <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white; width: 26%;">
+                        <div class="slds-truncate" title="SKU">SKU</div>
+                        </th>
+                        <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 10%;">
+                        <div class="slds-truncate" title="MRP">MRP</div>
+                        </th>
+                        <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;">
+                              <div class="slds-truncate" title="Selling Price">Selling Price</div>
+                              </th>
+                              <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 13%;">
+                              <div class="slds-truncate" title="Quantity">Quantity</div>
+                              </th>
+                              <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 13%;">
+                                    <div class="slds-truncate" title="Status">Status</div>
+                                    </th>
+                  <!-- <th scope="col" style="background-color:#701CC3;color:white;">
+                  <div class="slds-truncate" title="Unit Price">Unit Price</div>
+                  </th>
+                  <th scope="col" style="background-color:#701CC3;color:white;">
+                  <div class="slds-truncate" title="Total Price">Total Price</div> -->
+            </th>
+            </tr>
+      </thead> 
+      <tbody>
+      <template if:true={orderLineItems}>
+          <template for:each={orderLineItems} for:item="item">
+            <tr key={item.Id} class="slds-hint-parent">
+                  <td data-label="Brand Name" style="padding-left:1rem!important;">
+                        <div class="slds-truncate" title={item.Brand__c} style="margin-left: -10%;">{item.Brand__c}</div>
+                  </td>
+                  <td data-label="Product Name">
+                        <div class="slds-truncate" title={item.Product_Name__c}>{item.Product_Name__c}</div>
+                  </td>
+                  <td data-label="SKU">
+                        <div class="slds-truncate" title={item.SKU__c}>{item.SKU__c}</div>
+                  </td>
+                  <td data-label="MRP">
+                        <div class="slds-truncate" title={item.UnitPrice}>{item.UnitPrice}</div>
+                  </td>
+                  <td data-label="Selling Price">
+                        <div class="slds-truncate" title={item.Selling_Price__c}>{item.Selling_Price__c}</div>
+                  </td>
+                  <td data-label="Quantity">
+                        <div class="slds-truncate" title={item.Quantity}>{item.Quantity}</div>
+                  </td>
+                  <td data-label="Status">
+                        <div class="slds-truncate" title={item.Status__c}>{item.Status__c}</div>
+                  </td>
+                  <!-- <td data-label="Unit Price">
+                        <div class="slds-truncate" title={item.UnitPrice}>{item.UnitPrice}</div>
+                  </td>
+                  <td data-label="Total Price">
+                        <div class="slds-truncate" title={item.TotalPrice}>{item.TotalPrice}</div>
+                  </td> -->
+            </tr>
+      </template>
+      <template if:false={orderLineItems}>
+            <tr>
+                <td colspan="4">
+                    <div class="slds-text-align_center">No order line items found</div>
+                </td>
+            </tr>
+        </template>
+      </template>
+      </tbody>           
+</table>
+</div>
+</lightning-card>
+</template>

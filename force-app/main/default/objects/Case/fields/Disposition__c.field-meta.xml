@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disposition__c</fullName>
+    <externalId>false</externalId>
+    <label>Disposition</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Sub_Sub_Type__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Benefit Issued - CX informed</fullName>
+                <default>false</default>
+                <label>Benefit Issued - CX informed</label>
+            </value>
+            <value>
+                <fullName>Changes done - CX informed</fullName>
+                <default>false</default>
+                <label>Changes done - CX informed</label>
+            </value>
+            <value>
+                <fullName>Correction Done - CX informed</fullName>
+                <default>false</default>
+                <label>Correction Done - CX informed</label>
+            </value>
+            <value>
+                <fullName>Coupon Released - CX informed</fullName>
+                <default>false</default>
+                <label>Coupon Released - CX informed</label>
+            </value>
+            <value>
+                <fullName>Escalated to Marketing</fullName>
+                <default>false</default>
+                <label>Escalated to Marketing</label>
+            </value>
+            <value>
+                <fullName>Feedback Noted</fullName>
+                <default>false</default>
+                <label>Feedback Noted</label>
+            </value>
+            <value>
+                <fullName>Feedback taken</fullName>
+                <default>false</default>
+                <label>Feedback taken</label>
+            </value>
+            <value>
+                <fullName>Feedback taken - Issue Resolved</fullName>
+                <default>false</default>
+                <label>Feedback taken - Issue Resolved</label>
+            </value>
+            <value>
+                <fullName>lmformed to Content</fullName>
+                <default>false</default>
+                <label>lmformed to Content</label>
+            </value>
+            <value>
+                <fullName>Incomplete details</fullName>
+                <default>false</default>
+                <label>Incomplete details</label>
+            </value>
+            <value>
+                <fullName>Information Given</fullName>
+                <default>false</default>
+                <label>Information Given</label>
+            </value>
+            <value>
+                <fullName>Issue Resolved - CX informed</fullName>
+                <default>false</default>
+                <label>Issue Resolved - CX informed</label>
+            </value>
+            <value>
+                <fullName>Order Cancelled - CX informed</fullName>
+                <default>false</default>
+                <label>Order Cancelled - CX informed</label>
+            </value>
+            <value>
+                <fullName>Order Retained</fullName>
+                <default>false</default>
+                <label>Order Retained</label>
+            </value>
+            <value>
+                <fullName>Replacement done - Issue Resolved</fullName>
+                <default>false</default>
+                <label>Replacement done - Issue Resolved</label>
+            </value>
+            <value>
+                <fullName>Request shared with Marketing</fullName>
+                <default>false</default>
+                <label>Request shared with Marketing</label>
+            </value>
+            <value>
+                <fullName>Requested to Share Email</fullName>
+                <default>false</default>
+                <label>Requested to Share Email</label>
+            </value>
+            <value>
+                <fullName>Request Booked</fullName>
+                <default>false</default>
+                <label>Request Booked</label>
+            </value>
+            <value>
+                <fullName>RVP Cancelled - CX informed</fullName>
+                <default>false</default>
+                <label>RVP Cancelled - CX informed</label>
+            </value>
+            <value>
+                <fullName>RVP done - Refund Initiated</fullName>
+                <default>false</default>
+                <label>RVP done - Refund Initiated</label>
+            </value>
+            <value>
+                <fullName>Status Informed</fullName>
+                <default>false</default>
+                <label>Status Informed</label>
+            </value>
+            <value>
+                <fullName>Benefit not Issued - CX informed</fullName>
+                <default>false</default>
+                <label>Benefit not Issued - CX informed</label>
+            </value>
+            <value>
+                <fullName>CX not available - RVP cancelled</fullName>
+                <default>false</default>
+                <label>CX not available - RVP cancelled</label>
+            </value>
+            <value>
+                <fullName>CX not Contactable</fullName>
+                <default>false</default>
+                <label>CX not Contactable</label>
+            </value>
+            <value>
+                <fullName>CX understanding - Information given</fullName>
+                <default>false</default>
+                <label>CX understanding - Information given</label>
+            </value>
+            <value>
+                <fullName>Email sent to Brand</fullName>
+                <default>false</default>
+                <label>Email sent to Brand</label>
+            </value>
+            <value>
+                <fullName>Issued Resolved</fullName>
+                <default>false</default>
+                <label>Issued Resolved</label>
+            </value>
+            <value>
+                <fullName>Not Eligible - CX informed</fullName>
+                <default>false</default>
+                <label>Not Eligible - CX informed</label>
+            </value>
+            <value>
+                <fullName>Order Cancelled</fullName>
+                <default>false</default>
+                <label>Order Cancelled</label>
+            </value>
+            <value>
+                <fullName>Payment reversed - CXinformed</fullName>
+                <default>false</default>
+                <label>Payment reversed - CXinformed</label>
+            </value>
+            <value>
+                <fullName>RVP already done - CX informed</fullName>
+                <default>false</default>
+                <label>RVP already done - CX informed</label>
+            </value>
+            <value>
+                <fullName>SKU not available- Refund Initiated</fullName>
+                <default>false</default>
+                <label>SKU not available- Refund Initiated</label>
+            </value>
+            <value>
+                <fullName>Benefit already Issued - CX informed</fullName>
+                <default>false</default>
+                <label>Benefit already Issued - CX informed</label>
+            </value>
+            <value>
+                <fullName>Incomplete Details - CX Not contactable</fullName>
+                <default>false</default>
+                <label>Incomplete Details - CX Not contactable</label>
+            </value>
+            <value>
+                <fullName>Order retained - CX informed</fullName>
+                <default>false</default>
+                <label>Order retained - CX informed</label>
+            </value>
+            <value>
+                <fullName>Refund initiated w/o RVP- approval case</fullName>
+                <default>false</default>
+                <label>Refund initiated w/o RVP- approval case</label>
+            </value>
+            <value>
+                <fullName>Not contactable</fullName>
+                <default>false</default>
+                <label>Not contactable</label>
+            </value>
+            <value>
+                <fullName>Not eligible &gt; 15 days - CX informed</fullName>
+                <default>false</default>
+                <label>Not eligible &gt; 15 days - CX informed</label>
+            </value>
+            <value>
+                <fullName>Payment reversed - Cx informed</fullName>
+                <default>false</default>
+                <label>Payment reversed - Cx informed</label>
+            </value>
+            <value>
+                <fullName>Informed to Content</fullName>
+                <default>false</default>
+                <label>Informed to Content</label>
+            </value>
+            <value>
+                <fullName>Cx willing to keep</fullName>
+                <default>false</default>
+                <label>Cx willing to keep</label>
+            </value>
+            <value>
+                <fullName>CX is ok with delay</fullName>
+                <default>false</default>
+                <label>CX is ok with delay</label>
+            </value>
+            <value>
+                <fullName>CX is ok with OOS</fullName>
+                <default>false</default>
+                <label>CX is ok with OOS</label>
+            </value>
+            <value>
+                <fullName>Alternate date/time provided by Cx</fullName>
+                <default>false</default>
+                <label>Alternate date/time provided by Cx</label>
+            </value>
+            <value>
+                <fullName>Alternate address provided by Cx</fullName>
+                <default>false</default>
+                <label>Alternate address provided by Cx</label>
+            </value>
+            <value>
+                <fullName>Wrong No. / Email id</fullName>
+                <default>false</default>
+                <label>Wrong No. / Email id</label>
+            </value>
+            <value>
+                <fullName>Cx not answering</fullName>
+                <default>false</default>
+                <label>Cx not answering</label>
+            </value>
+            <value>
+                <fullName>Order already delivered</fullName>
+                <default>false</default>
+                <label>Order already delivered</label>
+            </value>
+            <value>
+                <fullName>Cx denied for order</fullName>
+                <default>false</default>
+                <label>Cx denied for order</label>
+            </value>
+            <value>
+                <fullName>Cx wants to cancel the Order</fullName>
+                <default>false</default>
+                <label>Cx wants to cancel the Order</label>
+            </value>
+            <value>
+                <fullName>Complete address/landmark provided by Cx</fullName>
+                <default>false</default>
+                <label>Complete address/landmark provided by Cx</label>
+            </value>
+            <value>
+                <fullName>Cx not answering- email sent</fullName>
+                <default>false</default>
+                <label>Cx not answering- email sent</label>
+            </value>
+            <value>
+                <fullName>Details provided by CX- order delivered</fullName>
+                <default>false</default>
+                <label>Details provided by CX- order delivered</label>
+            </value>
+            <value>
+                <fullName>Cx wants the delivery</fullName>
+                <default>false</default>
+                <label>Cx wants the delivery</label>
+            </value>
+            <value>
+                <fullName>Cx contacted - issue resolved</fullName>
+                <default>false</default>
+                <label>Cx contacted - issue resolved</label>
+            </value>
+            <value>
+                <fullName>Refund - Processed</fullName>
+                <default>false</default>
+                <label>Refund - Processed</label>
+            </value>
+            <value>
+                <fullName>Contacted on Secondary No. - issue resolved</fullName>
+                <default>false</default>
+                <label>Contacted on Secondary No. - issue resolved</label>
+            </value>
+            <value>
+                <fullName>Cx not at home</fullName>
+                <default>false</default>
+                <label>Cx not at home</label>
+            </value>
+            <value>
+                <fullName>Correct address/landmark provided by Cx</fullName>
+                <default>false</default>
+                <label>Correct address/landmark provided by Cx</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Offer/discount issues</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>Ecom Reason - Order lost in transit</controllingFieldValue>
+            <controllingFieldValue>OOS</controllingFieldValue>
+            <controllingFieldValue>CX out of town</controllingFieldValue>
+            <controllingFieldValue>Not required anymore/Wrongly Ordered</controllingFieldValue>
+            <controllingFieldValue>Price Issue</controllingFieldValue>
+            <controllingFieldValue>Bad review of product</controllingFieldValue>
+            <controllingFieldValue>Expected shorter delivery TAT</controllingFieldValue>
+            <valueName>Order Cancelled - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Offer/discount issues</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>Ecom Reason - Order lost in transit</controllingFieldValue>
+            <controllingFieldValue>Address Change - Before Shipping</controllingFieldValue>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <controllingFieldValue>Updation of new email id</controllingFieldValue>
+            <controllingFieldValue>Expiry &lt;8 months</controllingFieldValue>
+            <controllingFieldValue>Change in mail id</controllingFieldValue>
+            <controllingFieldValue>Brand Packaging/Authenticity/Others</controllingFieldValue>
+            <controllingFieldValue>Product Returned - Refund Awaited</controllingFieldValue>
+            <controllingFieldValue>Price mismatch</controllingFieldValue>
+            <controllingFieldValue>RVP delayed</controllingFieldValue>
+            <controllingFieldValue>Comparison with Competitor</controllingFieldValue>
+            <controllingFieldValue>Cancel RVP</controllingFieldValue>
+            <controllingFieldValue>Login issues/Login number error</controllingFieldValue>
+            <controllingFieldValue>Invalid Email/Phone Number</controllingFieldValue>
+            <controllingFieldValue>Invalid Coupon Code</controllingFieldValue>
+            <controllingFieldValue>App Stuck or Hanged</controllingFieldValue>
+            <controllingFieldValue>Error while adding in cart</controllingFieldValue>
+            <controllingFieldValue>Refund Issues</controllingFieldValue>
+            <controllingFieldValue>Change in profile number</controllingFieldValue>
+            <controllingFieldValue>Wrong courier partner remark</controllingFieldValue>
+            <controllingFieldValue>Complaint about Rider</controllingFieldValue>
+            <controllingFieldValue>Complaint about CSE</controllingFieldValue>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <controllingFieldValue>Delayed delivery</controllingFieldValue>
+            <controllingFieldValue>Packaging issues</controllingFieldValue>
+            <controllingFieldValue>App features</controllingFieldValue>
+            <controllingFieldValue>General/Out of Box Enquiries</controllingFieldValue>
+            <controllingFieldValue>Delivery Delayed</controllingFieldValue>
+            <controllingFieldValue>Mismatch in address details</controllingFieldValue>
+            <controllingFieldValue>Wrong courier partner remarks</controllingFieldValue>
+            <controllingFieldValue>Change in delivery schedule</controllingFieldValue>
+            <controllingFieldValue>Send order as a gift</controllingFieldValue>
+            <controllingFieldValue>OOS</controllingFieldValue>
+            <controllingFieldValue>CX out of town</controllingFieldValue>
+            <controllingFieldValue>Not required anymore/Wrongly Ordered</controllingFieldValue>
+            <controllingFieldValue>Price Issue</controllingFieldValue>
+            <controllingFieldValue>Bad review of product</controllingFieldValue>
+            <controllingFieldValue>Expected shorter delivery TAT</controllingFieldValue>
+            <valueName>CX not Contactable</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Offer/discount issues</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>Ecom Reason - Order lost in transit</controllingFieldValue>
+            <controllingFieldValue>Address Change - Before Shipping</controllingFieldValue>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <controllingFieldValue>Updation of new email id</controllingFieldValue>
+            <controllingFieldValue>Expiry &lt;8 months</controllingFieldValue>
+            <controllingFieldValue>Change in mail id</controllingFieldValue>
+            <controllingFieldValue>Brand Packaging/Authenticity/Others</controllingFieldValue>
+            <controllingFieldValue>Product Returned - Refund Awaited</controllingFieldValue>
+            <controllingFieldValue>Price mismatch</controllingFieldValue>
+            <controllingFieldValue>RVP delayed</controllingFieldValue>
+            <controllingFieldValue>Comparison with Competitor</controllingFieldValue>
+            <controllingFieldValue>Cancel RVP</controllingFieldValue>
+            <controllingFieldValue>Login issues/Login number error</controllingFieldValue>
+            <controllingFieldValue>Invalid Email/Phone Number</controllingFieldValue>
+            <controllingFieldValue>Invalid Coupon Code</controllingFieldValue>
+            <controllingFieldValue>App Stuck or Hanged</controllingFieldValue>
+            <controllingFieldValue>Error while adding in cart</controllingFieldValue>
+            <controllingFieldValue>Product Description/Offer Issues</controllingFieldValue>
+            <controllingFieldValue>Refund Issues</controllingFieldValue>
+            <controllingFieldValue>Change in profile number</controllingFieldValue>
+            <controllingFieldValue>Wrong courier partner remark</controllingFieldValue>
+            <controllingFieldValue>Complaint about Rider</controllingFieldValue>
+            <controllingFieldValue>Complaint about CSE</controllingFieldValue>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <controllingFieldValue>Delayed delivery</controllingFieldValue>
+            <controllingFieldValue>Packaging issues</controllingFieldValue>
+            <controllingFieldValue>App features</controllingFieldValue>
+            <controllingFieldValue>General/Out of Box Enquiries</controllingFieldValue>
+            <controllingFieldValue>Visit Request booking</controllingFieldValue>
+            <controllingFieldValue>Delivery Delayed</controllingFieldValue>
+            <controllingFieldValue>Mismatch in address details</controllingFieldValue>
+            <controllingFieldValue>Wrong courier partner remarks</controllingFieldValue>
+            <controllingFieldValue>Order Confirmation /Status Issues</controllingFieldValue>
+            <controllingFieldValue>Change in delivery schedule</controllingFieldValue>
+            <controllingFieldValue>Send order as a gift</controllingFieldValue>
+            <controllingFieldValue>OOS</controllingFieldValue>
+            <controllingFieldValue>CX out of town</controllingFieldValue>
+            <controllingFieldValue>Not required anymore/Wrongly Ordered</controllingFieldValue>
+            <controllingFieldValue>Price Issue</controllingFieldValue>
+            <controllingFieldValue>Bad review of product</controllingFieldValue>
+            <controllingFieldValue>Expected shorter delivery TAT</controllingFieldValue>
+            <valueName>CX understanding - Information given</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Offer/discount issues</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>Ecom Reason - Order lost in transit</controllingFieldValue>
+            <controllingFieldValue>OOS</controllingFieldValue>
+            <controllingFieldValue>CX out of town</controllingFieldValue>
+            <controllingFieldValue>Not required anymore/Wrongly Ordered</controllingFieldValue>
+            <controllingFieldValue>Price Issue</controllingFieldValue>
+            <controllingFieldValue>Bad review of product</controllingFieldValue>
+            <controllingFieldValue>Expected shorter delivery TAT</controllingFieldValue>
+            <valueName>Order retained - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Offer/discount issues</controllingFieldValue>
+            <controllingFieldValue>Cx Refuse to accept</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>OTP / ID issues</controllingFieldValue>
+            <controllingFieldValue>Cx not Responding</controllingFieldValue>
+            <controllingFieldValue>Incorrect  Number</controllingFieldValue>
+            <controllingFieldValue>Incorrect address</controllingFieldValue>
+            <controllingFieldValue>Incomplete Address/Landmark issues</controllingFieldValue>
+            <controllingFieldValue>PIN code not serviceable</controllingFieldValue>
+            <controllingFieldValue>Delayed due to STN</controllingFieldValue>
+            <controllingFieldValue>Delayed Tech/Climatic/Others</controllingFieldValue>
+            <controllingFieldValue>Partial</controllingFieldValue>
+            <controllingFieldValue>Full</controllingFieldValue>
+            <controllingFieldValue>Incomplete Address/Pin code</controllingFieldValue>
+            <controllingFieldValue>Wrong Address/Pin Code</controllingFieldValue>
+            <controllingFieldValue>CX not available/out of town</controllingFieldValue>
+            <controllingFieldValue>Restricted Entry area</controllingFieldValue>
+            <valueName>Wrong No. / Email id</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Offer/discount issues</controllingFieldValue>
+            <controllingFieldValue>Cx Refuse to accept</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>OTP / ID issues</controllingFieldValue>
+            <controllingFieldValue>Cx not Responding</controllingFieldValue>
+            <controllingFieldValue>Incorrect  Number</controllingFieldValue>
+            <controllingFieldValue>Incorrect address</controllingFieldValue>
+            <controllingFieldValue>Incomplete Address/Landmark issues</controllingFieldValue>
+            <controllingFieldValue>Incomplete Address/Pin code</controllingFieldValue>
+            <controllingFieldValue>Wrong Address/Pin Code</controllingFieldValue>
+            <controllingFieldValue>Address not found</controllingFieldValue>
+            <controllingFieldValue>CX not available/out of town</controllingFieldValue>
+            <controllingFieldValue>Restricted Entry area</controllingFieldValue>
+            <valueName>Cx not answering</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Offer/discount issues</controllingFieldValue>
+            <controllingFieldValue>Cx Refuse to accept</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>OTP / ID issues</controllingFieldValue>
+            <controllingFieldValue>Incomplete Address/Pin code</controllingFieldValue>
+            <controllingFieldValue>Wrong Address/Pin Code</controllingFieldValue>
+            <controllingFieldValue>Address not found</controllingFieldValue>
+            <controllingFieldValue>CX not available/out of town</controllingFieldValue>
+            <controllingFieldValue>Restricted Entry area</controllingFieldValue>
+            <valueName>Cx denied for order</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Offer/discount issues</controllingFieldValue>
+            <controllingFieldValue>Cx Refuse to accept</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>Cx not Responding</controllingFieldValue>
+            <controllingFieldValue>PIN code not serviceable</controllingFieldValue>
+            <controllingFieldValue>Delayed due to STN</controllingFieldValue>
+            <controllingFieldValue>Delayed Tech/Climatic/Others</controllingFieldValue>
+            <controllingFieldValue>Partial</controllingFieldValue>
+            <controllingFieldValue>Full</controllingFieldValue>
+            <controllingFieldValue>CX not available/out of town</controllingFieldValue>
+            <controllingFieldValue>Restricted Entry area</controllingFieldValue>
+            <valueName>Cx wants to cancel the Order</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Cx Refuse to accept</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>OTP / ID issues</controllingFieldValue>
+            <controllingFieldValue>Incomplete Address/Pin code</controllingFieldValue>
+            <controllingFieldValue>Wrong Address/Pin Code</controllingFieldValue>
+            <controllingFieldValue>Address not found</controllingFieldValue>
+            <controllingFieldValue>CX not available/out of town</controllingFieldValue>
+            <controllingFieldValue>Restricted Entry area</controllingFieldValue>
+            <valueName>Order already delivered</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Cx Refuse to accept</controllingFieldValue>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <valueName>Cx wants the delivery</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Others</controllingFieldValue>
+            <controllingFieldValue>Incorrect  Number</controllingFieldValue>
+            <controllingFieldValue>Incorrect address</controllingFieldValue>
+            <controllingFieldValue>Incomplete Address/Landmark issues</controllingFieldValue>
+            <controllingFieldValue>PIN code not serviceable</controllingFieldValue>
+            <valueName>Cx contacted - issue resolved</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OTP / ID issues</controllingFieldValue>
+            <valueName>Details provided by CX- order delivered</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OTP / ID issues</controllingFieldValue>
+            <valueName>Cx not at home</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Address Change - Before Shipping</controllingFieldValue>
+            <controllingFieldValue>Comparison with Competitor</controllingFieldValue>
+            <controllingFieldValue>Login issues/Login number error</controllingFieldValue>
+            <controllingFieldValue>Invalid Email/Phone Number</controllingFieldValue>
+            <controllingFieldValue>Invalid Coupon Code</controllingFieldValue>
+            <controllingFieldValue>App Stuck or Hanged</controllingFieldValue>
+            <controllingFieldValue>Error while adding in cart</controllingFieldValue>
+            <controllingFieldValue>Product Description/Offer Issues</controllingFieldValue>
+            <controllingFieldValue>Refund Issues</controllingFieldValue>
+            <controllingFieldValue>Serviceable Area/PIN Code</controllingFieldValue>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <controllingFieldValue>Delivery Delayed</controllingFieldValue>
+            <controllingFieldValue>Mismatch in address details</controllingFieldValue>
+            <controllingFieldValue>Wrong courier partner remarks</controllingFieldValue>
+            <controllingFieldValue>Order Confirmation /Status Issues</controllingFieldValue>
+            <controllingFieldValue>Change in delivery schedule</controllingFieldValue>
+            <controllingFieldValue>Send order as a gift</controllingFieldValue>
+            <valueName>Issue Resolved - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <controllingFieldValue>RVP delayed</controllingFieldValue>
+            <controllingFieldValue>Wrong courier partner remark</controllingFieldValue>
+            <valueName>Replacement done - Issue Resolved</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <controllingFieldValue>Expiry &lt;8 months</controllingFieldValue>
+            <controllingFieldValue>Brand Packaging/Authenticity/Others</controllingFieldValue>
+            <controllingFieldValue>Product Returned - Refund Awaited</controllingFieldValue>
+            <valueName>RVP done - Refund Initiated</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <controllingFieldValue>Expiry &lt;8 months</controllingFieldValue>
+            <controllingFieldValue>Brand Packaging/Authenticity/Others</controllingFieldValue>
+            <controllingFieldValue>Product Returned - Refund Awaited</controllingFieldValue>
+            <controllingFieldValue>RVP delayed</controllingFieldValue>
+            <controllingFieldValue>Wrong courier partner remark</controllingFieldValue>
+            <valueName>CX not available - RVP cancelled</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <valueName>SKU not available- Refund Initiated</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <controllingFieldValue>Expiry &lt;8 months</controllingFieldValue>
+            <controllingFieldValue>Brand Packaging/Authenticity/Others</controllingFieldValue>
+            <controllingFieldValue>Product Returned - Refund Awaited</controllingFieldValue>
+            <controllingFieldValue>RVP delayed</controllingFieldValue>
+            <controllingFieldValue>Wrong courier partner remark</controllingFieldValue>
+            <valueName>Refund initiated w/o RVP- approval case</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <controllingFieldValue>Expiry &lt;8 months</controllingFieldValue>
+            <controllingFieldValue>Brand Packaging/Authenticity/Others</controllingFieldValue>
+            <controllingFieldValue>Product Returned - Refund Awaited</controllingFieldValue>
+            <valueName>Not eligible &gt; 15 days - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wrong order or SKU</controllingFieldValue>
+            <controllingFieldValue>Missing Order or SKU</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Packaging</controllingFieldValue>
+            <controllingFieldValue>Damaged/Defective Product</controllingFieldValue>
+            <controllingFieldValue>No Damage/No Wrong - Special Approval</controllingFieldValue>
+            <controllingFieldValue>Wrong/Damage/Missing- CX wants to keep</controllingFieldValue>
+            <controllingFieldValue>Expiry &lt;8 months</controllingFieldValue>
+            <controllingFieldValue>Brand Packaging/Authenticity/Others</controllingFieldValue>
+            <controllingFieldValue>Product Returned - Refund Awaited</controllingFieldValue>
+            <valueName>Cx willing to keep</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Incorrect  Number</controllingFieldValue>
+            <valueName>Contacted on Secondary No. - issue resolved</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RTO Orders</controllingFieldValue>
+            <valueName>Refund - Processed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Updation of new email id</controllingFieldValue>
+            <controllingFieldValue>Change in mail id</controllingFieldValue>
+            <controllingFieldValue>Change in profile number</controllingFieldValue>
+            <valueName>Changes done - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Process to add/update more addresses</controllingFieldValue>
+            <controllingFieldValue>Guided on App</controllingFieldValue>
+            <controllingFieldValue>Ongoing Campaign/Sales updates</controllingFieldValue>
+            <controllingFieldValue>Upcoming Campaign /Sales updates</controllingFieldValue>
+            <controllingFieldValue>How to check product review</controllingFieldValue>
+            <controllingFieldValue>Giveaway inquiry</controllingFieldValue>
+            <controllingFieldValue>Addition of More Payment options or COD</controllingFieldValue>
+            <controllingFieldValue>Use of Coupon codes</controllingFieldValue>
+            <controllingFieldValue>Gift an Order</controllingFieldValue>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <controllingFieldValue>Guided to explore personalization on app</controllingFieldValue>
+            <controllingFieldValue>PIN code not serviceable</controllingFieldValue>
+            <controllingFieldValue>Order number confirmation</controllingFieldValue>
+            <controllingFieldValue>No Elevator in premise</controllingFieldValue>
+            <controllingFieldValue>Tracking details</controllingFieldValue>
+            <controllingFieldValue>Non-Perfume queries</controllingFieldValue>
+            <controllingFieldValue>Product/process inquiry only</controllingFieldValue>
+            <valueName>Information Given</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Refund Processed- Not credited</controllingFieldValue>
+            <valueName>Status Informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Price mismatch</controllingFieldValue>
+            <valueName>Correction Done - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Cancel RVP</controllingFieldValue>
+            <valueName>RVP Cancelled - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Cancel RVP</controllingFieldValue>
+            <valueName>RVP already done - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Product Description/Offer Issues</controllingFieldValue>
+            <controllingFieldValue>Missed/Incomplete Conversation</controllingFieldValue>
+            <valueName>Incomplete Details - CX Not contactable</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Complaint about Rider</controllingFieldValue>
+            <controllingFieldValue>Complaint about CSE</controllingFieldValue>
+            <controllingFieldValue>Delayed delivery</controllingFieldValue>
+            <controllingFieldValue>Packaging issues</controllingFieldValue>
+            <controllingFieldValue>App features</controllingFieldValue>
+            <valueName>Feedback taken - Issue Resolved</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Appreciation for CSE</controllingFieldValue>
+            <controllingFieldValue>Happy with order packaging</controllingFieldValue>
+            <controllingFieldValue>Happy with delivery time</controllingFieldValue>
+            <valueName>Feedback Noted</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Coupon/Freebie /Discount/Cashback Issuance</controllingFieldValue>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <valueName>Benefit Issued - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Coupon/Freebie /Discount/Cashback Issuance</controllingFieldValue>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <valueName>Benefit not Issued - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Coupon/Freebie /Discount/Cashback Issuance</controllingFieldValue>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <valueName>Benefit already Issued - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <valueName>Coupon Released - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Information Given</controllingFieldValue>
+            <valueName>Not Eligible - CX informed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Collabration Request/Influencer queries</controllingFieldValue>
+            <valueName>Request shared with Marketing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Collabration service issues</controllingFieldValue>
+            <valueName>Escalated to Marketing</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Collabration service issues</controllingFieldValue>
+            <valueName>Issued Resolved</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Collabration Request</controllingFieldValue>
+            <valueName>Requested to Share Email</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Collabration Request</controllingFieldValue>
+            <valueName>Email sent to Brand</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Content Issues - Cx</controllingFieldValue>
+            <controllingFieldValue>Content Issues - Partners</controllingFieldValue>
+            <valueName>lmformed to Content</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>General/Out of Box Enquiries</controllingFieldValue>
+            <valueName>Feedback taken</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PIN code not serviceable</controllingFieldValue>
+            <controllingFieldValue>Delayed due to STN</controllingFieldValue>
+            <controllingFieldValue>Delayed Tech/Climatic/Others</controllingFieldValue>
+            <controllingFieldValue>Partial</controllingFieldValue>
+            <controllingFieldValue>Full</controllingFieldValue>
+            <valueName>Cx not answering- email sent</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Visit Request booking</controllingFieldValue>
+            <valueName>Request Booked</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Incomplete details</controllingFieldValue>
+            <valueName>Incomplete details</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Confirmation /Status Issues</controllingFieldValue>
+            <valueName>Payment reversed - CXinformed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Confirmation /Status Issues</controllingFieldValue>
+            <valueName>Not contactable</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Delayed due to STN</controllingFieldValue>
+            <controllingFieldValue>Delayed Tech/Climatic/Others</controllingFieldValue>
+            <valueName>CX is ok with delay</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Other Internal Issues/Monitoring Reasons</controllingFieldValue>
+            <valueName>Order Retained</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Other Internal Issues/Monitoring Reasons</controllingFieldValue>
+            <valueName>Order Cancelled</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Partial</controllingFieldValue>
+            <controllingFieldValue>Full</controllingFieldValue>
+            <valueName>CX is ok with OOS</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Incomplete Address/Pin code</controllingFieldValue>
+            <controllingFieldValue>Address not found</controllingFieldValue>
+            <valueName>Complete address/landmark provided by Cx</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Wrong Address/Pin Code</controllingFieldValue>
+            <valueName>Correct address/landmark provided by Cx</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>CX not available/out of town</controllingFieldValue>
+            <valueName>Alternate date/time provided by Cx</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Restricted Entry area</controllingFieldValue>
+            <valueName>Alternate address provided by Cx</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

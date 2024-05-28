@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Type_Of_Case__c</fullName>
+    <externalId>false</externalId>
+    <label>Type Of Case</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Return to Origin (RTO)</fullName>
+                <default>false</default>
+                <label>Return to Origin (RTO)</label>
+            </value>
+            <value>
+                <fullName>Out Of Stock (OOS)</fullName>
+                <default>false</default>
+                <label>Out Of Stock (OOS)</label>
+            </value>
+            <value>
+                <fullName>Courier Issue</fullName>
+                <default>false</default>
+                <label>Courier Issue</label>
+            </value>
+            <value>
+                <fullName>Delay In Delivery (DID)</fullName>
+                <default>false</default>
+                <label>Delay In Delivery (DID)</label>
+            </value>
+            <value>
+                <fullName>Pincode Not Serviceable</fullName>
+                <default>false</default>
+                <label>Pincode Not Serviceable</label>
+            </value>
+            <value>
+                <fullName>Lost In Transit</fullName>
+                <default>false</default>
+                <label>Lost In Transit</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

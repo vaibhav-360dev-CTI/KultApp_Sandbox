@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataCategoryGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <dataCategory>
+        <dataCategory>
+            <label>FAQs</label>
+            <name>FAQs</name>
+        </dataCategory>
+        <dataCategory>
+            <label>Manuals</label>
+            <name>Manuals</name>
+        </dataCategory>
+        <dataCategory>
+            <label>E-mail Scripts</label>
+            <name>E_mail_Scripts</name>
+        </dataCategory>
+        <dataCategory>
+            <label>Offers</label>
+            <name>Offers</name>
+        </dataCategory>
+        <label>All</label>
+        <name>All</name>
+    </dataCategory>
+    <description>Used for Knowledge Articles to Caterogery the articles</description>
+    <label>Knowledge Article Type</label>
+    <objectUsage>
+        <object>SvcCatalogItemDef</object>
+        <object>KnowledgeArticleVersion</object>
+    </objectUsage>
+</DataCategoryGroup>

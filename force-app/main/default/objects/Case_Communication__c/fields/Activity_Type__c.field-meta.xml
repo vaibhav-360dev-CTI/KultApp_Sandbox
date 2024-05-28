@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Activity_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Activity Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>DM</fullName>
+                <default>false</default>
+                <label>DM</label>
+            </value>
+            <value>
+                <fullName>Comment</fullName>
+                <default>false</default>
+                <label>Comment</label>
+            </value>
+            <value>
+                <fullName>Post</fullName>
+                <default>false</default>
+                <label>Post</label>
+            </value>
+            <value>
+                <fullName>Reels</fullName>
+                <default>false</default>
+                <label>Reels</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

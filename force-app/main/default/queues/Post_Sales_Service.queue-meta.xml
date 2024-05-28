@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Post Sales Service</name>
+    <queueMembers>
+        <users>
+            <user>aisha.k@kult.app</user>
+            <user>isha.raj-qxmz@force.com</user>
+            <user>marketingqueries@kult.app</user>
+            <user>renu.g@kult.app</user>
+        </users>
+    </queueMembers>
+    <queueRoutingConfig>Post_Sales_Service</queueRoutingConfig>
+    <queueSobject>
+        <sobjectType>LiveChatTranscript</sobjectType>
+    </queueSobject>
+</Queue>

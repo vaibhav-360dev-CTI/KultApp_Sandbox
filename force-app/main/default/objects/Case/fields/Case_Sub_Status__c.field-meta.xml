@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Case_Sub_Status__c</fullName>
+    <externalId>false</externalId>
+    <label>Case Sub-Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Assigned to CS Team</fullName>
+                <default>false</default>
+                <label>Assigned to CS Team</label>
+            </value>
+            <value>
+                <fullName>Assigned to Warehouse Team</fullName>
+                <default>false</default>
+                <label>Assigned to Warehouse Team</label>
+            </value>
+            <value>
+                <fullName>Assigned to Refund Team</fullName>
+                <default>false</default>
+                <label>Assigned to Refund Team</label>
+            </value>
+            <value>
+                <fullName>Assigned to Marketing Team</fullName>
+                <default>false</default>
+                <label>Assigned to Marketing Team</label>
+            </value>
+            <value>
+                <fullName>Referred Back to CS Team</fullName>
+                <default>false</default>
+                <label>Referred Back to CS Team</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

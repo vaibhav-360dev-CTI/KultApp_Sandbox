@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>send_email_to_customer_on_his_case_being_under_review</fullName>
+        <ccEmails>mac.anwarchikle@gmail.com</ccEmails>
+        <description>send email to customer on his case being under review</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>aisha.k@kult.app</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>bhagyashree.n@kult.app</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>isha.raj-qxmz@force.com</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>marketingqueries@kult.app</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>renu.g@kult.app</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>unfiled$public/Send_email_on_Case_Entitlement_when_Status_is_new</template>
+    </alerts>
+    <alerts>
+        <fullName>send_email_to_user</fullName>
+        <description>send email to user</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>unfiled$public/Send_email_on_Case_Entitlement_when_Status_is_new</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Case_Review_Under_Process</fullName>
+        <field>Status</field>
+        <literalValue>In Progress</literalValue>
+        <name>Case Review Under Process</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>ChangePriorityToHigh</fullName>
+        <field>Priority</field>
+        <literalValue>High</literalValue>
+        <name>Changes the case priority to high.</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Change_The_status</fullName>
+        <field>Status</field>
+        <literalValue>In Progress</literalValue>
+        <name>Change The status</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Escalation_of_case</fullName>
+        <field>IsEscalated</field>
+        <literalValue>1</literalValue>
+        <name>Escalation of case</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>InProgress</fullName>
+        <field>Approval_Step__c</field>
+        <literalValue>InProgress</literalValue>
+        <name>InProgress</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Rejected</fullName>
+        <field>Approval_Step__c</field>
+        <literalValue>Rejected</literalValue>
+        <name>Rejected</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Set_Status_To_None</fullName>
+        <field>Approval_Step__c</field>
+        <name>Set Status To None</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>StatusPendings</fullName>
+        <field>Approval_Step__c</field>
+        <literalValue>Under Approval</literalValue>
+        <name>StatusPendings</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Status_Approved</fullName>
+        <field>Approval_Step__c</field>
+        <literalValue>Approved</literalValue>
+        <name>Status Approved</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Status_Pending</fullName>
+        <field>Approval_Step__c</field>
+        <literalValue>InProgress</literalValue>
+        <name>Status Pending</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>case_closed</fullName>
+        <field>Status</field>
+        <literalValue>Closed</literalValue>
+        <name>case closed</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+</Workflow>

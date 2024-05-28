@@ -1,0 +1,374 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" controller="ContactFormWithPhoneNoVfController">
+    <html>
+        <head>
+            <apex:stylesheet value="{!$Resource.ContactFormWithPhoneNoCSS}" />
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+            </script>
+            <link href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" rel="stylesheet"/>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.20.0/font/bootstrap-icons.css"/>
+        </head>
+
+        <script>
+            var app = angular.module('visit_app', []);
+            app.controller('visit_ctrl', function ($scope) {
+                $scope.showCustomerSection = false;
+                $scope.showNoRecFoundCustomer = false;
+                $scope.showSalesQuerySection = false;
+
+                $scope.showOrderQuerySection = false;
+                $scope.showOrderSection = false;
+                $scope.metaDataRecords={};
+                
+                $scope.onLoad = function() {
+                    ContactFormWithPhoneNoVfController.getMetaData(function(result,event){
+                        debugger;
+                        if(event.status && result){
+                            console.log('result==>'+result);
+                            $scope.records = result;
+                        	var recordTypeAndType = {};
+                            for (var i = 0; i < result.length; i++) {
+                                var record = result[i];
+                                var recordType = record.Type__c; 
+                                var type = record.Sub_Type__c; 
+                                
+                                if (!recordTypeAndType.hasOwnProperty(recordType)) {
+                                    recordTypeAndType[recordType] = [];
+                                }
+                                recordTypeAndType[recordType].push(type);
+                            }
+                            console.log('recordTypeAndType ==>', recordTypeAndType);
+                            $scope.metaDataRecords = recordTypeAndType;
+                            $scope.keys = Object.keys($scope.metaDataRecords);
+                            
+                            for(var i = 0; i < result.length; i++){
+                            	var record = result[i];
+                                var recordType = record.Type__c; 
+                                var type = record.Sub_Type__c;
+                                var subType = record.Sub_Sub_Type__c;
+                                var TypeAndsubType ={};
+
+                            }   
+                        }else{
+
+                        }
+                        $scope.$apply();
+                    })
+                }
+                $scope.onLoad();
+                
+                
+                $scope.searchCustomer = function(){
+                    debugger;
+                    var formattedPhone = $scope.searchValue.toString().substr(-10);
+                    ContactFormWithPhoneNoVfController.searchCustomer(formattedPhone,function(result,event){
+                        debugger;
+                        if(event.status && result){
+                            debugger;
+                            $scope.customerRecord = result;
+                            $scope.showCustomerSection = true;
+                            $scope.showNoRecFoundCustomer = false;
+                            $scope.showSalesQuerySection = false;
+                            $scope.showOrderQuerySection = false;
+                            $scope.showOrderSection = false;
+                        }else{
+                            $scope.showCustomerSection = false;
+                            $scope.showNoRecFoundCustomer = true;
+                            $scope.showSalesQuerySection = false;
+                            $scope.showOrderQuerySection = false;
+                            $scope.showOrderSection = false;
+                        }
+                        $scope.$apply();
+                    })
+                }
+
+                $scope.onclickOfQuery = function(queryType){
+                    debugger;
+                    if(queryType == 'Sales Query'){
+                        $scope.showSalesQuerySection = true;
+                        $scope.showCustomerSection = false;
+                        $scope.showNoRecFoundCustomer = false;
+                        $scope.showOrderQuerySection = false;
+                        $scope.showOrderSection = false;
+                    }else{
+                        $scope.showOrderQuerySection = true;
+                        $scope.showSalesQuerySection = false;
+                        $scope.showCustomerSection = false;
+                        $scope.showNoRecFoundCustomer = false;
+                        $scope.showOrderSection = false;
+                    }
+                }
+                
+                $scope.selectRecord = function(RecordTypeName){
+                	debugger;
+                    $scope.recordTypeName1 = RecordTypeName;
+                    console.log('RecordTypeName==>'+RecordTypeName);
+                    $scope.valuesForRecordType = $scope.metaDataRecords[RecordTypeName] || [];
+                    console.log('$scope.valuesForRecordType==>'+$scope.valuesForRecordType);
+                    
+                
+                }
+                
+                $scope.selectsubType = function(recordSubType){
+                	debugger;
+                    console.log('recordSubType'+recordSubType);
+                    $scope.recordSubType1 = recordSubType;
+                    $scope.recordSubSubType =[];
+                    for(var i=0;i<$scope.records.length;i++){
+                    	if($scope.records[i].Type__c == $scope.recordTypeName1 && $scope.records[i].Sub_Type__c == recordSubType){
+                        	$scope.recordSubSubType.push($scope.records[i].Sub_Sub_Type__c);
+                        }
+                    
+                    }
+                    console.log('$scope.recordSubSubType'+$scope.recordSubSubType);
+                
+                }
+                
+                $scope.selectSubSubType = function(recordSubType2){
+                    debugger;
+                	$scope.recordSubSubType1 = recordSubType2;
+                }
+                    
+                    
+                    
+
+                $scope.saveDetails = function(){
+                    debugger;
+                    ContactFormWithPhoneNoVfController.saveCaseWithCustomerDetails($scope.recordTypeName1,$scope.customerRecord,$scope.caseRecord,function(result,event){
+                        debugger;
+                        if(event.status && result){
+                            swal('success','Case has been created successfully....','success');
+                        }else{
+
+                        }
+                        $scope.$apply();
+                    })
+                }
+
+                $scope.saveOrderDetails = function(){
+                    debugger;
+                    ContactFormWithPhoneNoVfController.saveOrderDetails($scope.recordTypeName1,$scope.orderDetails.Id,$scope.orderDetails.Account,$scope.caseRecord,function(result,event){
+                        debugger;
+                        if(event.status && result){
+                            debugger;
+                            swal('success','Case has been created successfully....','success');
+                        }else{
+
+                        }
+                        $swcope.$apply();
+                    })
+                }
+
+                $scope.searchOrder = function(){
+                    debugger;
+                    ContactFormWithPhoneNoVfController.searchOrder($scope.searchValue,function(result,event){
+                        debugger;
+                        if(event.status && result){
+                            debugger;
+                            $scope.orderDetails = result;
+                            $scope.showCustomerSection = false;
+                            $scope.showNoRecFoundCustomer = false;
+                            $scope.showSalesQuerySection = false;
+                            $scope.showOrderQuerySection = false;
+                            $scope.showOrderSection = true;
+                        }else{
+                            
+                            $scope.showCustomerSection = false;
+                            $scope.showNoRecFoundCustomer = true;
+                            $scope.showSalesQuerySection = false;
+                            $scope.showOrderQuerySection = false;
+                            $scope.showOrderSection = false;
+                        }
+                        $scope.$apply();
+                    })
+                }
+            })
+        </script>
+
+        <div ng-app="visit_app" ng-controller="visit_ctrl" style="overflow-x: hidden;">
+            <body>
+                <div class="row">
+                    <div class="col-md-12 float-end">
+                        <apex:image url="{!$Resource.kultAppLogo}" Styleclass="float-end" style="width:10%" />
+                    </div>
+                </div>
+                <hr class="border" />
+
+                <div class="booking-form3">
+                    <div class="container mb-5">
+                        <div class="row">
+                            <label><input type="radio" name="queryType" value="sales" ng-click="onclickOfQuery('Sales Query')" />Sales Query</label>
+                            <label><input type="radio" name="queryType" value="order" ng-click="onclickOfQuery('Order Query')" />Order Query</label>
+                    </div>
+
+
+                        <div class="row mt-3" ng-show="showSalesQuerySection">
+                            <div class="col-md-5">
+                                <label class="label">Enter registered Phone</label>
+                                <input type="text" class="form-control mt-2" ng-model="searchValue" />
+                            </div>
+                            <div class="col-md-7 mt-4">
+                                <button class="button" ng-click="searchCustomer()">Search</button>
+                            </div>
+                        </div>
+
+
+                        <div class="row mt-3" ng-show="showOrderQuerySection">
+                            <div class="col-md-5">
+                                <label class="label">Enter Order No.</label>
+                                <input type="text" class="form-control mt-2" ng-model="searchValue" />
+                            </div>
+                            <div class="col-md-7 mt-4">
+                                <button class="button" ng-click="searchOrder()">Search</button>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row mt-5" ng-show="showNoRecFoundCustomer">
+                            <h3 style="color: red; text-align:center;">No such record available ! Try Again.....</h3>
+                        </div>
+
+                        <div class="row mt-5" ng-show="showCustomerSection">
+                            
+                            <div class="row">
+                                <h6 style="color:#1e45aa;"><b>Customer Details</b></h6>
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Customer Name</label>
+                                    <input type="text" class="form-control" ng-model="customerRecord.Name" ng-disabled="true" />
+                                </div>
+    
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Customer Phone</label>
+                                    <input type="text" class="form-control" ng-model="customerRecord.Phone_10_Digit__c" ng-disabled="true" />
+                                </div>
+    
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Customer Alternate Phone</label>
+                                    <input type="text" class="form-control" ng-model="customerRecord.Alternate_Phone_No__c"/>
+                                </div>
+                            </div>
+                            
+
+                            <div class="row mt-3">
+                                <h6 style="color:#1e45aa;"><b>Query Details</b></h6>
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Case Subject</label>
+                                    <input type="text" class="form-control" ng-model="caseRecord.Subject"/>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Case Description</label>
+                                    <input type="text" class="form-control" ng-model="caseRecord.Description"/>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-4 mt-3">
+                                    <select class="form-control" aria-label="Default select example" ng-model="RecordTypeName" ng-click="selectRecord(RecordTypeName)" >
+                                       <option ng-repeat="key in keys" ng-selected="true" >{{key}}</option>
+                                   </select>
+                                
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <select class="form-control" aria-label="Default select example" ng-model="caseRecord.Sub_Type__c" ng-click="selectsubType(caseRecord.Sub_Type__c)" >
+                                       <option ng-repeat="value in valuesForRecordType" ng-selected="true" >{{value}}</option>
+                                   </select>
+                                	
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <select class="form-control" aria-label="Default select example" ng-model="caseRecord.Sub_Sub_Type__c" ng-click="selectSubSubType(caseRecord.Sub_Sub_Type__c)" >
+                                       <option ng-repeat="subSubType in recordSubSubType" ng-selected="true" >{{subSubType}}</option>
+                                   </select>
+                                	
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSubmit2" class="button float-end" ng-click="saveDetails()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- showOrderSection -->
+                        <div class="row mt-5" ng-show="showOrderSection">
+                            
+                            <div class="row">
+                                <h6 style="color:#1e45aa;"><b>Order Details</b></h6>
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Order No</label>
+                                    <input type="text" class="form-control" ng-model="orderDetails.Name" ng-disabled="true" />
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Order Status</label>
+                                    <input type="text" class="form-control" ng-model="orderDetails.Status" ng-disabled="true" />
+                                </div>
+    
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Account Name</label>
+                                    <input type="text" class="form-control" ng-model="orderDetails.Account.Name" ng-disabled="true" />
+                                </div>
+
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Account Phone</label>
+                                    <input type="text" class="form-control" ng-model="orderDetails.Account.Phone_10_Digit__c" ng-disabled="true" />
+                                </div>
+    
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Customer Alternate Phone</label>
+                                    <input type="text" class="form-control" ng-model="orderDetails.Account.Alternate_Phone_No__c"/>
+                                </div>
+                            </div>
+                            
+
+                            <div class="row mt-3">
+                                <h6 style="color:#1e45aa;"><b>Query Details</b></h6>
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Case Subject</label>
+                                    <input type="text" class="form-control" ng-model="caseRecord.Subject"/>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <label class="label pe-3 text-nowrap">Case Description</label>
+                                    <input type="text" class="form-control" ng-model="caseRecord.Description"/>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-4 mt-3">
+                                    <select class="form-control" aria-label="Default select example" ng-model="RecordTypeName" ng-click="selectRecord(RecordTypeName)" >
+                                       <option ng-repeat="key in keys" ng-selected="true" >{{key}}</option>
+                                   </select>
+                                
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <select class="form-control" aria-label="Default select example" ng-model="caseRecord.Sub_Type__c" ng-click="selectsubType(caseRecord.Sub_Type__c)" >
+                                       <option ng-repeat="value in valuesForRecordType" ng-selected="true" >{{value}}</option>
+                                   </select>
+                                	
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <select class="form-control" aria-label="Default select example" ng-model="caseRecord.Sub_Sub_Type__c" ng-click="selectSubSubType(caseRecord.Sub_Sub_Type__c)" >
+                                       <option ng-repeat="subSubType in recordSubSubType" ng-selected="true" >{{subSubType}}</option>
+                                   </select>
+                                	
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" id="btnSubmit2" class="button float-end" ng-click="saveOrderDetails()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+            </body>
+        </div>
+    </html>
+</apex:page>

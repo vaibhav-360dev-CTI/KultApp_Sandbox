@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_for_RTO__c</fullName>
+    <externalId>false</externalId>
+    <label>Reason for:RTO</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Code verified cancellation</fullName>
+                <default>false</default>
+                <label>Code verified cancellation</label>
+            </value>
+            <value>
+                <fullName>WhatsApp verified cancellation</fullName>
+                <default>false</default>
+                <label>WhatsApp verified cancellation</label>
+            </value>
+            <value>
+                <fullName>Maximum attempts reached</fullName>
+                <default>false</default>
+                <label>Maximum attempts reached</label>
+            </value>
+            <value>
+                <fullName>The consignee refused to accept</fullName>
+                <default>false</default>
+                <label>The consignee refused to accept</label>
+            </value>
+            <value>
+                <fullName>Order canceled by customer</fullName>
+                <default>false</default>
+                <label>Order canceled by customer</label>
+            </value>
+            <value>
+                <fullName>Customs Clearance</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Customs Clearance</label>
+            </value>
+            <value>
+                <fullName>Delivery Attempt Failed</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Delivery Attempt Failed</label>
+            </value>
+            <value>
+                <fullName>Incorrect Address</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Incorrect Address</label>
+            </value>
+            <value>
+                <fullName>Order Cancellation</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Order Cancellation</label>
+            </value>
+            <value>
+                <fullName>Order Processing Issues</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Order Processing Issues</label>
+            </value>
+            <value>
+                <fullName>Shipping Delay</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Shipping Delay</label>
+            </value>
+            <value>
+                <fullName>Stolen or Misdelivered</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Stolen or Misdelivered</label>
+            </value>
+            <value>
+                <fullName>Technical Glitches</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Technical Glitches</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

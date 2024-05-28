@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Instagram_Dm_Messages</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>CASES.PRIORITY</columns>
+    <columns>Mention__c</columns>
+    <columns>Post_Id__c</columns>
+    <columns>POST_URL__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Type_of_Post__c</field>
+        <operation>equals</operation>
+        <value>DM</value>
+    </filters>
+    <label>Instagram Dm Messages</label>
+</ListView>

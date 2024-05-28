@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesSendEmailToMembers>true</doesSendEmailToMembers>
+    <name>Warehouse Team Queue</name>
+    <queueMembers>
+        <users>
+            <user>ashok.c@kult.app</user>
+            <user>dipesh.m@kult.app</user>
+            <user>isha.raj-qxmz@force.com</user>
+            <user>sneha.j@kult.app</user>
+            <user>sushant.r@kult.app</user>
+        </users>
+    </queueMembers>
+    <queueRoutingConfig>Warehouse_Cases</queueRoutingConfig>
+    <queueSobject>
+        <sobjectType>Case</sobjectType>
+    </queueSobject>
+</Queue>

@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sub_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Sub Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Type</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Order Related</fullName>
+                <default>false</default>
+                <label>Order Related</label>
+            </value>
+            <value>
+                <fullName>App Related</fullName>
+                <default>false</default>
+                <label>App Related</label>
+            </value>
+            <value>
+                <fullName>Refund Issues</fullName>
+                <default>false</default>
+                <label>Refund Issues</label>
+            </value>
+            <value>
+                <fullName>Mobile number change</fullName>
+                <default>false</default>
+                <label>Mobile number change</label>
+            </value>
+            <value>
+                <fullName>Update Email id</fullName>
+                <default>false</default>
+                <label>Update Email id</label>
+            </value>
+            <value>
+                <fullName>Process to add or update more addresses</fullName>
+                <default>false</default>
+                <label>Process to add or update more addresses</label>
+            </value>
+            <value>
+                <fullName>Product Price</fullName>
+                <default>false</default>
+                <label>Product Price</label>
+            </value>
+            <value>
+                <fullName>Comparison with Competitor</fullName>
+                <default>false</default>
+                <label>Comparison with Competitor</label>
+            </value>
+            <value>
+                <fullName>Offers and Promotions</fullName>
+                <default>false</default>
+                <label>Offers and Promotions</label>
+            </value>
+            <value>
+                <fullName>Gift / Pre-book</fullName>
+                <default>false</default>
+                <label>Gift / Pre-book</label>
+            </value>
+            <value>
+                <fullName>Process to Purchase / Delivery Charges</fullName>
+                <default>false</default>
+                <label>Process to Purchase / Delivery Charges</label>
+            </value>
+            <value>
+                <fullName>Expected Delivery TAT / Preferred Delivery window</fullName>
+                <default>false</default>
+                <label>Expected Delivery TAT / Preferred Delivery window</label>
+            </value>
+            <value>
+                <fullName>Previous order OOS Req for benefit/code</fullName>
+                <default>false</default>
+                <label>Previous order OOS Req for benefit/code</label>
+            </value>
+            <value>
+                <fullName>Missed campaign Req. for Benefit/code</fullName>
+                <default>false</default>
+                <label>Missed campaign Req. for Benefit/code</label>
+            </value>
+            <value>
+                <fullName>Word of Mouth on Order Cancellation</fullName>
+                <default>false</default>
+                <label>Word of Mouth on Order Cancellation</label>
+            </value>
+            <value>
+                <fullName>Know more about products</fullName>
+                <default>false</default>
+                <label>Know more about products</label>
+            </value>
+            <value>
+                <fullName>Product Suitability</fullName>
+                <default>false</default>
+                <label>Product Suitability</label>
+            </value>
+            <value>
+                <fullName>Product Quantity or Ingredients or Description</fullName>
+                <default>false</default>
+                <label>Product Quantity or Ingredients or Description</label>
+            </value>
+            <value>
+                <fullName>Stock / Restock</fullName>
+                <default>false</default>
+                <label>Stock / Restock</label>
+            </value>
+            <value>
+                <fullName>Product life /Expiry/Authencity /Others</fullName>
+                <default>false</default>
+                <label>Product life /Expiry/Authencity /Others</label>
+            </value>
+            <value>
+                <fullName>Collaboration Request/Influencer queries</fullName>
+                <default>false</default>
+                <label>Collaboration Request/Influencer queries</label>
+            </value>
+            <value>
+                <fullName>Collaboration service issues</fullName>
+                <default>false</default>
+                <label>Collaboration service issues</label>
+            </value>
+            <value>
+                <fullName>Collaboration Request</fullName>
+                <default>false</default>
+                <label>Collaboration Request</label>
+            </value>
+            <value>
+                <fullName>Content Issues - Cx</fullName>
+                <default>false</default>
+                <label>Content Issues - Cx</label>
+            </value>
+            <value>
+                <fullName>Content Issues - Partners</fullName>
+                <default>false</default>
+                <label>Content Issues - Partners</label>
+            </value>
+            <value>
+                <fullName>Order Status</fullName>
+                <default>false</default>
+                <label>Order Status</label>
+            </value>
+            <value>
+                <fullName>Gift Before Shipping</fullName>
+                <default>false</default>
+                <label>Gift Before Shipping</label>
+            </value>
+            <value>
+                <fullName>Gift After Shipping</fullName>
+                <default>false</default>
+                <label>Gift After Shipping</label>
+            </value>
+            <value>
+                <fullName>Cancellation Before Shipping</fullName>
+                <default>false</default>
+                <label>Cancellation Before Shipping</label>
+            </value>
+            <value>
+                <fullName>Cancellation After Shipping</fullName>
+                <default>false</default>
+                <label>Cancellation After Shipping</label>
+            </value>
+            <value>
+                <fullName>Address Change Before Shipping</fullName>
+                <default>false</default>
+                <label>Address Change Before Shipping</label>
+            </value>
+            <value>
+                <fullName>Address Change After Shipping</fullName>
+                <default>false</default>
+                <label>Address Change After Shipping</label>
+            </value>
+            <value>
+                <fullName>Return &amp; Replacement</fullName>
+                <default>false</default>
+                <label>Return &amp; Replacement</label>
+            </value>
+            <value>
+                <fullName>Return and Refund</fullName>
+                <default>false</default>
+                <label>Return and Refund</label>
+            </value>
+            <value>
+                <fullName>Reverse Pick Up</fullName>
+                <default>false</default>
+                <label>Reverse Pick Up</label>
+            </value>
+            <value>
+                <fullName>Serviceable Area or PIN Code</fullName>
+                <default>false</default>
+                <label>Serviceable Area or PIN Code</label>
+            </value>
+            <value>
+                <fullName>Complaint About Rider or CSE</fullName>
+                <default>false</default>
+                <label>Complaint About Rider or CSE</label>
+            </value>
+            <value>
+                <fullName>Happy Customer</fullName>
+                <default>false</default>
+                <label>Happy Customer</label>
+            </value>
+            <value>
+                <fullName>Service feedback</fullName>
+                <default>false</default>
+                <label>Service feedback</label>
+            </value>
+            <value>
+                <fullName>Looking for a Job</fullName>
+                <default>false</default>
+                <label>Looking for a Job</label>
+            </value>
+            <value>
+                <fullName>Missed / Incomplete Conversation</fullName>
+                <default>false</default>
+                <label>Missed / Incomplete Conversation</label>
+            </value>
+            <value>
+                <fullName>Return/Cancellation/ Privacy /Terms of use</fullName>
+                <default>false</default>
+                <label>Return/Cancellation/ Privacy /Terms of use</label>
+            </value>
+            <value>
+                <fullName>FAQs</fullName>
+                <default>false</default>
+                <label>FAQs</label>
+            </value>
+            <value>
+                <fullName>General Queries</fullName>
+                <default>false</default>
+                <label>General Queries</label>
+            </value>
+            <value>
+                <fullName>Home Visit</fullName>
+                <default>false</default>
+                <label>Home Visit</label>
+            </value>
+            <value>
+                <fullName>Delayed due to STN</fullName>
+                <default>false</default>
+                <label>Delayed due to STN</label>
+            </value>
+            <value>
+                <fullName>Delayed Tech/Climatic/Others</fullName>
+                <default>false</default>
+                <label>Delayed Tech/Climatic/Others</label>
+            </value>
+            <value>
+                <fullName>Partial</fullName>
+                <default>false</default>
+                <label>Partial</label>
+            </value>
+            <value>
+                <fullName>Full</fullName>
+                <default>false</default>
+                <label>Full</label>
+            </value>
+            <value>
+                <fullName>Incomplete Address/Pin code</fullName>
+                <default>false</default>
+                <label>Incomplete Address/Pin code</label>
+            </value>
+            <value>
+                <fullName>Wrong Address/Pin Code</fullName>
+                <default>false</default>
+                <label>Wrong Address/Pin Code</label>
+            </value>
+            <value>
+                <fullName>Address not found</fullName>
+                <default>false</default>
+                <label>Address not found</label>
+            </value>
+            <value>
+                <fullName>CX not available/out of town</fullName>
+                <default>false</default>
+                <label>CX not available/out of town</label>
+            </value>
+            <value>
+                <fullName>Restricted Entry area</fullName>
+                <default>false</default>
+                <label>Restricted Entry area</label>
+            </value>
+            <value>
+                <fullName>Cx Refuse to accept</fullName>
+                <default>false</default>
+                <label>Cx Refuse to accept</label>
+            </value>
+            <value>
+                <fullName>OTP / ID issues</fullName>
+                <default>false</default>
+                <label>OTP / ID issues</label>
+            </value>
+            <value>
+                <fullName>Others</fullName>
+                <default>false</default>
+                <label>Others</label>
+            </value>
+            <value>
+                <fullName>Cx not Responding</fullName>
+                <default>false</default>
+                <label>Cx not Responding</label>
+            </value>
+            <value>
+                <fullName>Incorrect  Number</fullName>
+                <default>false</default>
+                <label>Incorrect  Number</label>
+            </value>
+            <value>
+                <fullName>Incorrect address</fullName>
+                <default>false</default>
+                <label>Incorrect address</label>
+            </value>
+            <value>
+                <fullName>Incomplete Address/Landmark issues</fullName>
+                <default>false</default>
+                <label>Incomplete Address/Landmark issues</label>
+            </value>
+            <value>
+                <fullName>PIN Code not Serviceable</fullName>
+                <default>false</default>
+                <label>PIN Code not Serviceable</label>
+            </value>
+            <value>
+                <fullName>RTO Orders</fullName>
+                <default>false</default>
+                <label>RTO Orders</label>
+            </value>
+            <value>
+                <fullName>Monitoring Report - Full</fullName>
+                <default>false</default>
+                <label>Monitoring Report - Full</label>
+            </value>
+            <value>
+                <fullName>Monitoring Report - Partial</fullName>
+                <default>false</default>
+                <label>Monitoring Report - Partial</label>
+            </value>
+            <value>
+                <fullName>Porduct /process enquiry only</fullName>
+                <default>false</default>
+                <label>Porduct /process enquiry only</label>
+            </value>
+            <value>
+                <fullName>Non Perfume queries</fullName>
+                <default>false</default>
+                <label>Non Perfume queries</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Pricing</controllingFieldValue>
+            <valueName>Product Price</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pricing</controllingFieldValue>
+            <valueName>Comparison with Competitor</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Monitoring Report - Full</controllingFieldValue>
+            <valueName>Monitoring Report - Full</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Camapign /Reviews</controllingFieldValue>
+            <valueName>Offers and Promotions</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Monitoring Report - Partial</controllingFieldValue>
+            <valueName>Monitoring Report - Partial</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Gift / Pre-book</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Process to Purchase / Delivery Charges</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Expected Delivery TAT / Preferred Delivery window</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Previous order OOS Req for benefit/code</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Missed campaign Req. for Benefit/code</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Word of Mouth on Order Cancellation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Know more about products</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Product Suitability</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Product Quantity or Ingredients or Description</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Stock / Restock</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pre Order</controllingFieldValue>
+            <valueName>Product life /Expiry/Authencity /Others</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Marketing</controllingFieldValue>
+            <valueName>Collaboration Request/Influencer queries</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Marketing</controllingFieldValue>
+            <valueName>Collaboration service issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Brand</controllingFieldValue>
+            <valueName>Collaboration Request</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Content</controllingFieldValue>
+            <valueName>Content Issues - Cx</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Content</controllingFieldValue>
+            <valueName>Content Issues - Partners</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Order Status</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Gift Before Shipping</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Gift After Shipping</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Cancellation Before Shipping</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Cancellation After Shipping</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Address Change Before Shipping</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Address Change After Shipping</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Return &amp; Replacement</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Return and Refund</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Order Related</controllingFieldValue>
+            <valueName>Reverse Pick Up</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Service Related</controllingFieldValue>
+            <valueName>Serviceable Area or PIN Code</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Service Related</controllingFieldValue>
+            <valueName>Complaint About Rider or CSE</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Service Related</controllingFieldValue>
+            <valueName>Happy Customer</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Service Related</controllingFieldValue>
+            <valueName>Service feedback</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Service Related</controllingFieldValue>
+            <valueName>Looking for a Job</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Service Related</controllingFieldValue>
+            <valueName>Missed / Incomplete Conversation</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Policies and FAQs</controllingFieldValue>
+            <valueName>Return/Cancellation/ Privacy /Terms of use</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Policies and FAQs</controllingFieldValue>
+            <valueName>FAQs</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Delayed</controllingFieldValue>
+            <valueName>Delayed due to STN</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Delayed</controllingFieldValue>
+            <valueName>Delayed Tech/Climatic/Others</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Out of Stock</controllingFieldValue>
+            <valueName>Partial</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Out of Stock</controllingFieldValue>
+            <valueName>Full</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Courier Partner Remarks</controllingFieldValue>
+            <valueName>Incomplete Address/Pin code</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Courier Partner Remarks</controllingFieldValue>
+            <valueName>Wrong Address/Pin Code</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Courier Partner Remarks</controllingFieldValue>
+            <valueName>Address not found</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Courier Partner Remarks</controllingFieldValue>
+            <valueName>CX not available/out of town</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Courier Partner Remarks</controllingFieldValue>
+            <valueName>Restricted Entry area</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Courier Partner Remarks</controllingFieldValue>
+            <valueName>Cx Refuse to accept</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Courier Partner Remarks</controllingFieldValue>
+            <valueName>OTP / ID issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Courier Partner Remarks</controllingFieldValue>
+            <controllingFieldValue>Rider Remarks</controllingFieldValue>
+            <valueName>Others</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Rider Remarks</controllingFieldValue>
+            <valueName>Cx not Responding</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Rider Remarks</controllingFieldValue>
+            <valueName>Incorrect  Number</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Rider Remarks</controllingFieldValue>
+            <valueName>Incorrect address</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Rider Remarks</controllingFieldValue>
+            <valueName>Incomplete Address/Landmark issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pin Code Change</controllingFieldValue>
+            <valueName>PIN Code not Serviceable</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RTO Orders</controllingFieldValue>
+            <valueName>RTO Orders</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Tech</controllingFieldValue>
+            <valueName>Order Related</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Tech</controllingFieldValue>
+            <valueName>App Related</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Tech</controllingFieldValue>
+            <valueName>Refund Issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>General Queries</controllingFieldValue>
+            <valueName>General Queries</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Profile</controllingFieldValue>
+            <valueName>Mobile number change</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Profile</controllingFieldValue>
+            <valueName>Update Email id</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Profile</controllingFieldValue>
+            <valueName>Process to add or update more addresses</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Perfume - category</controllingFieldValue>
+            <valueName>Home Visit</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

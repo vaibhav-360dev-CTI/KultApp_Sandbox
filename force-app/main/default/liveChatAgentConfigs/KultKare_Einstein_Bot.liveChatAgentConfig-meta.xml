@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LiveChatAgentConfig xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <assignments>
+        <profiles>
+            <profile xsi:nil="true"/>
+            <profile>customer service executive</profile>
+        </profiles>
+        <users>
+            <user>aisha.k@kult.app</user>
+            <user>isha.raj-qxmz@force.com</user>
+            <user>renu.g@kult.app</user>
+            <user>marketingqueries@kult.app</user>
+        </users>
+    </assignments>
+    <autoGreeting>Hi,
+
+Thank you for contacting Kult Kare. This is {!User_FirstName} I will be assisting you further with your issue.</autoGreeting>
+    <criticalWaitTime>60</criticalWaitTime>
+    <disableTransferConferenceGreeting>true</disableTransferConferenceGreeting>
+    <enableAgentFileTransfer>true</enableAgentFileTransfer>
+    <enableAgentSneakPeek>true</enableAgentSneakPeek>
+    <enableAssistanceFlag>true</enableAssistanceFlag>
+    <enableAutoAwayOnDecline>true</enableAutoAwayOnDecline>
+    <enableAutoAwayOnPushTimeout>true</enableAutoAwayOnPushTimeout>
+    <enableChatConferencing>true</enableChatConferencing>
+    <enableChatMonitoring>true</enableChatMonitoring>
+    <enableChatTransferToAgent>true</enableChatTransferToAgent>
+    <enableChatTransferToButton>true</enableChatTransferToButton>
+    <enableChatTransferToSkill>true</enableChatTransferToSkill>
+    <enableLogoutSound>true</enableLogoutSound>
+    <enableNotifications>true</enableNotifications>
+    <enableRequestSound>true</enableRequestSound>
+    <enableSneakPeek>true</enableSneakPeek>
+    <enableVisitorBlocking>false</enableVisitorBlocking>
+    <enableWhisperMessage>true</enableWhisperMessage>
+    <label>KultKare Einstein Bot</label>
+    <supervisorDefaultAgentStatusFilter>Offline</supervisorDefaultAgentStatusFilter>
+    <transferableButtons>
+        <button>Chat_Support_Team</button>
+    </transferableButtons>
+</LiveChatAgentConfig>

@@ -1,0 +1,70 @@
+<template>
+
+    <div class="slds-scrollable_y" style="height:5rem;width:24rem" tabindex="0">
+        <lightning-quick-action-panel header="Tag a Case">
+            <template if:true={show1stPage}>
+                <b class="slds-align_absolute-center">Current Task</b>
+                <br>
+                <lightning-datatable key-field="Id" data={thisTask} columns={columns} hide-checkbox-column
+                    selected-rows={preSelectedRows}>
+                </lightning-datatable>
+
+                <br><br><br><br>
+
+                <template if:true={showUnder1stPage}>
+
+                    <div>
+                        <b class="slds-align_absolute-center">Related Task</b>
+                        <br>
+                        <lightning-datatable key-field="Id" data={TaskData} columns={columns}
+                            onrowselection={handleRowSelection}>
+                        </lightning-datatable>
+                    </div>
+
+                </template>
+            </template>
+            <template if:true={show2ndPage}>
+                <div>
+                    <template if:true={showCase}>
+                        <!-- <lightning-combobox label="Select Case" placeholder="Choose Case" value={value} required
+                            onchange={handleChange} options={AllCases}></lightning-combobox> -->
+                            
+                    </template>
+
+
+                </div>
+                <br><br>
+                <div>
+                    <b class="slds-align_absolute-center">Current Task</b>
+                    <br>
+                    <lightning-datatable key-field="Id" data={thisTask} columns={columns}
+                        selected-rows={preSelectedRows} hide-checkbox-column>
+                    </lightning-datatable>
+
+                </div>
+                <br><br><br><br>
+
+                <template if:true={showUnder2ndPage}>
+
+                    <div>
+                        <b class="slds-align_absolute-center">Related Task</b>
+                        <br>
+                        <lightning-datatable key-field="Id" data={TaskData} columns={columns}
+                            onrowselection={handleRowSelection}>
+                        </lightning-datatable>
+                    </div>
+
+                </template>
+            </template>
+
+            <br><br><br>
+            <div class="slds-align_absolute-center">
+                <lightning-button variant="neutral" onclick={closeAction} label="Cancel"></lightning-button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <lightning-button variant="Brand" onclick={handleSave} label="Save"></lightning-button>&nbsp;&nbsp;
+            </div>
+        </lightning-quick-action-panel>
+    </div>
+
+
+</template>

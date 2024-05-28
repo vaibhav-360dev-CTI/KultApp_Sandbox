@@ -1,0 +1,97 @@
+.c-container {
+    /*border: 1px solid #d8dde6;*/
+    margin: 10px 0 20px;
+    /* background-color: #efefef; */
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.c-container::-webkit-scrollbar {
+  display: none;
+}
+
+.noCases{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    margin-bottom: 5%;
+}
+
+h2{
+    display: inline-block;
+    margin-left: 1%;
+}
+
+.page-header {
+    height: 50px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: white;
+    padding: 2%;
+    border-radius: 5px;
+}
+
+.caseCard{
+    background-color: white;
+    border-radius: 5px;
+    padding: 2%;
+    margin-bottom: 4%;
+}
+.caseTitelText{
+    color: #000000;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 15.51px;
+    text-align: left;
+}
+@media screen and (min-width: 1680px){
+    .noCases{
+    display: block;
+    margin-left: 53%;
+    width: 50%;
+    margin-bottom: 5%;
+}
+
+
+.caseTitelText{
+    color: #000000;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 15.51px;
+    text-align: left;
+}
+.case-Type{
+    color: #000000;
+}
+.case-Sub-Type{
+    color: #000000;
+}
+.case-Status{
+    color: #000000;
+}
+
+.case-type{
+    color: #000000;
+    display: inline-block;  
+    margin-bottom: 1rem; 
+    font-size: 1.3rem; 
+}
+/* .faq-icon{
+    width: 20px; 
+    height: 10px; 
+} */
+
+
+/* Reduce gap between lightning-layout-item elements */
+lightning-layout-item {
+    --slds-col-gap: 0.5rem; /* Adjust the gap size as needed */
+}
+
+/* Reduce gap between lightning-layout-item elements */
+lightning-layout-item {
+    margin-right: -0.5rem; /* Adjust the negative margin size to reduce the gap */
+}
+
+
+}

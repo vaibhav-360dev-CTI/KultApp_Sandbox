@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Refer_Back_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Refer Back Reason</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Resolved</fullName>
+                <default>false</default>
+                <label>Resolved</label>
+            </value>
+            <value>
+                <fullName>Need More Info</fullName>
+                <default>false</default>
+                <label>Need More Info</label>
+            </value>
+            <value>
+                <fullName>Send Update</fullName>
+                <default>false</default>
+                <label>Send Update</label>
+            </value>
+            <value>
+                <fullName>Address Changed</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Address Changed</label>
+            </value>
+            <value>
+                <fullName>Cancellation Processed</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Cancellation Processed</label>
+            </value>
+            <value>
+                <fullName>Cancellation Rejected</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Cancellation Rejected</label>
+            </value>
+            <value>
+                <fullName>Refund Processed</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Refund Processed</label>
+            </value>
+            <value>
+                <fullName>Refund Rejected</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Refund Rejected</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

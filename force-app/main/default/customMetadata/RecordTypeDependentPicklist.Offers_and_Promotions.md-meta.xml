@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Offers and Promotions</label>
+    <protected>false</protected>
+    <values>
+        <field>Sub_Sub_Type__c</field>
+        <value xsi:type="xsd:string">Ongoing Campaign/Sales updates,Upcoming Campaign /Sales updates,
+How to check product review,
+Giveaway inquiry,
+Use of Coupon codes,
+Coupon/Freebie /Discount/Cashback Issuance</value>
+    </values>
+    <values>
+        <field>Sub_Type__c</field>
+        <value xsi:type="xsd:string">Offers and Promotions</value>
+    </values>
+    <values>
+        <field>Type__c</field>
+        <value xsi:type="xsd:string">Campaign /Reviews</value>
+    </values>
+</CustomMetadata>

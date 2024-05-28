@@ -1,0 +1,15 @@
+.tableScroll {
+    overflow: auto;
+    overflow-y: hidden;
+    height: 10rem;
+}
+
+table{
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.slds-table_header-fixed thead th{
+    padding: 4px 8px;
+}

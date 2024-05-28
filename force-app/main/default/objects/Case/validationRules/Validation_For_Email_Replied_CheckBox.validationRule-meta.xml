@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Validation_For_Email_Replied_CheckBox</fullName>
+    <active>false</active>
+    <description>Validation For Email Replied CheckBox When Ticket is Closing</description>
+    <errorConditionFormula>AND(ISPICKVAL(Status, &quot;Closed&quot;),NOT( Email_Replied__c))</errorConditionFormula>
+    <errorDisplayField>Email_Replied__c</errorDisplayField>
+    <errorMessage>Please mark the &apos;Email Replied&apos; checkbox before closing the ticket.</errorMessage>
+</ValidationRule>

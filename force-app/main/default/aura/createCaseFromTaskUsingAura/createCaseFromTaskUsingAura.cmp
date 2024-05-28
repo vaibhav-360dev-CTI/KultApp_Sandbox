@@ -1,0 +1,5 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="recordId" type="String"/>
+    <!--c:createCaseFromTaskUsingLwc recordId="{!v.recordId}"/-->
+    <c:createCaseFromTaskUsingLwc recordId="{!v.recordId}" onmyfirstevent="{!c.handleLWCEvent}"></c:createCaseFromTaskUsingLwc>
+</aura:component>

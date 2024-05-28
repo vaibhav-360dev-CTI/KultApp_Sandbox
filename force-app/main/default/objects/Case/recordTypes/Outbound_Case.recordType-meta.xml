@@ -1,0 +1,1573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Outbound_Case</fullName>
+    <active>true</active>
+    <businessProcess>Support Processes</businessProcess>
+    <label>Outbound Case</label>
+    <picklistValues>
+        <picklist>Actual_Order_Status__c</picklist>
+        <values>
+            <fullName>Cancelled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delivered</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>On Hold</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Processing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refunded</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Returned</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shipped</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Appointment_Booked__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Approval_Step__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>InProgress</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Open</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Under Approval</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Availability_Window__c</picklist>
+        <values>
+            <fullName>1 Month %2B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>1-2 Weeks</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2-4 Weeks</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Within 1 week</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Call_Status__c</picklist>
+        <values>
+            <fullName>Cancelled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Declined</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Callback_Requested__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Case_Category__c</picklist>
+        <values>
+            <fullName>FCR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>NFCR</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Case_Sub_Status__c</picklist>
+        <values>
+            <fullName>Assigned to CS Team</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Assigned to Marketing Team</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Assigned to Refund Team</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Assigned to Warehouse Team</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Referred Back to CS Team</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Category_Type__c</picklist>
+        <values>
+            <fullName>Camapign %2FReviews</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Profile</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pre Order</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pricing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tech</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Category__c</picklist>
+        <values>
+            <fullName>Complaint</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Feedback</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Query</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Request</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Channel_Case__c</picklist>
+        <values>
+            <fullName>CHAT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Instagram</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OutBound</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Communication_Mode__c</picklist>
+        <values>
+            <fullName>Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Chat</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Social - IG</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Coupon__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Courier_Issue__c</picklist>
+        <values>
+            <fullName>Communication Problems</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect Address</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Customer_s_Request__c</picklist>
+        <values>
+            <fullName>Address Change</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Full Cancellation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Partial Cancellation</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Disposition__c</picklist>
+        <values>
+            <fullName>Alternate address provided by Cx</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Alternate date%2Ftime provided by Cx</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Benefit Issued - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Benefit already Issued - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Benefit not Issued - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CX is ok with OOS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CX is ok with delay</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CX not Contactable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CX not available - RVP cancelled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CX understanding - Information given</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Changes done - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Complete address%2Flandmark provided by Cx</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contacted on Secondary No%2E - issue resolved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Correct address%2Flandmark provided by Cx</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Correction Done - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coupon Released - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx contacted - issue resolved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx denied for order</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx not answering</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx not answering- email sent</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx not at home</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx wants the delivery</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx wants to cancel the Order</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Details provided by CX- order delivered</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Email sent to Brand</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Escalated to Marketing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Feedback Noted</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Feedback taken</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Feedback taken - Issue Resolved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incomplete Details - CX Not contactable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incomplete details</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Information Given</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Issue Resolved - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Issued Resolved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Eligible - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not contactable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not eligible %3E 15 days - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Cancelled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Cancelled - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Retained</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order already delivered</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order retained - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Payment reversed - CXinformed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RVP Cancelled - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RVP already done - CX informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RVP done - Refund Initiated</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refund - Processed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refund initiated w%2Fo RVP- approval case</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Replacement done - Issue Resolved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Request Booked</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Request shared with Marketing</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Requested to Share Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SKU not available- Refund Initiated</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Status Informed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrong No%2E %2F Email id</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>lmformed to Content</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Interest_Level__c</picklist>
+        <values>
+            <fullName>Interested</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not-Interested</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Order_Placed__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Order_Source__c</picklist>
+        <values>
+            <fullName>App</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WebSite</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Origin</picklist>
+        <values>
+            <fullName>Bulk Upload</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Facebook</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound Missed Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound Phone</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Instagram</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outbound Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outbound Phone</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Web</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Priority</picklist>
+        <values>
+            <fullName>High</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Low</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Medium</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>RTO_Reso__c</picklist>
+        <values>
+            <fullName>Create Duplicate Order</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Initiate Refund</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Reason</picklist>
+        <values>
+            <fullName>Customer Service Related</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Existing Complaint Related</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>General Inquries</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New problem</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Related</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Quality %2F Expiry Related</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Profile Related</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refund Related</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Reason_For_Dealy__c</picklist>
+        <values>
+            <fullName>Customer Unreachable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect Addresses</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lost in Transit</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Reason_for_RTO__c</picklist>
+        <values>
+            <fullName>Code verified cancellation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Maximum attempts reached</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order canceled by customer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>The consignee refused to accept</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WhatsApp verified cancellation</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Refer_Back_Reason__c</picklist>
+        <values>
+            <fullName>Need More Info</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Resolved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Send Update</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Refund_Back_Reason__c</picklist>
+        <values>
+            <fullName>Need More Information</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Request Approve</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Request Rejected</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Refund_Reasons__c</picklist>
+        <values>
+            <fullName>Billing Error</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelled Order</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Changed Mind</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Duplicate Order</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Item Not as Described</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Late Delivery</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other %28Specify%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Defect</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unwanted Gift</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrong Item Shipped</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Refund_Type__c</picklist>
+        <values>
+            <fullName>Full</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Partial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Special Case Refund</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Social_Media_Platform__c</picklist>
+        <values>
+            <fullName>Facebook</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Instagram</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Stage__c</picklist>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Open</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Re-Open</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Reassigned</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Unassigned</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sub_Sub_Type__c</picklist>
+        <values>
+            <fullName>Addition of More Payment options or COD</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Address Change - Before Shipping</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Address not found</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>App Stuck or Hanged</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>App features</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Appreciation for CSE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bad review of product</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Brand Packaging%2FAuthenticity%2FOthers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CX not available%2Fout of town</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CX out of town</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancel RVP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Change in delivery schedule</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Change in mail id</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Change in profile number</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collabration Request</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collabration Request%2FInfluencer queries</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collabration service issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Comparison with Competitor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Complaint about CSE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Complaint about Rider</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Content Issues - Cx</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Content Issues - Partners</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coupon%2FFreebie %2FDiscount%2FCashback Issuance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx Refuse to accept</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx not Responding</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Damaged%2FDefective Packaging</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Damaged%2FDefective Product</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delayed Tech%2FClimatic%2FOthers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delayed delivery</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delayed due to STN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delivery Delayed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ecom Reason - Order lost in transit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Error while adding in cart</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Expected shorter delivery TAT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Expiry %3C8 months</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Full</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>General%2FOut of Box Enquiries</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gift an Order</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Giveaway inquiry</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Guided on App</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Guided to explore personalization on app</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Happy with delivery time</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Happy with order packaging</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>How to check product review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incomplete Address%2FLandmark issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incomplete Address%2FPin code</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incomplete details</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect  Number</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect address</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Information Given</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Invalid Coupon Code</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Invalid Email%2FPhone Number</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Login issues%2FLogin number error</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mismatch in address details</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed%2FIncomplete Conversation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missing Order or SKU</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Damage%2FNo Wrong - Special Approval</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Elevator in premise</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Non-Perfume queries</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not required anymore%2FWrongly Ordered</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OOS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OTP %2F ID issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Offer%2Fdiscount issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ongoing Campaign%2FSales updates</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Confirmation %2FStatus Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order number confirmation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other Internal Issues%2FMonitoring Reasons</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Others</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PIN code not serviceable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Packaging issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Partial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Price Issue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Price mismatch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Process to add%2Fupdate more addresses</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Description%2FOffer Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Returned - Refund Awaited</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product%2Fprocess inquiry only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RTO Orders</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RVP delayed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refund Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refund Processed- Not credited</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Restricted Entry area</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Send order as a gift</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Serviceable Area%2FPIN Code</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tracking details</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Upcoming Campaign %2FSales updates</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Updation of new email id</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Use of Coupon codes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Visit Request booking</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrong Address%2FPin Code</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrong courier partner remark</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrong courier partner remarks</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrong order or SKU</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrong%2FDamage%2FMissing- CX wants to keep</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sub_Type__c</picklist>
+        <values>
+            <fullName>Address Change After Shipping</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Address Change Before Shipping</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Address not found</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>App Related</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CX not available%2Fout of town</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancellation After Shipping</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancellation Before Shipping</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collaboration Request</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collaboration Request%2FInfluencer queries</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Collaboration service issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Comparison with Competitor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Complaint About Rider or CSE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Content Issues - Cx</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Content Issues - Partners</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx Refuse to accept</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cx not Responding</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delayed Tech%2FClimatic%2FOthers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delayed due to STN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Expected Delivery TAT %2F Preferred Delivery window</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>FAQs</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Full</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>General Queries</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gift %2F Pre-book</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gift After Shipping</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Gift Before Shipping</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Happy Customer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Home Visit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incomplete Address%2FLandmark issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incomplete Address%2FPin code</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect  Number</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Incorrect address</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Know more about products</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Looking for a Job</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed %2F Incomplete Conversation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missed campaign Req%2E for Benefit%2Fcode</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mobile number change</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monitoring Report - Full</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monitoring Report - Partial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>OTP %2F ID issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Offers and Promotions</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Related</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Order Status</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Others</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PIN Code not Serviceable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Partial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Previous order OOS Req for benefit%2Fcode</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Process to Purchase %2F Delivery Charges</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Process to add or update more addresses</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Price</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Quantity or Ingredients or Description</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product Suitability</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Product life %2FExpiry%2FAuthencity %2FOthers</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RTO Orders</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refund Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Restricted Entry area</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Return %26 Replacement</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Return and Refund</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Return%2FCancellation%2F Privacy %2FTerms of use</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Reverse Pick Up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service feedback</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Serviceable Area or PIN Code</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Stock %2F Restock</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Update Email id</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Word of Mouth on Order Cancellation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrong Address%2FPin Code</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type</picklist>
+        <values>
+            <fullName>Courier Partner Remarks</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delayed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monitoring Report - Full</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monitoring Report - Partial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Out of Stock</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pin Code Change</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RTO Orders</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rider Remarks</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type_Of_Case__c</picklist>
+        <values>
+            <fullName>Courier Issue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delay In Delivery %28DID%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lost In Transit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Out Of Stock %28OOS%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pincode Not Serviceable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Return to Origin %28RTO%29</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type_of_Call__c</picklist>
+        <values>
+            <fullName>Feedback</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sales</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type_of_Post__c</picklist>
+        <values>
+            <fullName>Comment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hashtags</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mentions</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Post</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Reel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tags</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>isFollowUp__c</picklist>
+        <values>
+            <fullName>No</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>None</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Yes</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

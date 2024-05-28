@@ -1,0 +1,121 @@
+<template>
+	<lightning-quick-action-panel header="Refer Back To CS Team">
+
+		<!-- <lightning-combobox label="Select Refer Back Reason" options={RefrebackOption} onchange={handelreferbackChange} required>
+		</lightning-combobox> -->
+		<lightning-combobox label="Select Refer Back Reason" options={RefrebackOption} onchange={handelreferbackChange}  required>
+		</lightning-combobox>
+
+         <!-- <template if:true={RequestApprove}>
+            <tr>
+                <td colspan="5">&nbsp;</td>
+            </tr>
+    
+        </template>
+
+		<template if:true={RequestApprove}>
+			<template for:each={ListOfCaseRecords} for:item="cs" for:index="index">
+				<lightning-input key={cs.Id} type="text" variant="standard" name="Approval Remarks"
+					label="Approval Remarks" value={cs.Approval_Remarks__c} onchange ={handelApprovalremark} required></lightning-input>
+			</template>
+		</template>
+
+         <template if:true={RequestReject}>
+            <tr>
+                <td colspan="5">&nbsp;</td>
+            </tr>
+         </template>
+
+		<template if:true={RequestReject}>
+			<template for:each={ListOfCaseRecords} for:item="cs" for:index="index">
+				<lightning-input key={cs.Id} type="text" variant="standard" name="Rejection Reason" value={cs.Rejection_Reason__c}
+					label="Rejection Reason" onchange ={handelRejectionreason} required></lightning-input>
+			</template>
+		</template> -->
+
+         <template if:true={NeedMoreInfo}>
+            <tr>
+                <td colspan="5">&nbsp;</td>
+            </tr>
+         </template>
+
+		<template if:true={NeedMoreInfo}>
+			<template for:each={ListOfCaseRecords} for:item="cs" for:index="index">
+				<lightning-input key={cs.Id} type="text" variant="standard" name="Describe Info Needed"  value={describeInformationNeeded}
+					label="Describe Info Needed" onchange ={handeldescribeInformation} required></lightning-input>
+
+					<div key={cs.Id} class="slds-m-around_medium">
+						<lightning-input type="file" 
+						accept=".csv, .png, .doc, .docx, .pdf, .jpg, .jpeg"
+						label="Attachment" onchange={openfileUpload}></lightning-input>
+					</div>
+					<template if:true={fileData}>
+						<p key={cs.Id}>{fileData.filename}</p>
+					</template>
+			</template>
+		</template>
+
+
+		
+		<template if:true={SendUpdate}>
+            <tr>
+                <td colspan="5">&nbsp;</td>
+            </tr>
+         </template>
+
+		 	<template if:true={SendUpdate}>
+			<template for:each={ListOfCaseRecords} for:item="cs" for:index="index">
+				<lightning-input key={cs.Id} type="text" variant="standard" name="Mention Update"  value={updateDesc}
+					label="Mention Update" onchange ={handeldescribeUpdate} required></lightning-input>
+
+					<div key={cs.Id} class="slds-m-around_medium">
+						<lightning-input type="file" 
+						accept=".csv, .png, .doc, .docx, .pdf, .jpg, .jpeg"
+						label="Attachment" onchange={openfileUpload}></lightning-input>
+					</div>
+					<template if:true={fileData}>
+						<p key={cs.Id}>{fileData.filename}</p>
+					</template>
+			</template>
+		</template>
+
+
+
+		<template if:true={resolved}>
+            <tr>
+                <td colspan="5">&nbsp;</td>
+            </tr>
+         </template>
+
+		<template if:true={resolved}>
+			<template for:each={ListOfCaseRecords} for:item="cs" for:index="index">
+				<lightning-input key={cs.Id} type="text" variant="standard" name="Resolution"  value={resolutionRemarks}
+					label="Resolution Remarks" onchange ={handelResolutionRemarks} required></lightning-input>
+
+					<div key={cs.Id} class="slds-m-around_medium">
+						<lightning-input type="file" 
+						accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+						label="Attachment" onchange={openfileUpload}></lightning-input>
+					</div>
+					<template if:true={fileData}>
+						<p key={cs.Id}>{fileData.filename}</p>
+					</template>
+					<template if:true={wareHouseOrderRelated}>
+						<lightning-input key={cs.Id} type="text" label="AWB Number" name="awbNumber" value={awbNumber} onchange ={handleAWBNumber}></lightning-input>
+						<lightning-input key={cs.Id} type="text" label="FOC Order Id" name="focOrder" value={focOrderId} onchange ={handleFOCorderId}></lightning-input>
+					</template>
+					<template if:true={refundResolved}>
+						<lightning-input key={cs.Id} type="text" label="Refund Amount" name="refundAmt" value={refundAmount} onchange ={handleRefundAmt}></lightning-input>
+					</template>
+			</template>
+		</template>
+
+		<div class="slds-m-top_medium slds-text-align_center">
+			<lightning-button type="submit" label="Cancel" variant="neutral" onclick={handleCancel}></lightning-button>
+			&nbsp; &nbsp;
+			<lightning-button type="submit" label="Save" variant="brand" onclick={handleSave}> </lightning-button>
+		</div>
+
+	</lightning-quick-action-panel>
+
+</template>

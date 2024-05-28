@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Cancellation After Shipping</label>
+    <protected>false</protected>
+    <values>
+        <field>Sub_Sub_Type__c</field>
+        <value xsi:type="xsd:string">OOS,Other Internal Issues/Monitoring Reasons,CX out of town,Not required anymore/WronglyOrdered,Price Issue,Bad review of product,Expected shorter delivery TAT,Offer/discount issues,Others,Ecom Reason - Order lost in transit</value>
+    </values>
+    <values>
+        <field>Sub_Type__c</field>
+        <value xsi:type="xsd:string">Cancellation After Shipping</value>
+    </values>
+    <values>
+        <field>Type__c</field>
+        <value xsi:type="xsd:string">Chatbot Case</value>
+    </values>
+</CustomMetadata>

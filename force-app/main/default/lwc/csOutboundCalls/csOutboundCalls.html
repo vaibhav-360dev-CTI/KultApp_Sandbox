@@ -1,0 +1,54 @@
+<template>
+	<div style="background-color:#f2f2f2;font-size:18px;" class="slds-text-align_center slds-p-around_medium">
+		<h1 class="slds-p-top_medium"><b>Enter CS Outbound Call Details</b></h1>
+	</div>
+
+	<div class="slds-p-around_medium">
+		<div class="slds-grid slds-gutters">
+			<div class="slds-col slds-size_1-of-2">
+				<span><lightning-combobox name="Type_of_Call__c" label="Type Of Call" value={parentCaseDetails.Type_of_Call__c} placeholder="Select Type Of Call" required
+                            options={typeOfCallOptions} onchange={handleChange}></lightning-combobox></span>
+			</div>
+			<div class="slds-col slds-size_1-of-2">
+				<span><lightning-combobox name="Call_Status__c" label="Call Status" value={parentCaseDetails.Call_Status__c} placeholder="Select Call Status" required
+                            options={callStatusOptions} onchange={handleChange}></lightning-combobox></span>
+			</div>
+		</div>
+		<div class="slds-grid slds-gutters">
+			<div class="slds-col slds-size_1-of-2">
+				<span><lightning-combobox name="Interest_Level__c" label="Interest Level" placeholder="Select Interest Level" required value={parentCaseDetails.Interest_Level__c}
+                            options={interestLevelOptions} onchange={handleChange}></lightning-combobox></span>
+			</div>
+			<div class="slds-col slds-size_1-of-2">
+				<span><lightning-combobox name="Callback_Requested__c" label="Callback Requested" placeholder="Select Callback Requested" required value={parentCaseDetails.Callback_Requested__c}
+                            options={callbackReqOptions} onchange={handleChange}></lightning-combobox></span>
+			</div>
+		</div>
+
+		<template if:false={hideFields}>
+		<div class="slds-grid slds-gutters">
+			<div class="slds-col slds-size_1-of-2">
+				<span><lightning-combobox name="Appointment_Booked__c" label="Appointment Booked" placeholder="Select Appointment Booked" required value={parentCaseDetails.Appointment_Booked__c}
+                            options={appointmentOptions} onchange={handleChange}></lightning-combobox></span>
+			</div>
+			<div class="slds-col slds-size_1-of-2">
+				<span><lightning-combobox name="Order_Placed__c" label="Order Placed" placeholder="Select Order Placed" required value={parentCaseDetails.Order_Placed__c}
+                            options={orderPlacedOptions} onchange={handleChange}></lightning-combobox></span>
+			</div>
+		</div>
+		</template>
+
+		<div class="slds-grid slds-gutters">
+			<div class="slds-col slds-size_2-of-2">
+				<span><lightning-input type="text" name="CSE_Remarks__c" label="CSE Remarks" required onchange={handleChange} value={parentCaseDetails.CSE_Remarks__c}></lightning-input></span>
+			</div>
+		</div>
+	</div>
+
+	<div style="background-color:#f2f2f2;" class="slds-p-around_x-large slds-clearfix slds-align_absolute-center">
+		<lightning-button variant="brand-outline" label="Cancel" onclick={handleCancel} class="slds-m-left_x-small">
+		</lightning-button>
+		<lightning-button variant="brand" label="Save" onclick={handleSave} class="slds-m-left_x-small">
+		</lightning-button>
+	</div>
+</template>

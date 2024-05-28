@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Category_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Category Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Tech</fullName>
+                <default>false</default>
+                <label>Tech</label>
+            </value>
+            <value>
+                <fullName>Customer Profile</fullName>
+                <default>false</default>
+                <label>Customer Profile</label>
+            </value>
+            <value>
+                <fullName>Pricing</fullName>
+                <default>false</default>
+                <label>Pricing</label>
+            </value>
+            <value>
+                <fullName>Camapign /Reviews</fullName>
+                <default>false</default>
+                <label>Camapign /Reviews</label>
+            </value>
+            <value>
+                <fullName>Pre Order</fullName>
+                <default>false</default>
+                <label>Pre Order</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

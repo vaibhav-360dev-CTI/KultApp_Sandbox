@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>App Related11</label>
+    <protected>false</protected>
+    <values>
+        <field>Sub_Sub_Type__c</field>
+        <value xsi:type="xsd:string">Login issues/Login number error,Invalid Email/Phone Number,Invalid Coupon Code,
+App Stuck or Hanged,Error while adding in cart,Product Description/Offer Issues,Addition of More Payment options or COD</value>
+    </values>
+    <values>
+        <field>Sub_Type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Type__c</field>
+        <value xsi:type="xsd:string">Tech</value>
+    </values>
+</CustomMetadata>

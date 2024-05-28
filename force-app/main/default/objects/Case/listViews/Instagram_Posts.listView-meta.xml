@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Instagram_Posts</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>POST_URL__c</columns>
+    <columns>Post_Id__c</columns>
+    <columns>Type_of_Post__c</columns>
+    <columns>Created_Time__c</columns>
+    <columns>Refund_WH_Team_Status__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CASES.ORIGIN</field>
+        <operation>equals</operation>
+        <value>Instagram</value>
+    </filters>
+    <filters>
+        <field>Type_of_Post__c</field>
+        <operation>equals</operation>
+        <value>Post</value>
+    </filters>
+    <label>Instagram POST Cases</label>
+</ListView>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_cases</fullName>
+    <columns>CASES.CASE_NUMBER</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>CASES.ORIGIN</columns>
+    <columns>CASES.SUBJECT</columns>
+    <columns>showFlags__c</columns>
+    <columns>CASES.STATUS</columns>
+    <columns>Refund_WH_Team_Status__c</columns>
+    <columns>Created_Time__c</columns>
+    <columns>CASES.RECORDTYPE</columns>
+    <columns>CASES.CREATED_DATE_DATE_ONLY</columns>
+    <columns>Last_Response_External__c</columns>
+    <columns>Last_Response__c</columns>
+    <columns>OWNER_NAME</columns>
+    <columns>CASES.PRIORITY</columns>
+    <filterScope>Everything</filterScope>
+    <label>All cases</label>
+</ListView>

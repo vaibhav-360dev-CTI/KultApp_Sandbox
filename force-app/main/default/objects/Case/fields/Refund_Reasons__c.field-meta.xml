@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Refund_Reasons__c</fullName>
+    <externalId>false</externalId>
+    <label>Refund Reasons</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Product Defect</fullName>
+                <default>false</default>
+                <label>Product Defect</label>
+            </value>
+            <value>
+                <fullName>Wrong Item Shipped</fullName>
+                <default>false</default>
+                <label>Wrong Item Shipped</label>
+            </value>
+            <value>
+                <fullName>Customer Changed Mind</fullName>
+                <default>false</default>
+                <label>Customer Changed Mind</label>
+            </value>
+            <value>
+                <fullName>Late Delivery</fullName>
+                <default>false</default>
+                <label>Late Delivery</label>
+            </value>
+            <value>
+                <fullName>Item Not as Described</fullName>
+                <default>false</default>
+                <label>Item Not as Described</label>
+            </value>
+            <value>
+                <fullName>Billing Error</fullName>
+                <default>false</default>
+                <label>Billing Error</label>
+            </value>
+            <value>
+                <fullName>Cancelled Order</fullName>
+                <default>false</default>
+                <label>Cancelled Order</label>
+            </value>
+            <value>
+                <fullName>Duplicate Order</fullName>
+                <default>false</default>
+                <label>Duplicate Order</label>
+            </value>
+            <value>
+                <fullName>Unwanted Gift</fullName>
+                <default>false</default>
+                <label>Unwanted Gift</label>
+            </value>
+            <value>
+                <fullName>Other (Specify)</fullName>
+                <default>false</default>
+                <label>Other (Specify)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

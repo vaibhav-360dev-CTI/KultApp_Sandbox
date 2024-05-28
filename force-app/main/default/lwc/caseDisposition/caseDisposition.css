@@ -1,0 +1,39 @@
+h1{
+    font-size: large;
+    font-weight: 600;
+}
+
+label{
+    font-weight: 600;
+}
+
+.slds-textarea{
+    min-height: 140px!important;
+}
+
+:host {
+    --sds-c-textarea-sizing-min-height: 200px;
+ }
+
+
+@media (min-width: 820px) AND (max-width: 1680px)
+{
+    .comboBoxSize{
+        width: 328%;
+       
+    }
+    .statusLabel{
+        margin-right: 52%;
+    }
+}
+
+
+@media (min-width: 1680px)
+{
+    .comboBoxSize{
+        width: 328%;
+    }
+    .statusLabel{
+        margin-right: 52%;
+    }
+}

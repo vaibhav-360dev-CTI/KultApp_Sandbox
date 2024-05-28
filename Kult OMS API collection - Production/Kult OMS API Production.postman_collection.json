@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "cd3b9aa5-d61e-4460-bbf5-0bd99b72e24a",
+		"name": "Kult OMS API Production",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31915738"
+	},
+	"item": [
+		{
+			"name": "Access Token API",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "isha.raj-qxmz@force.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Vaibhav@1995K6URpX6qEfbtpFUOJQ9mDeVC",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "3MVG9q4K8Dm94dAzccThg5jfe..V49iwycboJ.hRO3ub8.3cdy9k62GjL4TcpBi12LrgvfxcuuslM_v.Al088",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "2F2B689D4A57066E8DBB3D807998A463287D78F75D971BA2A816C19CDBAC798F",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.salesforce.com/services/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"salesforce",
+						"com"
+					],
+					"path": [
+						"services",
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Customer Creation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "00DIR00000071tv!ARkAQLlIMK_n9NC7hCZhbslkw2hw4NhodbWqj42ZsmmDn6weDsYU44qkRyFrrMnm5TlJ5Hkt_chNyWTvwvXX0B_mNX2J5kpy",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 00DIR00000071tv!ARkAQLlIMK_n9NC7hCZhbslkw2hw4NhodbWqj42ZsmmDn6weDsYU44qkRyFrrMnm5TlJ5Hkt_chNyWTvwvXX0B_mNX2J5kpy"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n  \"uuid\": \"UUID1\",\r\n  \"phone_number\": \"9999057812\",\r\n   \"email_id\": \"vaibhav.chauhan@utilitarianlabs.com\",\r\n   \"name\": \"Test Account - API\",\r\n    \"is_deleted\":false,\r\n    \"custom\": {} \r\n}\r\n\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ruby-customization-1508.my.salesforce.com/services/apexrest/CustomerCreation",
+					"protocol": "https",
+					"host": [
+						"ruby-customization-1508",
+						"my",
+						"salesforce",
+						"com"
+					],
+					"path": [
+						"services",
+						"apexrest",
+						"CustomerCreation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order Creation API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "00DIR00000071tv!ARkAQLlIMK_n9NC7hCZhbslkw2hw4NhodbWqj42ZsmmDn6weDsYU44qkRyFrrMnm5TlJ5Hkt_chNyWTvwvXX0B_mNX2J5kpy",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 00DIR00000071tv!ARkAQLlIMK_n9NC7hCZhbslkw2hw4NhodbWqj42ZsmmDn6weDsYU44qkRyFrrMnm5TlJ5Hkt_chNyWTvwvXX0B_mNX2J5kpy"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\"data\":\r\n   {\"order_id\":\"2\",\r\n    \"order_date\":\"2024-03-11\",\r\n    \"payment_id\":\"pay_NkgVYiAFKRFuv2_test\",\r\n    \"payment_type\":\"upi\",\r\n    \"payment_status\":\"paid\",\r\n    \"amount\":320.0,\r\n    \"coupon_code\":\"KULT75\",\r\n    \"coupon_discount\":960.0,\r\n    \"is_coupon_redeemed\":null,\r\n    \"customer_details\":{\"name\":\"Test Account - API\", \"phone_number\":9999057812, \"email\":\"vaibhav.chauhan@utilitarianlabs.com\"},\r\n    \"address_details\":\r\n     {\"shipping_address\":\r\n       {\"street\":\"7/10/158 Hanspuram colony, Dhaniram ka purwa Deokali \",\r\n        \"city\":\"FAIZABAD\",\r\n        \"state\":\"UTTAR PRADESH\",\r\n        \"country_code\":\"IN\",\r\n        \"pin_code\":\"224001\",\r\n        \"phone_number\":\"9648520626\"},\r\n      \"billing_address\":\r\n       {\"street\":\"7/10/158 Hanspuram colony, Dhaniram ka purwa Deokali \",\r\n        \"city\":\"FAIZABAD\",\r\n        \"state\":\"UTTAR PRADESH\",\r\n        \"country_code\":\"IN\",\r\n        \"pin_code\":\"224001\",\r\n        \"phone_number\":\"9648520626\"}},\r\n    \"order_details\":\r\n     [{\"sub_order_id\":\"2\",\r\n       \"sub_order_seller_name\":\"Kult\",\r\n       \"awb_number\":null,\r\n       \"courier\":null,\r\n       \"expected_delivery_date\":null,\r\n       \"sub_order_status\":\"pending\",\r\n       \"tracking_link\":null,\r\n       \"item_details\":\r\n        [{\"brand\":\"Lakme\",\r\n          \"mrp\":1600.0,\r\n          \"selling_price\":1280.0,\r\n          \"refunded_price\":1280.0,\r\n          \"sku\":\"Test\",\r\n          \"status\":\"initiated\",\r\n          \"variant_name\":\" Night Cream \"},\r\n          {\"brand\":\"Maybelline\",\r\n          \"mrp\":1600.0,\r\n          \"selling_price\":1280.0,\r\n          \"refunded_price\":1280.0,\r\n          \"sku\":\"Test1\",\r\n          \"status\":\"initiated\",\r\n          \"variant_name\":\"Mascara\"}\r\n          ]}]}}]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ruby-customization-1508.my.salesforce.com/services/apexrest/OrderCreation",
+					"protocol": "https",
+					"host": [
+						"ruby-customization-1508",
+						"my",
+						"salesforce",
+						"com"
+					],
+					"path": [
+						"services",
+						"apexrest",
+						"OrderCreation"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Order Creation API",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer 00DF30000009wiW!AQcAQP44qNLZ8vZd8zVLro1FhuimEje.hZZuig3siBarrjTaJ0ji_mbKWpFfwcyIaVZi7uVvg4vqDQYh4N6fSsAJPD8.DArW"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[   { \r\n  \"data\": { \r\n    \"order_id\": 260995, \r\n    \"order_date\": \"2024-04-02\", \r\n    \"payment_id\": \"pay_Jjnm2cYyTbhj7C8\", \r\n    \"payment_status\": \"paid\", \r\n     \"payment_type\": \"paid\", \r\n    \"amount\": 1900.00, \r\n    \"coupon_code\": \"KULT75\", \r\n    \"coupon_discount\": 120.00, \r\n   \"is_coupon_redeemed\": true, \r\n   \"order_status\": \"Cancelled\", \r\n \"customer_details\": { \r\n      \"name\": null, \r\n      \"email\": null, \r\n      \"phone_number\": \"9999057812\" \r\n    }, \r\n \"address_details\": { \r\n      \"shipping_address\": { \r\n        \"street\": \"7-3-43-2-0,SLSN colony\",\r\n         \"city\": \"Sitapur\",\r\n         \"state\": \"Uttar Pradesh\",\r\n         \"country_code\": \"IN\",\r\n        \"pin_code\": \"26001\",\r\n       \"phone_number\": \"9654548763\"\r\n\r\n      }, \r\n      \"billing_address\": { \r\n        \"street\": \"7-3-43-2-0,SLSN colony\",\r\n         \"city\": \"Sitapur\",\r\n         \"state\": \"Uttar Pradesh\",\r\n         \"country_code\": \"IN\",\r\n        \"pin_code\": \"26001\",\r\n       \"phone_number\": \"9654548763\"\r\n      } \r\n    }, \r\n    \"order_details\": [ \r\n      { \r\n        \"sub_order_id\": \"234567_1\", \r\n        \"sub_order_seller_name\": \"Raj\", \r\n        \"awb_number\": 123456, \r\n        \"courier\": \"SelfShip\", \r\n        \"expected_delivery_date\": \"2024-02-04\", \r\n        \"Sub_order_status\": \"Cancelled\", \r\n        \"tracking_link\": \"https://123456.com\", \r\n        \"item_details\": [ \r\n          { \r\n            \"brand\": \"Lakme\", \r\n            \"mrp\": 1650.00, \r\n            \"selling_price\": 1100.00, \r\n            \"quantity\": 3, \r\n            \"refunded_price\": \"\", \r\n            \"sku\": \"2zKtJ9vZGrJ462IqOIKvnu\", \r\n            \" status\": \"Shipped\", \r\n            \"variant_name\": \"Lakme Lotion Night\" \r\n          } \r\n        ] \r\n      } \r\n    ] \r\n  } \r\n}]\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://kultapp--kultapp.sandbox.my.salesforce.com/services/apexrest/OrderCreation",
+							"protocol": "https",
+							"host": [
+								"kultapp--kultapp",
+								"sandbox",
+								"my",
+								"salesforce",
+								"com"
+							],
+							"path": [
+								"services",
+								"apexrest",
+								"OrderCreation"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "Order Updation API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "00DF30000009wiW!AQcAQCcYR__t2xkFe2sfN.fTBTb6NSJCxu71yx8xjAK0ikgjU2SL8L2WF.cbyqdcM6rbjE.syEXkSaq2P5R70JFMKdrWLnSk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 00DF30000009wiW!AQcAQP44qNLZ8vZd8zVLro1FhuimEje.hZZuig3siBarrjTaJ0ji_mbKWpFfwcyIaVZi7uVvg4vqDQYh4N6fSsAJPD8.DArW"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n    \"order_id\": \"2345678\",\r\n   \"is_coupon_redeemed\": true,\r\n    \"order_details\": [\r\n      {\r\n        \"sub_order_id\": \"234567_1\",\r\n         \"sub_order_status\": \"Returned\",\r\n        \"awb_number\": \"123456\",\r\n        \"courier\": \"Express Shipping\",\r\n        \"expected_delivery_date\": \"2024-02-01\",\r\n        \"tracking_link\": \"https://tracking.example.com/AWB123456\",\r\n        \"item_details\":[\r\n          {\r\n            \"sku\":\"2zKtJ9vZGrJ462IqOIKvnu\",\r\n            \"status\":\"placed\"\r\n           \r\n          }]\r\n      },\r\n       {\"sub_order_id\": \"234567_2\",\r\n         \"sub_order_status\": \"Delivered\",\r\n         \"awb_number\": \"123489\",\r\n         \"courier\": \"Express Shipping\",\r\n         \"expected_delivery_date\": \"2024-02-01\",\r\n         \"tracking_link\": \"https://tracking.example.com/AWB123456\",\r\n   \"item_details\": [\r\n          {\r\n            \"sku\": \"2zKtJ9vZGrJ462IqOIKvn2\",\r\n             \"status\": \"Shipped\"\r\n          }]}]}]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://kultapp--kultapp.sandbox.my.salesforce.com/services/apexrest/OrderUpdation",
+					"protocol": "https",
+					"host": [
+						"kultapp--kultapp",
+						"sandbox",
+						"my",
+						"salesforce",
+						"com"
+					],
+					"path": [
+						"services",
+						"apexrest",
+						"OrderUpdation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetPolicyAndTnC",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "00DF30000009wiW!AQcAQP44qNLZ8vZd8zVLro1FhuimEje.hZZuig3siBarrjTaJ0ji_mbKWpFfwcyIaVZi7uVvg4vqDQYh4N6fSsAJPD8.DArW",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://kultapp--kultapp.sandbox.my.salesforce.com/services/apexrest/PoilcyAndTnCFetch",
+					"protocol": "https",
+					"host": [
+						"kultapp--kultapp",
+						"sandbox",
+						"my",
+						"salesforce",
+						"com"
+					],
+					"path": [
+						"services",
+						"apexrest",
+						"PoilcyAndTnCFetch"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
