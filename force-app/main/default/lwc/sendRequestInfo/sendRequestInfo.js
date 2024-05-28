@@ -6,6 +6,7 @@ import { getRecordNotifyChange } from "lightning/uiRecordApi";
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class SendRequestInfo extends LightningElement {
+
     remarks;
     @track caseResult;
     @track error;
