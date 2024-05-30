@@ -20,7 +20,7 @@ private class taskHelperControllerTest {
     @isTest
     static void testGetOrderItems() {
         
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account', Phone = '12345678');
         insert testAccount;
         
         Product2 objProduct = new Product2();
@@ -55,7 +55,7 @@ insert testCase;*/
     @isTest
     static void testCreateCaseFromCase() {
         
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account', Phone='12345678');
         insert testAccount;
         
         Product2 objProduct = new Product2();
@@ -90,7 +90,6 @@ insert testCase;*/
         
         Test.startTest();
         taskHelperController.getCaseRecords();
-        taskHelperController.dumMethod();
         Case result = taskHelperController.createCaseFromCase('Subject', '234126', testTasks.Id, testOrder.Id);
         Test.stopTest();        
     }

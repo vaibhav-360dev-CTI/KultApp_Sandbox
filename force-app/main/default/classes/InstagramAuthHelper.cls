@@ -244,11 +244,12 @@ public class InstagramAuthHelper {
         String endpointUrl = 'https://graph.facebook.com/v17.0/'+businessUserId+'/tags';
         String fieldsParam = 'fields=media_url,comments_count,permalink,caption,media_type,timestamp,username,comments.limit(50){id,like_count,user,media,timestamp,username,replies{text,username,timestamp},text}&limit=50';
         String fullUrl = endpointUrl + '?' + fieldsParam + '&access_token=' + accessToken;
-        
+        system.debug('fullUrl-->'+fullUrl);
         Http http = new Http();
         HttpRequest request = new HttpRequest();
         request.setEndpoint(fullUrl);
         request.setMethod('GET');
+        request.setTimeout(20000);
         
         HttpResponse response = http.send(request);
         FacebookApiResponse responseWrapper = (FacebookApiResponse) JSON.deserialize(response.getBody(), FacebookApiResponse.class);

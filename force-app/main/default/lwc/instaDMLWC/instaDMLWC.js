@@ -4,7 +4,7 @@ import sendMessage from '@salesforce/apex/instaDmLWCCompController.sendMessage';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { LightningElement, api, track } from 'lwc';
 
-export default class InstaDmLWC extends LightningElement {
+export default class InstaDmLwcComp extends LightningElement {
     @api recordId;
     @api chatMessages = [];
     @api senderName;
@@ -26,7 +26,7 @@ export default class InstaDmLWC extends LightningElement {
                 this.chatInitiatedTime = result[0].timestamp;
                 this.totalMessages = result.length;
                 for (let i = 0; i < result.length; i++) {
-                    if (result[i].sender !== 'Kult App') {
+                    if (result[i].sender !== 'Sokultsokool') {
                         this.recipientId = result[i].senderId;
                     }
                 }

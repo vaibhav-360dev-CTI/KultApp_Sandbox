@@ -365,19 +365,36 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
 
     }
 
+    // handelaffectedChange(event) {
+    //     debugger;
+    //     var index = event.currentTarget.dataset.index;
+    //     if (this.AllOrderItems[index].totalQuantity < parseInt(event.target.value)) {
+    //         this.AllOrderItems[index].Affected_Quantity__c = null;
+    //         alert('Affected Quantity Cannot be Greater than Order Quantity');
+    //     } else {
+    //         this.AllOrderItems[index].Affected_Quantity__c = null;
+    //         this.AllOrderItems[index].Affected_Quantity__c = parseInt(event.target.value);
+    //     }
+    //     // if(this.selecteRowsMap.has(this.AllOrderItems[index].Id)){
+    //     //     this.selecteRowsMap.set(this.AllOrderItems[index].Id, this.AllOrderItems[index].Affected_Quantity__c);
+    //     // }
+    // }
+
     handelaffectedChange(event) {
         debugger;
         var index = event.currentTarget.dataset.index;
-        if (this.AllOrderItems[index].totalQuantity < parseInt(event.target.value)) {
-            alert('Affected Quantity Cannot be Greater than Order Quantity');
-            this.AllOrderItems[index].Affected_Quantity__c = null;
-            return;
+        var newValue = parseInt(event.target.value);
+        let updatedOrderItems = JSON.parse(JSON.stringify(this.AllOrderItems)); // Deep copy of the array
+
+        if (updatedOrderItems[index].totalQuantity < newValue) {
+            updatedOrderItems[index].Affected_Quantity__c = null;
+            //alert('Affected Quantity Cannot be Greater than Order Quantity');
         } else {
-            this.AllOrderItems[index].Affected_Quantity__c = parseInt(event.target.value);
+            updatedOrderItems[index].Affected_Quantity__c = newValue;
         }
-        // if(this.selecteRowsMap.has(this.AllOrderItems[index].Id)){
-        //     this.selecteRowsMap.set(this.AllOrderItems[index].Id, this.AllOrderItems[index].Affected_Quantity__c);
-        // }
+
+        this.AllOrderItems = updatedOrderItems;
+
     }
 
     handleClick() {

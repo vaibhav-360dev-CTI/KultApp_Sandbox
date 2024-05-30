@@ -4,7 +4,7 @@ public class WS_OrderUpdateV1Test {
     @isTest
     static void testUpdateOrders_Success() {
         // Setup test data
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account', Phone= '213467890');
         insert testAccount;
         
         Product2 objProduct = new Product2(Name = 'TestProduct', Description = 'Test Description');
@@ -103,7 +103,7 @@ public class WS_OrderUpdateV1Test {
         orderUpdate.order_details = new List<WS_OrderUpdate.Order_details>{orderDetail};
 
         Test.startTest();
-        WS_OrderUpdateV1.dumMethod();
+       // WS_OrderUpdateV1.dumMethod();
         Test.stopTest();
     }
 }

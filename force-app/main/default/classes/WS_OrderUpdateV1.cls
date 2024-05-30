@@ -211,7 +211,7 @@ global class WS_OrderUpdateV1 {
         public String new_status;
     }
     
-     public static void dumMethod() {
+    /* public static void dumMethod() {
     Integer i = 0;
     Integer j = 0;
     Integer k = 0;
@@ -505,6 +505,6 @@ global class WS_OrderUpdateV1 {
     i = j + k;
     i = j + k;
     i = j + k;
-    } 
+    } */
     
 }

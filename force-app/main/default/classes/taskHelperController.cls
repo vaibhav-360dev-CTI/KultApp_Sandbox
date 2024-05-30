@@ -254,7 +254,7 @@ public with sharing class taskHelperController {
         }
     }
     
-     public static void dumMethod() {
+  /*   public static void dumMethod() {
     Integer i = 0;
     Integer j = 0;
     Integer k = 0;
@@ -535,7 +535,7 @@ public with sharing class taskHelperController {
     i = j + k;
     i = j + k;
    
-    } 
+    } */
     
         
 }

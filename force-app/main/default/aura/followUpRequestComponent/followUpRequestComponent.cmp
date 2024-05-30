@@ -2,6 +2,9 @@
     implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
     access="global" controller="followUpController">
     <aura:attribute name="followUpRemarks" type="string" />
+    <aura:attribute name="parentId" type="Id" default="00128000002KuXUAA0" />
+    <aura:attribute name="fileName" type="String" default="No File Selected.." />
+    <aura:attribute name="isUploaded" type ="Boolean" default="false"/>
     <!-- <aura:attribute name="showTrue" type="Boolean"  default="false" /> -->
     <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> -->
     <aura:html tag="style">
@@ -25,6 +28,13 @@
         </div>
         <div class="slds-modal__content" id="modal-content-id-1">
             <lightning:input type="text" value="{!v.followUpRemarks}" label="Enter Follow Up Remarks" required="true" />
+        </div>
+        <div class="slds-col slds-size_2-of-4.5" style="">
+            <span>
+                <lightning:input aura:id="fuploader" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload File" multiple="false"/>
+                <div class="slds-text-body_small slds-text-color_error">{!v.fileName} </div>
+                <br/>
+            </span>
         </div>
         <footer>
             <div class="slds-col modal-footer slds-modal__footer">

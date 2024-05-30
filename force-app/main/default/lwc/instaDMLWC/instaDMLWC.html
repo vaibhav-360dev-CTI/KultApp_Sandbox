@@ -1,9 +1,11 @@
 <template>
-    <div style="height: 500px; overflow-y: auto;">
-        <div class="slds-chat-bookend">
+   <div style="height: 500px; background-color: #fffefc; border: 1px solid #ccc; border-radius: 10px; overflow: hidden;">
+       <div class="slds-chat-bookend">
             <span class="slds-icon_container slds-icon-utility-chat slds-chat-icon"></span>
             <p>Chat started by <b>{senderName}</b> • {chatInitiatedTime}</p>
         </div>
+    <div style="padding: 10px; overflow-y: auto; height: calc(100% - 60px);">
+        
         <template if:true={showSpinner}>
             <div class="exampleHolder">
                 <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
@@ -17,7 +19,11 @@
                             <div class="slds-chat-message">
                                 <div class="slds-chat-message__body">
                                     <div class='slds-chat-message__text slds-chat-message__text_inbound'>
-                                        <span>{message.text}</span>
+                                        <span>
+                                            <lightning-formatted-rich-text value= {message.text} >
+                                               
+                                            </lightning-formatted-rich-text>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -28,23 +34,29 @@
                             <div class="slds-chat-message">
                                 <div class="slds-chat-message__body">
                                     <div class='slds-chat-message__text slds-chat-message__text_outbound'>
-                                        <span>{message.text}</span>
+                                         <span>
+                                            <lightning-formatted-rich-text value= {message.text} >
+                                               
+                                            </lightning-formatted-rich-text>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </li>
                     </template>
-                    
                 </ul>
             </section>
         </template>
-        <div class="slds-p-around_medium">
-            <lightning-textarea label="Reply" value={messageContext} placeholder="Type your reply here..." onchange={handleMessageChange}></lightning-textarea>
-            <br/>
-            <lightning-button-group>
-                <lightning-button label="Refresh" onclick={refreshChat}></lightning-button>
-                <lightning-button label="Send" onclick={handleSendReply}></lightning-button>
-            </lightning-button-group>
-         </div>
     </div>
+</div>
+<div class="chat-input-container">
+    <div class="input-container">
+        <lightning-textarea label="Reply" value={messageContext} placeholder="Type your reply here..." onchange={handleMessageChange}></lightning-textarea>
+    </div>
+    <div class="button-container" style="margin-top: 2%;">
+            <lightning-icon icon-name='action:reset_password' alternative-text='read_receipts' size='small' title='read_receipts' onclick={refreshChat}></lightning-icon>
+            <lightning-icon icon-name='action:share_post' alternative-text='reply_text' size='small' title='reply_text' onclick={handleSendReply}></lightning-icon>
+        
+    </div>
+</div>
 </template>

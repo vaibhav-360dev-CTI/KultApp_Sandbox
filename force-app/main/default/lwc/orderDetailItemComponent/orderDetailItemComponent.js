@@ -33,6 +33,7 @@ export default class OrderDetailItems extends LightningElement {
     }
 
     loadOrderLineItems(orderId) {
+        debugger;
         getOrderLineItems({ orderId: orderId })
             .then(result => {
                 this.orderLineItems = result;
@@ -46,6 +47,11 @@ export default class OrderDetailItems extends LightningElement {
                 this.loginNumber = result[0].Order.Account.Phone;
                 this.orderStatus = result[0].Order.ParentOrder__r.Status;
                 this.couponCode = result[0].Order.ParentOrder__r.Coupon_Code__c;
+                this.shippingaddress1 = result[0].Order.ParentOrder__r.ShippingStreet +',';
+                this.shippingaddress2 = result[0].Order.ParentOrder__r.ShippingCity + ',';
+                this.shippingaddress3 =  result[0].Order.ParentOrder__r.ShippingState + ',';
+                this.shippingaddress4 = result[0].Order.ParentOrder__r.ShippingCountry + ',';
+                this.shippingpostalcode = result[0].Order.ParentOrder__r.ShippingPostalCode;
             })
             .catch(error => {
                 console.error('Error loading order line items', error);

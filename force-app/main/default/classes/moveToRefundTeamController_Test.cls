@@ -6,7 +6,7 @@ public class moveToRefundTeamController_Test {
     @isTest
     static void testGetOrderLineItem() {
         // Fetch the case for test
-     /*   Case testCase = [SELECT Id FROM Case LIMIT 1];
+       Case testCase = [SELECT Id FROM Case LIMIT 1];
         
         // Call the method
         moveToRefundTeamController.RefundWrapper result = moveToRefundTeamController.getOrderLineItem(testCase.Id);
@@ -26,7 +26,7 @@ public class moveToRefundTeamController_Test {
         //List<OrderItem> orderItems = [SELECT Id FROM OrderItem WHERE OrderId = :testCase.OrderId__c LIMIT 1];
         List<OrderItem> orderItems = new List<OrderItem>();
         
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account',Phone = '23456789');
         insert testAccount;
         
         
@@ -57,6 +57,18 @@ public class moveToRefundTeamController_Test {
             Status = 'New'
         );
         insert testCase;
+        Case cs = [Select Id,Subject,AccountId,Status FROM Case Where ID = :testCase.Id];
+        cs.Subject = 'Test';
+        cs.AccountId = testAccount.Id;
+        update cs;
+        
+        Case_Progress_Detail__c cpd = new Case_Progress_Detail__c();
+        cpd.WH_Team_Remarks__c = 'Test1';
+        cpd.CS_Remarks__c = 'refundReason';
+        cpd.Status__c = 'In Progress'; 
+        cpd.Current_Action__c = 'Moved to Refund Team';
+        cpd.Case__c = cs.Id;
+        insert cpd;
         
         // Call the method
         String result = moveToRefundTeamController.updateOrderAndCaseFields(
@@ -77,7 +89,7 @@ public class moveToRefundTeamController_Test {
         moveToRefundTeamController.sendingCustomNotification(testUser.Id, testCase.Id, 'Test Notification', 'This is a test notification.');
         
         // No assertion required as this method does not return a value
-        // Check the debug logs for verification  */
-        moveToRefundTeamController.dumMethod();
+        // Check the debug logs for verification  
+       
     }
 }

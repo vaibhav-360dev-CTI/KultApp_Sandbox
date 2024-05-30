@@ -77,6 +77,7 @@ public class InstagramMentionCreationBatch implements Database.Batchable<sObject
             String fieldsParam = 'fields=media_url,comments_count,permalink,caption,media_type,timestamp,username,comments.limit(25){id,like_count,user,media,timestamp,username,replies{text,username,timestamp},text}&limit=50&after='+nextPaginationMentionToken;
             Id caseRecordTypeId = Schema.SObjectType.case.getRecordTypeInfosByName().get('Social').getRecordTypeId();
             String fullUrl = endpointUrl + '?' + fieldsParam + '&access_token=' + accessToken;
+            system.debug('fullUrl==>'+fullUrl);
             String body = '';
             Http http = new Http();
             HttpRequest request = new HttpRequest();

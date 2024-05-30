@@ -295,6 +295,7 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
                     if(caseRec.SuppliedEmail != null){
                         emailList.add(caseRec.SuppliedEmail);
                     }
+                    caseRec.Communication_Mode__c = 'Email';
                 }else if(!to){
                     if(emailCaseQueueRec != null){
                         caseRec.OwnerId = nonWorkingHoursGroup.Id;
@@ -303,7 +304,6 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
                         emailList.add(caseRec.SuppliedEmail);
                     }
                 }
-                caseRec.Communication_Mode__c = 'Email';
             }
             List<Account> accList = [SELECT Id, Name, Email__c FROM Account WHERE Email__c IN: emailList ORDER BY LastModifiedDate DESC];
             Map<String, Account> accountsByEmail = new Map<String, Account>();
@@ -523,7 +523,7 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
             }
         }
     
-          public static void dumMethod() {
+      /*    public static void dumMethod() {
     Integer i = 0;
     Integer j = 0;
     Integer k = 0;
@@ -1613,7 +1613,7 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
     i = j + k;
     i = j + k;
     i = j + k;
-  }
+  } */
  
     
 }

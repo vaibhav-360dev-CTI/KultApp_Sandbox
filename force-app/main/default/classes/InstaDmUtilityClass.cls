@@ -41,6 +41,7 @@ public class InstaDmUtilityClass {
         
         
         String endpointUrl = basicUrl+pageId+'/conversations?fields=message_count,messages{message,id,thread_id,created_time,from},id,can_reply,senders';
+        system.debug('endpointUrl==>'+endpointUrl);
         //&user_id=25162329106715195 
         try{
             system.debug('endpointUrl==>'+endpointUrl);
@@ -195,7 +196,7 @@ public class InstaDmUtilityClass {
         List<String> senderIds = new List<String>();
         
         String endpointUrl = basicUrl + pageId + '/conversations?fields=message_count,messages{message,id,thread_id,created_time,from},id,can_reply,senders&user_id=' + recipientId;
-        
+        system.debug('--endpointUrl-->'+endpointUrl);
         try{
             if(Test.isRunningTest()){
                 jsonResponse = '{"id": "17841405793087218", "media_url": "https://www.example.com/image.jpg", "comments": { "data": [{"id": "17851087209098192", "text": "Awesome!", "username": "user1", "timestamp": "2023-07-29T12:40:00+0000"}] } }';
@@ -206,7 +207,7 @@ public class InstaDmUtilityClass {
                 body = body.replaceAll('from','fromDetails');
                 messageInfo = (InstaDMWrapper) JSON.deserialize(body, InstaDMWrapper.class);
             }
-            
+            system.debug('messageInfo==>'+messageInfo);
             if(messageInfo.data.size() > 0){
                 //Getting the Sender ids..
                 for(InstaDMWrapper.Data messageRec : messageInfo.data){

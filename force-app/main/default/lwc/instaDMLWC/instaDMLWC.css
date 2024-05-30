@@ -1,0 +1,63 @@
+/* messagingComponent.css */
+.whatsapp-chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.whatsapp-chat {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.message-bubble {
+    max-width: 70%;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 10px;
+    word-wrap: break-word;
+}
+
+.received {
+    background-color: #dcf8c6;
+    align-self: flex-start;
+}
+
+.sent {
+    background-color: #e2e2e2;
+    align-self: flex-end;
+}
+
+.timestamp {
+    font-size: 0.75rem;
+    color: #777;
+}
+
+.whatsapp-input {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-top: 1px solid #ccc;
+}
+
+.whatsapp-input lightning-textarea {
+    flex: 1;
+    margin-right: 16px;
+}
+
+.whatsapp-input lightning-button-group {
+    flex-shrink: 0;
+}
+.chat-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.input-container {
+    flex: 1;
+    margin-right: 8px; /* Adjust spacing between input and button if needed */
+}
+
+.button-container {
+    flex-shrink: 0;
+}

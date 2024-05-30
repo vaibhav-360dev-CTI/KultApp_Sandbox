@@ -2,7 +2,7 @@
 public class referBackToCsTeamControllerTest {
     @istest 
     static void testClass(){
-      /*  Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
         
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
@@ -417,7 +417,7 @@ public class referBackToCsTeamControllerTest {
         referBackToCsTeamController.getCaseAndOrderDetails(cse.Id, cse2.Refer_Back_Reason__c, 200, cse2.Approval_Remarks__c, cse2.Rejection_Reason__c, cse2.Describe_Information_Needed__c, 200, 'resolution remarks', 'update desc', 'base64String', 'filename', 'awbNumber', 'focOrderId');
         referBackToCsTeamController.deletecaseShares(cse.Id);
         referBackToCsTeamController.sendingCustomNotification(userInstant.Id, cse.Id, 'Test Class Title', 'Test Class Body', new List<String>{'anwarchikle2000@gmail.com'});
-        Test.stopTest();  */
-        referBackToCsTeamController.dumMethod();
+        Test.stopTest();  
+       
     } 
 }

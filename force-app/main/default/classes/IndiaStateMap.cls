@@ -49,7 +49,7 @@ public class IndiaStateMap {
         return indiaStateMap;
     }
     
-     public static void dumMethod() {
+    /*public static void dumMethod() {
     Integer i = 0;
     Integer j = 0;
     Integer k = 0;
@@ -343,6 +343,6 @@ public class IndiaStateMap {
     i = j + k;
     i = j + k;
     i = j + k;
-    } 
+    } */
     
 }

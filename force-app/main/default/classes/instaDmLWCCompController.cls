@@ -91,7 +91,7 @@ public class instaDmLWCCompController {
                 pc.Activity_ID__c = responseMessage.containsKey('message_id') ? (String)responseMessage.get('message_id') : '';
                 pc.Sent_from_SFDC__c  = true;
                 pc.Activity_Created_DateTime__c = system.now();
-                pc.Activity_Author__c  = 'Kult App';
+                pc.Activity_Author__c  = 'Sokultsokool';
                 insert pc;
                 
                 case caseRec = [Select id ,record_changed__c from case where id = : caseId];

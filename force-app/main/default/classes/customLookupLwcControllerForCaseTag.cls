@@ -6,12 +6,12 @@ public class customLookupLwcControllerForCaseTag {
             System.debug('whereCondition==> ' + whereCondition);
             String searchKey = '%'+ searchKeyWord + '%';        
             List<sObject> returnList = new List<sObject>();
-            String sQuery = 'SELECT Id, CaseNumber, Type, Sub_Type__c, Sub_Sub_Type__c';
+            String sQuery = 'SELECT Id, CaseNumber, Type, Sub_Type__c, Sub_Sub_Type__c,Status';
             if(String.isNotBlank(fieldNames) && !fieldNames.equalsIgnoreCase('Name')) {
                 sQuery += ','+fieldNames;
             }
             if(String.isNotBlank(whereCondition) && whereCondition != null){
-                sQuery +=  ' FROM ' +objectAPIName + ' WHERE Status != Closed' + fieldNames + ' LIKE \''+searchKey+'\' AND ' + whereCondition + ' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
+                sQuery +=  ' FROM ' +objectAPIName + ' WHERE ' + fieldNames + ' LIKE \''+searchKey+'\' AND ' + whereCondition + ' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
             } else {
                 sQuery +=  ' FROM ' +objectAPIName + ' WHERE ' + fieldNames + ' LIKE \''+searchKey+'\' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
             }
@@ -32,7 +32,7 @@ public class customLookupLwcControllerForCaseTag {
     public static sObject getinitRecord(String recordId, String objectAPIName, String fieldNames) {
         try{
             String sRecId = recordId;    
-            String sQuery = 'SELECT Id, CaseNumber, Type, Sub_Type__c, Sub_Sub_Type__c';
+            String sQuery = 'SELECT Id, CaseNumber, Type, Sub_Type__c, Sub_Sub_Type__c,Status';
             if(String.isNotBlank(fieldNames)) {
                 sQuery += ','+fieldNames;
             }
@@ -50,12 +50,12 @@ public class customLookupLwcControllerForCaseTag {
     public static List<sObject> gerRecentlyCreatedRecords( String objectAPIName, String fieldNames, String whereCondition, Integer customLimit){
         try{
             List<sObject> returnList = new List<sObject>();
-            String sQuery = 'SELECT Id, CaseNumber, Type, Sub_Type__c, Sub_Sub_Type__c';
+            String sQuery = 'SELECT Id, CaseNumber, Type, Sub_Type__c, Sub_Sub_Type__c,Status';
             if(String.isNotBlank(fieldNames) && !fieldNames.equalsIgnoreCase('Name')) {
                 sQuery += ','+fieldNames;
             }
             if(String.isNotBlank(whereCondition) && whereCondition != null){
-                sQuery +=  ' FROM ' +objectAPIName + ' WHERE Status != Closed' + whereCondition + ' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
+                sQuery +=  ' FROM ' +objectAPIName + ' WHERE ' + whereCondition + ' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
             } else {
                 sQuery +=  ' FROM ' +objectAPIName + ' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
             }

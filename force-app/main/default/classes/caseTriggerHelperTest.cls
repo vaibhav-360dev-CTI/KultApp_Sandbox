@@ -2,7 +2,7 @@
 public class caseTriggerHelperTest {
     @isTest
     static void testResetTypeAndSubtypeOnRecordTypeChange() {
-       /* Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team' LIMIT 1]; 
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team' LIMIT 1]; 
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
                                     IsActive=true, Division='Rainmakers',
@@ -10,7 +10,7 @@ public class caseTriggerHelperTest {
                                     TimeZoneSidKey='America/Los_Angeles', UserName='standardVarsha1234565432@testorg.com');
         insert userInstant;
         
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account', Phone ='123456789');
         insert testAccount;
         
         Contact con = new Contact();
@@ -55,7 +55,7 @@ public class caseTriggerHelperTest {
 
     @isTest
     static void testCreatedAffectedSKUs() {
-        Account acc = new Account(Name = 'Test Account');
+        Account acc = new Account(Name = 'Test Account', phone = '213456789');
         insert acc;
         
         Order ord = new Order(AccountId = acc.Id, EffectiveDate = System.today(), Status = 'Draft');
@@ -177,11 +177,10 @@ public class caseTriggerHelperTest {
         
         Test.startTest();
         caseTriggerHelper.modifyEmailCases(new List<Case>{cse});
-        caseTriggerHelper.dumMethod();
         Test.stopTest();
         
         Case updatedCase = [SELECT Communication_Mode__c FROM Case WHERE Id = :cse.Id];
-         caseTriggerHelper.dumMethod();
+      
     } 
        
 }

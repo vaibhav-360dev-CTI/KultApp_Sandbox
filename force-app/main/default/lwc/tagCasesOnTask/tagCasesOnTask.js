@@ -39,6 +39,7 @@ export default class TagCasesOnTask extends LightningElement {
     error;
     resultData;
     @track value = '';
+    @track hideResult = false;
 
     get AllCases() {
         return this.items;
@@ -54,6 +55,11 @@ export default class TagCasesOnTask extends LightningElement {
 
         this.callApexMethod1();
         this.callApexMethod2();
+    }
+
+    handleResultHide(){
+        debugger;
+        this.handleResult = true;
     }
 
     

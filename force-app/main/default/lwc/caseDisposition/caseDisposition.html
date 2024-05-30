@@ -34,57 +34,36 @@
                                 </template>
                             </template>                           
                             <template if:true={IfFCR}>
-                                <div class="slds-form-element slds-m-bottom_x-small">
-                                    <div class="slds-form-element__row">
-                                        <div class="slds-size_1-of-1 slds-grid slds-gutters" style="    align-items: center;
-                                        padding-left: 3%;">
-                                            <div class="slds-col slds-size_3-of-12 statusLabel">
-                                                <label class="slds-form-element__label" for="status-combobox">
-                                                    Status
-                                                </label>
-                                            </div>
-                                            <div class="slds-col slds-size_7-of-12">
-                                                <div class="slds-form-element__control comboBoxSize">
+                                        <div class="slds-col slds-size_6-of-12">
+                                            <span>
                                                     <lightning-combobox 
                                                         id="status-combobox"
                                                         name="status"
                                                         required
                                                         value={StatusValue}
+                                                        label="Status"
                                                         placeholder="Select Status"
                                                         options={Statusoptions}
                                                         onchange={handleChange}>
                                                     </lightning-combobox>
+                                                </span>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </template>
                             <template if:true={IfNFCR}>
-                                <div class="slds-form-element slds-m-bottom_x-small">
-                                    <div class="slds-form-element__row">
-                                        <div class="slds-size_1-of-1 slds-grid slds-gutters" style="    align-items: center;
-                                        padding-left: 3%;">
-                                            <div class="slds-col slds-size_3-of-12 statusLabel">
-                                                <label class="slds-form-element__label" for="status-combobox">
-                                                    Status
-                                                </label>
-                                            </div>
-                                            <div class="slds-col slds-size_7-of-12">
-                                                <div class="slds-form-element__control comboBoxSize">
-                                                    <lightning-combobox 
-                                                        name="status"
-                                                        required
-                                                        value={StatusValue}
-                                                        placeholder="Select Status"
-                                                        options={StatoptionsForNFCR}
-                                                        onchange={handleChange}>
-                                                    </lightning-combobox>
-                                                </div>
-                                            </div>
+                                <div class="slds-col slds-size_6-of-12">
+                                    <span>
+                                            <lightning-combobox 
+                                                id="status-combobox1"
+                                                name="status"
+                                                required
+                                                value={StatusValue}
+                                                label="Status"
+                                                placeholder="Select Status"
+                                                options={StatoptionsForNFCR}
+                                                onchange={handleChange}>
+                                            </lightning-combobox>
+                                        </span>
                                         </div>
-                                    </div>
-                                </div>
                             </template>
                         </div>
                         

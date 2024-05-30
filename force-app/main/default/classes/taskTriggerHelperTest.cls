@@ -4,7 +4,7 @@ public class taskTriggerHelperTest {
     @isTest
     static void testClass() {
          
-     /*   Group missedCallGroup = new Group(DeveloperName = 'Missed_Call_Queue', Name = 'Missed Call Queue');
+  Group missedCallGroup = new Group(DeveloperName = 'Missed_Call_Queue', Name = 'Missed Call Queue');
         insert missedCallGroup;
 
         Account acc = new Account(Name = 'Test Account');
@@ -270,9 +270,9 @@ public class taskTriggerHelperTest {
 
         // Verify the result
         System.assertEquals('SUCCESS', result);
-    } */
+    }
 
-    /*@isTest
+   @isTest
     static void testCreateCaseOnCallWithNoMissedCallQueue() {
         // Delete the missed call queue group
         delete [SELECT Id FROM Group WHERE DeveloperName = 'Missed_Call_Queue'];
@@ -283,9 +283,9 @@ public class taskTriggerHelperTest {
         taskTriggerHelper.createCaseOnCall(tasks);
         Test.stopTest();
 
-    }*/
+    }
 
-   /* @isTest
+   @isTest
     static void testMissedCallHelperWithNoTasks() {
         List<Task> tasks = new List<Task>();
 
@@ -328,9 +328,10 @@ public class taskTriggerHelperTest {
         
         Test.startTest();
         taskTriggerHelper.createCaseOnFirstMissedCall(testTasks);
-        taskTriggerHelper.dumMethod();
-        Test.stopTest();  */
         
-        taskTriggerHelper.dumMethod();
+        //taskTriggerHelper.dumMethod(); 
+        Test.stopTest();  
+        
+       // taskTriggerHelper.dumMethod();
     } 
 }

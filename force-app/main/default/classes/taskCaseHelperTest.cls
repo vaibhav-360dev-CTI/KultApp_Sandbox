@@ -3,7 +3,7 @@ public class taskCaseHelperTest {
     @isTest
     static void testDumMethod() {
         
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account',Phone ='23456789');
         insert testAccount;
         
         Product2 objProduct = new Product2(Name = 'TestProduct', Description = 'Test Description');
@@ -55,7 +55,7 @@ public class taskCaseHelperTest {
     @isTest
     static void testDumMethod1() {
         
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account',Phone='2134567');
         insert testAccount;
         
         Product2 objProduct = new Product2(Name = 'TestProduct', Description = 'Test Description');

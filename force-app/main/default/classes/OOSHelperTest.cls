@@ -5,7 +5,7 @@ public class OOSHelperTest {
     static void testGetCaseAndOrderDetails() {
         // Create test data
         
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account',Phone = '12456789');
         insert testAccount;
         
         Product2 objProduct = new Product2();
@@ -42,7 +42,7 @@ public class OOSHelperTest {
     static void testCreateDupOrder() {
         // Create test data
         
-        Account testAccount = new Account(Name = 'Test Account');
+        Account testAccount = new Account(Name = 'Test Account',Phone='12345678');
         insert testAccount;
         
         Pricebook2 testPricebook = new Pricebook2(Name = 'Standard Price Book', IsActive = true);

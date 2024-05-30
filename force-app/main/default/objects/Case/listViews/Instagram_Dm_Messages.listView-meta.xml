@@ -4,9 +4,9 @@
     <columns>CASES.CASE_NUMBER</columns>
     <columns>CASES.STATUS</columns>
     <columns>CASES.PRIORITY</columns>
-    <columns>Mention__c</columns>
+    <columns>User_Name__c</columns>
     <columns>Post_Id__c</columns>
-    <columns>POST_URL__c</columns>
+    <columns>CASES.SUBJECT</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Type_of_Post__c</field>

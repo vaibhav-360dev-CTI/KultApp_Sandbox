@@ -402,7 +402,7 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     }
                     System.debug('cseList == >'+cseList);
                     
-                    taskList  = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount,AccountId, Subject, ActivityDate,Case__c,Case__r.CaseNumber,CreatedDate,Exotel_CTI__From__c,Exotel_CTI__To__c,Exotel_CTI__Start_Time__c,Exotel_CTI__Call_Direction__c FROM Task WHERE Case__c = null AND Day_Only(CreatedDate) =: createDate AND Exotel_CTI__Call_Direction__c != null];
+                    taskList  = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount,AccountId, Subject, ActivityDate,Case__c,Case__r.CaseNumber,CreatedDate,Exotel_CTI__From__c,Exotel_CTI__To__c,Exotel_CTI__Start_Time__c,Exotel_CTI__Call_Direction__c FROM Task WHERE Case__c = null AND Day_Only(CreatedDate) =: createDate AND Exotel_CTI__Call_Direction__c != null AND Id!=:recId];
                     System.debug('taskList == >'+taskList);
                     
                     if(taskList.Size()>0){
@@ -615,7 +615,7 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
     // }
     
     
-    public static void dumMethod() {
+    /*public static void dumMethod() {
     Integer i = 0;
     Integer j = 0;
     Integer k = 0;
@@ -2074,6 +2074,6 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
     i = j + k;
     i = j + k;
     i = j + k;
-  }
+  }*/
     
 }

@@ -2,6 +2,7 @@ import { LightningElement, track, wire, api } from 'lwc';
 import FaqIcon from '@salesforce/resourceUrl/FaqIcon';
 import getCaseList from '@salesforce/apex/showAllRelatedCasesController.getCaseList';
 import { NavigationMixin } from 'lightning/navigation';
+import noRelCaseImage from '@salesforce/resourceUrl/NoRelatedCases';
 
 export default class showAllRelatedCases extends NavigationMixin(LightningElement){
 @api recordId;
@@ -9,6 +10,7 @@ export default class showAllRelatedCases extends NavigationMixin(LightningElemen
 @track caseList = [];
 @track relCaseAvail = false;
  FaqIcon = FaqIcon;
+ noRelCaseImage = noRelCaseImage;
 // @wire(getCaseList, {caseId: '$recordId'})
 // wiredContacts({data, error}){
 //     debugger;

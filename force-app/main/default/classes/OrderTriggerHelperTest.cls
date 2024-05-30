@@ -4,7 +4,8 @@ public class OrderTriggerHelperTest {
     static void setup() {
         List<OrderItem> orderItems = new List<OrderItem>();
         Account testAccount = new Account(
-            Name = 'Test Account'
+            Name = 'Test Account',
+            Phone ='12345678'
         );
         insert testAccount;
         

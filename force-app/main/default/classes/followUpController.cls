@@ -1,4 +1,5 @@
 public class followUpController {
+
     @AuraEnabled
     public static void sendFollowUp(String recId, String remarks){
         try{
@@ -26,7 +27,6 @@ insert fupReq; */
                 cpd.Current_Action__c = 'Follow Request Raised by CS Agent';
             } 
             Insert cpd;
-
             caseRec.isFollowUp__c = 'Yes';
             
             CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
@@ -43,6 +43,81 @@ insert fupReq; */
             System.debug('Error Message: ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
         }
     }
+
+    @AuraEnabled
+    public static Id sendFollowUpWithAttachment(String recId, String remarks,String fileName, String base64Data, String contentType){
+        try{
+            /*Follow_Up_Request__c fupReq = new Follow_Up_Request__c();
+fupReq.Follow_Up_Remarks__c	 = remarks;
+fupReq.Case__c = recId;
+insert fupReq; */
+            
+            Case caseRec = [SELECT Id, OwnerId,Is_With_Refund_Team__c, isFollowUp__c FROM Case WHERE Id =: recId LIMIT 1];
+            
+            String UserId =  userInfo.getUserId();
+            User usrRec = [SELECT Id,Name,Profile.Name From User Where Id =:UserId];
+            
+            Case_Progress_Detail__c cpd = new Case_Progress_Detail__c();            
+            cpd.Case__c = recId;
+            cpd.Status__c = 'Open';
+            if(usrRec.Profile.Name == 'WareHouse Team'){
+                cpd.WH_Team_Remarks__c = remarks;
+                cpd.Current_Action__c = 'Follow Request Raised by WH Team';
+            }else if(usrRec.Profile.Name == 'Customer Service Executive' && caseRec.Is_With_Refund_Team__c == true){
+                cpd.WH_Team_Remarks__c = remarks;
+                cpd.Current_Action__c = 'Follow Request Raised by Refund Team';
+            }else{
+                cpd.CS_Remarks__c = remarks;
+                cpd.Current_Action__c = 'Follow Request Raised by CS Agent';
+            } 
+            Insert cpd;
+            System.debug('Inside Save File');
+            base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
+            Attachment attach = new Attachment();
+            attach.parentId = cpd.Id;
+            attach.Body = EncodingUtil.base64Decode(base64Data);
+            attach.Name = fileName;
+            attach.ContentType = contentType;
+            Insert attach;
+
+            caseRec.isFollowUp__c = 'Yes';
+            
+            CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
+            Messaging.CustomNotification notification = new Messaging.CustomNotification();
+            String notificationBody = 'CS Agent is following up on the case. Please update!'; 
+            notification.setBody(notificationBody);
+            notification.setTitle('Follow Up Request Received');
+            notification.setSenderId(UserInfo.getUserId());
+            notification.setNotificationTypeId(customNotiList.Id); 
+            notification.setTargetId(recId);
+            System.debug('notification:::::::::::>' + notification); 
+            notification.send(new set<String>{caseRec.OwnerId});
+            return attach.Id;
+        }catch(exception e){
+            System.debug('Error Message: ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            return null;
+        }
+    }
+
+    // @AuraEnabled
+    // public static Id SaveFile(String fileName, String base64Data, String contentType) {
+    //     try{
+    //         System.debug('Inside Save File');
+    //         System.debug('cpdId-> ' + cpdId);
+    //         base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
+    //     Attachment attach = new Attachment();
+    //     attach.parentId = cpdId;
+    //     attach.Body = EncodingUtil.base64Decode(base64Data);
+    //     attach.Name = fileName;
+    //     attach.ContentType = contentType;
+    //     Insert attach;
+    //     System.debug('attach.Id--> ' + attach.Id);
+    //     return attach.Id;
+    //     }catch(exception e){
+    //         System.debug('Error Message: ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+    //         return null;
+    //     }
+    // }
     
     @AuraEnabled
     public static String sendFollowUpResponse(String recId, String respondNote) {

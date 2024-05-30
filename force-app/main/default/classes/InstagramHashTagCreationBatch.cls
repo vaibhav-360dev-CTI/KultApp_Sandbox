@@ -68,6 +68,7 @@ public class InstagramHashTagCreationBatch  implements Database.Batchable<sObjec
         String hashTagId = InstagramAuthHelper.getHashtagIdFromInsta(hashtagName);
         String body = '';
         String endpointUrl = basicUrl+hashTagId+'/recent_media?fields=media_url,media_type,caption,permalink,timestamp&user_id='+businessUserId;
+        system.debug('endpointUrl==>'+endpointUrl);
         Map<String, String> queryParams = new Map<String, String>();
         Map<String, String> headers = new Map<String, String>{'Content-Type' => 'application/json','Authorization' => 'Bearer '+accessToken};
             if (test.isRunningTest()){

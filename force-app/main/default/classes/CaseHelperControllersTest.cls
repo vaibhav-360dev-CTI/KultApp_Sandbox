@@ -3,7 +3,7 @@ public class CaseHelperControllersTest {
     @isTest
     static void testClass(){
         
-      /*  Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
         
         Map<Id,User> userMap = new Map<Id,User>();
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
@@ -134,15 +134,15 @@ public class CaseHelperControllersTest {
         CaseHelperControllers.getCaseFieldSetListForCourierIssue();
         CaseHelperControllers.createChildCase('Tech',cse.Sub_Type__c,cse.Sub_Sub_Type__c,acc.Id,con.id,newTask.Subject,cse.Contact_Number__c,cse.Id,userInstant.Id);
         CaseHelperControllers.createCaseUnderAccount(cse.Id,'Tech',cse.Sub_Type__c,cse.Sub_Sub_Type__c,newTask.Subject,cse.Describe_Information_Needed__c,cse.OrderId__c,cse.Category__c);
-        */
-         CaseHelperControllers.dumMethod();
+        
+        // CaseHelperControllers.dumMethod();
     }
     
     
     @isTest
     static void testClass1(){
         
-       /* Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
         
         Map<Id,User> userMap = new Map<Id,User>();
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
@@ -269,7 +269,7 @@ public class CaseHelperControllersTest {
         CaseHelperControllers.getAllRT();
         //CaseHelperControllers.createCaseInLiveChatTranscript('Tech',cse.Sub_Type__c,cse.Sub_Sub_Type__c,cse.AccountId,cse.ContactId,newTask.Subject,cse.Contact_Number__c,cse.Id,userInstant.Id); 
         CaseHelperControllers.returnToOrigin(cse.Id,cse.Reason_for_RTO__c,cse.RTO_Reso__c);
-        */
-         CaseHelperControllers.dumMethod();
+        
+        // CaseHelperControllers.dumMethod();
     }
 }

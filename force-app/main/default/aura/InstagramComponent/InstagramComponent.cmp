@@ -34,7 +34,7 @@
         <div style = "border-style: solid;margin :1%">
             <div style = "margin :1%">
                 
-                <div style ="width :20%">
+                <div style ="width :5%">
                     <img src="{!$Resource.Instagram}"/>
                 </div>
                 <aura:if isTrue="{!v.showSpinner}">

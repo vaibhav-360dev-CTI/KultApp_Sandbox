@@ -43,6 +43,12 @@ noRecordFound = false;
      }
   }
 
+  closeResultWindow(){
+       debugger;
+       let container = this.template.querySelector('.custom-lookup-container');
+     container.classList.add('slds-is-close');
+  }
+
      connectedCallback() {
      debugger;
      if (this.initialLookupValue != '') {
