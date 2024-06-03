@@ -251,18 +251,17 @@ public without sharing class moveToWarehouseController {
 
     @AuraEnabled
     public static string reAssignCaseToCSTeam(string recId, String reAssignmnetReason, Id usrId){
-        System.debug('recId===============>'+recId + '   ' + 'reassginmentReason==========>'+reAssignmnetReason + '     '+'usrId==========>'+usrId);
         try {
             if(recId != null){
                 
-                List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,CS_Team_Member__c,OwnerId From Case Where Id =: recId Limit 1];
+                List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,CS_Team_Member__c,OwnerId,Is_With_Refund_Team__c From Case Where Id =: recId Limit 1];
                 for(Case cse : csList){
                     if(reAssignmnetReason != null){
                         cse.MT_Assignment_Reason__c = reAssignmnetReason;
                         cse.OwnerId = usrId;
                         cse.CS_Team_Member__c = usrId;
-                        System.debug('csList==========>' + cse.CS_Team_Member__c);
-                        System.debug('csList==========>' + cse.OwnerId);
+                        cse.Is_With_Refund_Team__c = false;
+                        cse.Status = 'Re Assigned';
 
                         Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
                         notification.setBody('A New Case Has Been Assigned To You'); 
@@ -284,9 +283,7 @@ public without sharing class moveToWarehouseController {
 
                 }
                 
-                update csList;
-                System.debug('csList==========>' + csList);
-                
+                update csList;                
                 return 'SUCCESS';
             }
         } catch (Exception e) {
@@ -300,7 +297,7 @@ public without sharing class moveToWarehouseController {
     public static List<User> getAllUser(){
         try {
 
-            List<User> userList = [SELECT Id, Name, Profile.Name FROM User WHERE Profile.Name = 'Customer Service Executive'];
+            List<User> userList = [SELECT Id, Name, Profile.Name FROM User WHERE Profile.Name = 'Customer Service Executive' AND IsActive = true];
             System.debug('userList===========>' + userList);
             return userList;
  

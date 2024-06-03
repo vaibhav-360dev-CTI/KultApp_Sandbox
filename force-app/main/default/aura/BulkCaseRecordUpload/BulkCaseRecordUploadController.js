@@ -73,6 +73,7 @@
         component.set("v.tempNameToDownload",tempName);
         component.set("v.showScondScreen",true);
         component.set("v.showFirstScreen",false);
+        component.set('v.NotRefundMember', false);
     },
 
     handleClickDelayInDelivery : function(component,event,helper){

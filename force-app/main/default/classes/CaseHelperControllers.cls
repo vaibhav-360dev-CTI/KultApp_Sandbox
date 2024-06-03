@@ -1507,10 +1507,10 @@ System.debug('taskList:::::::::>' + taskList);
                     System.debug('subOrderIds==> ' + subOrderIds);
                 }
                 if(!subOrderIds.isEmpty()){
-                    itmList = [SELECT Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId IN: subOrderIds];
+                    itmList = [SELECT Id,Refunded_Price__c,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId IN: subOrderIds];
                 }
             }else{
-                itmList = [SELECT Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId =: OrdId];
+                itmList = [SELECT Id,Refunded_Price__c,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId =: OrdId];
             }
             
             return itmList;
@@ -1881,10 +1881,10 @@ System.debug('taskList:::::::::>' + taskList);
                         System.debug('subOrderIds==> ' + subOrderIds);
                     }
                     if(!subOrderIds.isEmpty()){
-                        itmList = [SELECT Brand__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber, Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId IN: subOrderIds];
+                        itmList = [SELECT Refunded_Price__c,Brand__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber, Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId IN: subOrderIds];
                     }
                 }else{
-                    itmList = [SELECT Brand__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber,  Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId =: cserec.OrderId__c];
+                    itmList = [SELECT Brand__c, Refunded_Price__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber,  Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId =: cserec.OrderId__c];
                 }
                 
                 return itmList;
@@ -1904,6 +1904,7 @@ System.debug('taskList:::::::::>' + taskList);
         try {
             List<String> skuString = new List<String>();
             List<Affected_SKU__c> affectedSKUsList = new List<Affected_SKU__c>(); 
+            List<OrderItem> orderItemToUpdate = new List<OrderItem>();
             // List<User> currUserList = [SELECT Id, Profile.Name FROM User WHERE Id=:UserInfo.getUserId() LIMIT 1];
             // User currUserRec = new User();
             // if(!currUserList.isEmpty()){
@@ -1911,8 +1912,9 @@ System.debug('taskList:::::::::>' + taskList);
             // }
             if(ordLinItmList.Size()>0){
                 update oliList;
-                Map<Id,OrderItem> ordMap = new Map<Id,OrderItem>([SELECT Id,SKU__c,Product_Name__c,Affected_Quantity__c,Quantity,Selling_Price__c,UnitPrice,Total_Selling_Price__c,Brand__c From OrderItem Where Id IN:ordLinItmList ]);
+                Map<Id,OrderItem> ordMap = new Map<Id,OrderItem>([SELECT Id,Refunded_Price__c,SKU__c,Is_Already_Utilized__c,Product_Name__c,Affected_Quantity__c,Quantity,Selling_Price__c,UnitPrice,Total_Selling_Price__c,Brand__c From OrderItem Where Id IN:ordLinItmList ]);
                 for(Id key : ordMap.keySet()){
+                    if(ordMap.get(key).Is_Already_Utilized__c){
                     skuString.add(ordMap.get(key).SKU__c);
                     Affected_SKU__c affectedSKU = new Affected_SKU__c();
                     affectedSKU.Name = ordMap.get(key).SKU__c;
@@ -1924,8 +1926,14 @@ System.debug('taskList:::::::::>' + taskList);
                     affectedSKU.Selling_Price__c = ordMap.get(key).Selling_Price__c;
                     affectedSKU.Affected_Quantity__c = ordMap.get(key).Affected_Quantity__c;
                     affectedSKU.Created_By__c = 'CS Team';
+                    affectedSKU.Refund_Amount__c = ordMap.get(key).Refunded_Price__c;
                     // Add other fields as needed for the Affected_SKU__c object
                     affectedSKUsList.add(affectedSKU);
+                    OrderItem olToUpdate = new OrderItem();
+                    olToUpdate.Id = ordMap.get(key).Id;
+                    olToUpdate.Is_Already_Utilized__c = true;
+                    orderItemToUpdate.add(olToUpdate);
+                    }
                 }
             }
             
@@ -1972,6 +1980,7 @@ System.debug('taskList:::::::::>' + taskList);
                 
                 // Insert the list of Affected_SKU__c records
                 insert affectedSKUsList;
+                update orderItemToUpdate;
                 system.debug('affectedSKUsList==============>'+affectedSKUsList);
             }
             return 'SUCCESS';

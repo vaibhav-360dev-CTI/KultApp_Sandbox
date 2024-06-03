@@ -97,6 +97,9 @@
                         <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;">
                               <div class="slds-truncate" title="Selling Price">Selling Price</div>
                               </th>
+                              <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;">
+                                    <div class="slds-truncate" title="Selling Price">Refunded Price</div>
+                                    </th>
                               <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 13%;">
                               <div class="slds-truncate" title="Quantity">Quantity</div>
                               </th>
@@ -129,6 +132,9 @@
                   </td>
                   <td data-label="Selling Price">
                         <div class="slds-truncate" title={item.Selling_Price__c}>{item.Selling_Price__c}</div>
+                  </td>
+                  <td data-label="Selling Price">
+                        <div class="slds-truncate" title={item.Selling_Price__c}>{item.Refunded_Price__c}</div>
                   </td>
                   <td data-label="Quantity">
                         <div class="slds-truncate" title={item.Quantity}>{item.Quantity}</div>

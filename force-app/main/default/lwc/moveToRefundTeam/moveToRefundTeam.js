@@ -232,10 +232,11 @@ export default class MoveToRefundTeam extends LightningElement {
                         isAlreadyUtilized: item.Is_Already_Utilized__c,
                         totalprice: item. UnitPrice,                      
                         refundreasonPickListValue: item.Refund_Reasons__c,
-                        refundPrice: item.TotalPrice,
+                        refundPrice: item.Refunded_Price__c,
                         skudetail: item.SKU__c,
                         OliRefundReason: item.Refund_Reason__c,
                         sellingprice: item.Selling_Price__c,
+                        Refunded_Price__c:item.Refunded_Price__c,
                         refundtypeOli: 'Full'
                     }));
                     debugger;
@@ -255,6 +256,7 @@ export default class MoveToRefundTeam extends LightningElement {
                         refundtypeOli: item.Refund_Type__c,
                         refundreasonPickListValue: item.Refund_Reasons__c,
                         sellingprice: item.Selling_Price__c,
+                        Refunded_Price__c: item.Refunded_Price__c,
                         editable: true,
                         checkboxVal2: false,
                         disableReason: true
@@ -335,7 +337,7 @@ export default class MoveToRefundTeam extends LightningElement {
             this.records2[rowIndex].refundQuantity = parseInt(event.target.value);
             console.log('test');
             if (this.records2[rowIndex].refundQuantity != null && this.records2[rowIndex].totalQuantity != null && this.records2[rowIndex].totalprice != null) {
-                this.records2[rowIndex].refundPrice = (this.records2[rowIndex].totalprice / this.records2[rowIndex].totalQuantity) * this.records2[rowIndex].refundQuantity;
+                this.records2[rowIndex].refundPrice = (this.records2[rowIndex].Refunded_Price__c / this.records2[rowIndex].totalQuantity) * this.records2[rowIndex].refundQuantity;
             }
             this.records2 = [...this.records2];
         }
@@ -348,14 +350,14 @@ export default class MoveToRefundTeam extends LightningElement {
         const rowIndex = event.target.dataset.rowIndex;
         this.records2[rowIndex].refundtypeOli = event.target.value;
         if (this.records2[rowIndex].refundtypeOli == 'Full') {
-            this.records2[rowIndex].refundPrice = this.records2[rowIndex].totalprice;
+            this.records2[rowIndex].refundPrice = this.records2[rowIndex].Refunded_Price__c;
             this.records2[rowIndex].refundQuantity = this.records2[rowIndex].totalQuantity;
             this.records2[rowIndex].editable = true;
             this.records2[rowIndex].disableReason = false;
         }
         else {
             if (this.records2[rowIndex].refundQuantity != null && this.records2[rowIndex].totalQuantity != null && this.records2[rowIndex].totalprice != null) {
-                this.records2[rowIndex].refundPrice = (this.records2[rowIndex].totalprice / this.records2[rowIndex].totalQuantity) * this.records2[rowIndex].refundQuantity;
+                this.records2[rowIndex].refundPrice = (this.records2[rowIndex].Refunded_Price__c / this.records2[rowIndex].totalQuantity) * this.records2[rowIndex].refundQuantity;
             } else {
                 this.records2[rowIndex].refundPrice = 0;
             }
@@ -512,7 +514,7 @@ export default class MoveToRefundTeam extends LightningElement {
                         Refund_Reason__c: obj.OliRefundReason,
                         Refund_Type__c: obj.refundtypeOli,
                         Refund_Reasons__c: obj.refundreasonPickListValue,
-                        Is_Already_Utilized__c : obj.isAlreadyUtilized,
+                        Is_Already_Utilized__c : true,
                         Id: obj.Id
                     });
                 }
@@ -554,7 +556,7 @@ export default class MoveToRefundTeam extends LightningElement {
                     Refund_Reason__c: obj.OliRefundReason,
                     Refund_Type__c : obj.refundOptions,
                     Refund_Reasons__c: obj.refundreasonPickListValue,
-                    Is_Already_Utilized__c : obj.isAlreadyUtilized,
+                    Is_Already_Utilized__c : true,
                     Id: obj.Id
 
                 });

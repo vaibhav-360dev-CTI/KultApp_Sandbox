@@ -25,6 +25,7 @@
     <aura:attribute name="tempNameToDownload" type="String" />
     <aura:attribute name="docTempName" type="string" />
     <aura:attribute name="class" type="String" />
+    <aura:attribute name="hideDownload" type="boolean" default="false"/>
     <aura:attribute name="options" type="List" default="[
     {'label': 'Full', 'value': 'Full'},
     {'label': 'Partial', 'value': 'Partial'}

@@ -257,6 +257,7 @@ global class WS_OrderCreationv1 {
                                         SubOrdRec.AWB_Number__c = subOrderDetailsBySubOrderId.get(mapKey).awb_number != null ? subOrderDetailsBySubOrderId.get(mapKey).awb_number : ''; 
                                         SubOrdRec.EffectiveDate = System.today();
                                         SubOrdRec.Courier__c = subOrderDetailsBySubOrderId.get(mapKey).courier != null ? subOrderDetailsBySubOrderId.get(mapKey).courier : '';
+                                        SubOrdRec.Sub_Order_Id__c = subOrderDetailsBySubOrderId.get(mapKey).sub_order_id != null ? subOrderDetailsBySubOrderId.get(mapKey).sub_order_id : '';
                                         SubOrdRec.Pricebook2Id = priceBookToTag.Id;
                                         if(subOrderDetailsBySubOrderId.get(mapKey).expected_delivery_date != null){
                                             SubOrdRec.Expected_Delivery_Date__c = Date.ValueOf(subOrderDetailsBySubOrderId.get(mapKey).expected_delivery_date);

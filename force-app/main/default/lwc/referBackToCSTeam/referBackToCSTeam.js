@@ -100,9 +100,16 @@ export default class ReferBackToCSTeam extends LightningElement {
 
                     // this.describeInformationNeeded = result.Describe_Information_Needed__c;
                     // this.resolutionRemarks = this.describeInformationNeeded;
-                    if(result.Refund_Type__c == 'Full'){
-                        this.refundAmount = result.Refund_Amount__c;
-                    }
+
+                    
+                    // if(result.Refund_Type__c == 'Full'){
+                    //     this.refundAmount = result.Refund_Amount__c;
+                    // }
+                    this.refundAmount = result.Refund_Amount__c;
+
+                    if(result.Refund_Type__c != 'Special Case Refund'){
+                            this.disableRefundAmt = true;
+                        }
 
 
                     console.log('Cases retrieved successfully');

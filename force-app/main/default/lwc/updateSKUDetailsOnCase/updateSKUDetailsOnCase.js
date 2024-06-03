@@ -119,7 +119,8 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
                         brand : item.Brand__c,
-                        disabled: true
+                        disabled: true,
+                        Refunded_Price__c : item.Refunded_Price__c
                     });
                 });
                 this.error = undefined;
@@ -146,7 +147,8 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
                         brand : item.Brand__c,
-                        disabled: true
+                        disabled: true,
+                        Refunded_Price__c : item.Refunded_Price__c
                     });
                 });
                 this.error = undefined;
@@ -231,7 +233,8 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
                         brand : item.Brand__c,
-                        disabled: true
+                        disabled: true,
+                        Refunded_Price__c : item.Refunded_Price__c
                     });
                 });
 
@@ -404,7 +407,14 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
             if (!this.AllOrderItems[i].disabled) {
                 listToSend.push({
                     Id: this.AllOrderItems[i].Id,
-                    Affected_Quantity__c: this.AllOrderItems[i].Affected_Quantity__c
+                    Affected_Quantity__c: this.AllOrderItems[i].Affected_Quantity__c,
+                    Is_Already_Utilized__c:true
+                });
+            }else{
+                listToSend.push({
+                    Id: this.AllOrderItems[i].Id,
+                    Affected_Quantity__c: 0,
+                    Is_Already_Utilized__c:false
                 });
             }
         }

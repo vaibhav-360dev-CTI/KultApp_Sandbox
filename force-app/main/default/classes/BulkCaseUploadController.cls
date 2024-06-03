@@ -95,6 +95,7 @@ public class BulkCaseUploadController {
                         orderByOrderNo.put(orRec.Name, orRec);
                     }
                 }
+                System.debug(' orderByOrderNo ==>' + orderByOrderNo);
                 for(sObject record : recordList){
                     if(!orderIdSet.contains((String)record.get('Order__c'))){
                         Case caseRec = new case();   
@@ -103,6 +104,7 @@ public class BulkCaseUploadController {
                     // }
                     if(record.get('Order__c') !=null){
                         caseRec.Order__c = (String)record.get('Order__c');
+                        System.debug('(String)record.get(Order__c)' + (String)record.get('Order__c'));
                         if(orderByOrderNo.get((String)record.get('Order__c')) != null){
                             Order orderRec = orderByOrderNo.get((String)record.get('Order__c'));
                             caseRec.OrderId__c = orderRec.Id;

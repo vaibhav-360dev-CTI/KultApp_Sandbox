@@ -30,7 +30,7 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <template if:true={orderHasItemAvailable}>
                                 <div class="slds-scrollable_x" style="height:auto;width:100%" tabindex="0">
-                                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                    <table class="slds-table slds-table_bordered slds-table_cell-buffer" style="width:max-content">
 
                                         <thead>
                                             <tr class="slds-text-title_caps">
@@ -42,7 +42,7 @@
                                                 <!-- <th scope="col">
                                                     <div class="slds-truncate" title="CheckBox"></div>
                                                 </th> -->
-                                                <th scope="col">
+                                                <th scope="col" style="width:13%">
                                                     <div class="slds-truncate" title="Brand">Brand</div>
                                                 </th>
                                                 <th scope="col">
@@ -57,13 +57,15 @@
                                                 <th scope="col">
                                                     <div class="slds-truncate" title="Affected Quantity">Aff. Quantity</div>
                                                 </th>
-                                                <th scope="col">
+                                                <!-- <th scope="col">
                                                     <div class="slds-truncate" title="MRP">MRP</div>
-                                                </th>
+                                                </th> -->
                                                 <th scope="col">
                                                     <div class="slds-truncate" title="Selling Price">Selling Price</div>
                                                 </th>
-
+                                                <th scope="col">
+                                                    <div class="slds-truncate" title="RefundAmount">Refund Amount</div>
+                                                </th>
 
 
                                             </tr>
@@ -86,14 +88,14 @@
                                                     <td>
                                                         <lightning-input type="text" variant="standard"
                                                             value={opls.productName} class="custom-input"
-                                                            name="productName" label="" disabled></lightning-input>
+                                                            name="productName" label="" disabled style="width:20rem;"></lightning-input>
 
                                                     </td>
                                                     <td>
 
                                                         <lightning-input type="Text" variant="standard"
                                                             value={opls.skudetail} class="custom-input"
-                                                            name="SkuDetails" label="" disabled style="width: 120px;"></lightning-input>
+                                                            name="SkuDetails" label="" disabled style="width: 15rem;"></lightning-input>
 
                                                     </td>
                                                     <td>
@@ -109,14 +111,19 @@
                                                             name="refundQuantity" label=""  
                                                             onchange={handelaffectedChange} disabled={opls.disabled} style="width: 100px;"></lightning-input>
                                                     </td>
-                                                    <td>
+                                                    <!-- <td>
                                                         <lightning-input type="number" value={opls.UnitPrice}
                                                             class="custom-inputmrp" variant="standard" name="MRP"
-                                                            label="" disabled></lightning-input>
-                                                    </td>
+                                                            label="" disabled style="width: 100px;"></lightning-input>
+                                                    </td> -->
                                                     <td>
                                                         <lightning-input type="number" value={opls.Selling_Price__c}
                                                             class="custom-inputmrp" variant="standard" name="Selling Price"
+                                                            label="" disabled style="width: 100px;"></lightning-input>
+                                                    </td>
+                                                    <td>
+                                                        <lightning-input type="number" value={opls.Refunded_Price__c}
+                                                            class="custom-inputmrp" variant="standard" name="refundAmt"
                                                             label="" disabled style="width: 100px;"></lightning-input>
                                                     </td>
                                                     

@@ -47,11 +47,15 @@
 							<th scope="col">
 								<div class="slds-truncate" title="Quantity">Quantity</div>
 							</th>
-							<th scope="col">
+							<!-- <th scope="col">
 								<div class="slds-truncate" title="MRP"> MRP </div>
-							</th>
+							</th> -->
 							<th scope="col">
 								<div class="slds-truncate" title="Selling Price">Selling Price</div>
+							</th>
+
+							<th scope="col">
+								<div class="slds-truncate" title="Selling Price">Refund Amount</div>
 							</th>
 
 							<th scope="col">
@@ -108,14 +112,19 @@
 										disabled></lightning-input>
 
 								</td>
-								<td key={opls.Id}>
+								<!-- <td key={opls.Id}>
 									<lightning-input type="number" value={opls.totalprice} class="custom-inputmrp"
 										variant="standard" name="MRP" label="" disabled style="width: 100px;"></lightning-input>
-								</td>
+								</td> -->
 
 								<td key={opls.Id}>
 									<lightning-input type="number" value={opls.sellingprice} class="custom-inputmrp"
 										variant="standard" name="sellingprice" label="" disabled></lightning-input>
+								</td>
+
+								<td key={opls.Id}>
+									<lightning-input type="number" value={opls.Refunded_Price__c} class="custom-inputmrp"
+										variant="standard" name="refundAmt" label="" disabled style="width: 100px;"></lightning-input>
 								</td>
 
 								<td key={opls.Id}>
@@ -184,12 +193,16 @@
 							<th scope="col">
 								<div class="slds-truncate" title="Quantity">Quantity</div>
 							</th>
-							<th scope="col">
+							<!-- <th scope="col">
 								<div class="slds-truncate" title="MRP"> MRP </div>
-							</th>
+							</th> -->
 							
 							<th scope="col">
 								<div class="slds-truncate" title="Selling Price">Selling Price</div>
+							</th>
+
+							<th scope="col">
+								<div class="slds-truncate" title="Selling Price">Refund Amount</div>
 							</th>
 
 							<th scope="col">
@@ -242,14 +255,19 @@
 										disabled></lightning-input>
 
 								</td>
-								<td key={opls.Id}>
+								<!-- <td key={opls.Id}>
 									<lightning-input type="number" value={opls.totalprice} variant="standard" name="MRP"
 										label="" class="custom-inputmrp" disabled style="width: 100px;"></lightning-input>
-								</td>
+								</td> -->
 								
 								<td key={opls.Id}>
 									<lightning-input type="number" value={opls.sellingprice} class="custom-inputmrp"
 										variant="standard" name="sellingprice" label="" disabled></lightning-input>
+								</td>
+
+								<td key={opls.Id}>
+									<lightning-input type="number" value={opls.Refunded_Price__c} variant="standard" name="refundPrice"
+										label="" class="custom-inputmrp" disabled style="width: 100px;"></lightning-input>
 								</td>
 
 								<td key={opls.Id}>

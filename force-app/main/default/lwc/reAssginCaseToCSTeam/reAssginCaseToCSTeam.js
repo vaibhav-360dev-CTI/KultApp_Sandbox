@@ -53,9 +53,9 @@ export default class ReAssginCaseToCSTeam extends LightningElement {
                 .then((result) => {
                     this.result = result;
                     const event = new ShowToastEvent({
-                        title: 'Case Assigned SuccessFully',
+                        title: 'Success',
                         variant: 'Success',
-                        message: 'Case Is In Admin Queue',
+                        message: 'Case has been Successfully Re Assigned',
                     });
                     this.dispatchEvent(event);
                     this.closeQuickAction();
