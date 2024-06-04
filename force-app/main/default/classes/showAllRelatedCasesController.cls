@@ -136,7 +136,7 @@ public class showAllRelatedCasesController {
             return null;
         }
     }
-         public static void dumMethod() {
+       /*  public static void dumMethod() {
     Integer i = 0;
     Integer j = 0;
     Integer k = 0;
@@ -1595,5 +1595,5 @@ public class showAllRelatedCasesController {
     i = j + k;
     i = j + k;
     i = j + k;
-    }
+    } */
 }

@@ -662,6 +662,10 @@
                 <behavior>Readonly</behavior>
                 <field>SLA_Status__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Order_Shipping_Name__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>

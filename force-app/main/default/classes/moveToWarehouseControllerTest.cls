@@ -3,7 +3,7 @@ public class moveToWarehouseControllerTest {
 	@isTest
     static void testClass(){
         
-      /*  Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
+       Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team']; 
         
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
@@ -74,7 +74,7 @@ public class moveToWarehouseControllerTest {
         
         moveToWarehouseController.getCaseDetailsAndPicklistValues(cse.Id);
         //moveToWarehouseController.moveToWHteams(cse);
-        moveToWarehouseController.sendingCustomNotification(userInstant.Id, cse.Id,'Testing For Notification Title', 'Testing For Notification Body'); */
+        moveToWarehouseController.sendingCustomNotification(userInstant.Id, cse.Id,'Testing For Notification Title', 'Testing For Notification Body'); 
         
         moveToWarehouseController.dumMethod();
         

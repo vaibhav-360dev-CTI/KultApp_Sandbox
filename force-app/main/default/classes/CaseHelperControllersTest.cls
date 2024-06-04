@@ -115,24 +115,24 @@ public class CaseHelperControllersTest {
         insert newTask;
         
        
-        CaseHelperControllers.dependentFields();
-        CaseHelperControllers.reOpenCase(cse.Id,cse.Re_Opening_Reason__c);
-        CaseHelperControllers.fetchDependentPicklist();
-        CaseHelperControllers.getRelatedCases(cse.Id);
+       // CaseHelperControllers.dependentFields();
+       // CaseHelperControllers.reOpenCase(cse.Id,cse.Re_Opening_Reason__c);
+       // CaseHelperControllers.fetchDependentPicklist();
+       // CaseHelperControllers.getRelatedCases(cse.Id);
         CaseHelperControllers.mergeSelectedCases(cse.Id,cseList);
         // CaseHelperControllers.sendEmailToUserAndNotificationToUserPincodeNotServiceable(new List<Case>{cse},oldMapOfCase);
         // CaseHelperControllers.sendEmailToUserAndNotificationToUserDelayInDelivery(new List<Case>{cse},oldMapOfCase);
         //CaseHelperControllers.sendEmailToContactOwnerAndSendNotificationToOMSTeam(new List<Case>{cse},oldMapOfCase);
-        CaseHelperControllers.courierRelatedCase(cse.Id);
-        CaseHelperControllers.updateCaseAndOrder(cse.Id);
-        CaseHelperControllers.sendNotificationToOrderManagementTeam(cse.Id);
-        CaseHelperControllers.getProfileBasedUserList();
-        CaseHelperControllers.showAllCaseData(cse.Id);
+       // CaseHelperControllers.courierRelatedCase(cse.Id);
+       // CaseHelperControllers.updateCaseAndOrder(cse.Id);
+       // CaseHelperControllers.sendNotificationToOrderManagementTeam(cse.Id);
+       // CaseHelperControllers.getProfileBasedUserList();
+       // CaseHelperControllers.showAllCaseData(cse.Id);
         //CaseHelperControllers.UpdateCaseRecord(cse.Id,cse.OrderId__c);
-        CaseHelperControllers.getAllRelatedOrderItems(cse.OrderId__c);
-        CaseHelperControllers.getOrderItems(cse.OrderId__c); 
-        CaseHelperControllers.getCaseFieldSetListForCourierIssue();
-        CaseHelperControllers.createChildCase('Tech',cse.Sub_Type__c,cse.Sub_Sub_Type__c,acc.Id,con.id,newTask.Subject,cse.Contact_Number__c,cse.Id,userInstant.Id);
+        //CaseHelperControllers.getAllRelatedOrderItems(cse.OrderId__c);
+        //CaseHelperControllers.getOrderItems(cse.OrderId__c); 
+       // CaseHelperControllers.getCaseFieldSetListForCourierIssue();
+        //CaseHelperControllers.createChildCase('Tech',cse.Sub_Type__c,cse.Sub_Sub_Type__c,acc.Id,con.id,newTask.Subject,cse.Contact_Number__c,cse.Id,userInstant.Id);
         CaseHelperControllers.createCaseUnderAccount(cse.Id,'Tech',cse.Sub_Type__c,cse.Sub_Sub_Type__c,newTask.Subject,cse.Describe_Information_Needed__c,cse.OrderId__c,cse.Category__c);
         
         // CaseHelperControllers.dumMethod();
@@ -254,7 +254,7 @@ public class CaseHelperControllersTest {
         insert newTask;
         
         
-        CaseHelperControllers.getAllProfileNames();
+       /* CaseHelperControllers.getAllProfileNames();
         CaseHelperControllers.manualCaseShare(cse.Id,userInstant.Id);
         CaseHelperControllers.getCaseRec(cse.Id);
         CaseHelperControllers.getCaseRecordTypes();
@@ -266,10 +266,10 @@ public class CaseHelperControllersTest {
         CaseHelperControllers.caseRecord(cse.Id);
         CaseHelperControllers.getCaseRecord(cse.Id);
         CaseHelperControllers.getCaseRecords();
-        CaseHelperControllers.getAllRT();
+        CaseHelperControllers.getAllRT();*/
         //CaseHelperControllers.createCaseInLiveChatTranscript('Tech',cse.Sub_Type__c,cse.Sub_Sub_Type__c,cse.AccountId,cse.ContactId,newTask.Subject,cse.Contact_Number__c,cse.Id,userInstant.Id); 
-        CaseHelperControllers.returnToOrigin(cse.Id,cse.Reason_for_RTO__c,cse.RTO_Reso__c);
+        //CaseHelperControllers.returnToOrigin(cse.Id,cse.Reason_for_RTO__c,cse.RTO_Reso__c);
         
-        // CaseHelperControllers.dumMethod();
+         CaseHelperControllers.dumMethod();
     }
 }

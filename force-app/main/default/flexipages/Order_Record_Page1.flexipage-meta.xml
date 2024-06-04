@@ -202,10 +202,10 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.TotalAmount</fieldItem>
-                <identifier>RecordTotalAmountField</identifier>
+                <fieldItem>Record.Sub_Order_Id__c</fieldItem>
+                <identifier>RecordSub_Order_Id_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>

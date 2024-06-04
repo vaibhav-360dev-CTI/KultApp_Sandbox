@@ -62,13 +62,23 @@ public class InstagramUtilityClass {
     
     //Pass this method the media id and all the details related to post will be fetched for a post type case
     public static string getMediaDetailsFromMediaId(String mediaId){
-        
-        List<Case_Communication__c> postCommentList = new List<Case_Communication__c>();
-        List<Case_Communication__c> postCommentListToBeUpdated = new List<Case_Communication__c>();
-        map<String,List<Case_Communication__c>> commentsOnPostByPostId = new map<String,List<Case_Communication__c>>();
-        map<String,String> caseIdByPostId = new map<String,String>();
-        map<String,String> postCommentIdByPostId = new map<String,String>();
-        List<Case> existingCaseList = [Select id,subject,Description,Caption__c,Post_Id__c,(Select Activity_Content__c ,Activity_ID__c,Activity_Author__c	,Platform_URL__c,Activity_Created_DateTime__c  from Case_Communications__r ) from case where Post_Id__c = :mediaId];
+        system.debug('Here is the mediaId==>'+mediaId);
+        if (mediaId == null ||string.isBlank(mediaId)) {
+            return 'Invalid mediaId';
+        }
+        List<Case_Communication__c> postCommentList                       = new List<Case_Communication__c>();
+        List<Case_Communication__c> postCommentListToBeUpdated            = new List<Case_Communication__c>();
+        map<String,List<Case_Communication__c>> commentsOnPostByPostId    = new map<String,List<Case_Communication__c>>();
+        map<String,String> caseIdByPostId                                 = new map<String,String>();
+        map<String,String> postCommentIdByPostId                          = new map<String,String>();
+        Map<String, String> queryParams                                   = new Map<String, String>();
+        Map<String, String> headers                                       = new Map<String, String>{'Content-Type' => 'application/json','Authorization' => 'Bearer '+accessToken};
+        String jsonResponse                                               = '';  
+        InstagramMediaResponseWrapper postInfo                            = new InstagramMediaResponseWrapper();   
+        String endpointUrl                                                = basicUrl+mediaId+'?fields=media_url,comments_count,permalink,caption,media_type,shortcode,timestamp,username,comments{id,like_count,user,media,timestamp,username,replies{text,username,timestamp},text}';
+        system.debug('endpointUrl==>'+endpointUrl);
+        List<Case> existingCaseList                                       = [Select id,subject,Description,Caption__c,Post_Id__c,(Select Activity_Content__c ,Activity_ID__c,Activity_Author__c	,Platform_URL__c,
+                                                                                            Activity_Created_DateTime__c  from Case_Communications__r ) from case where Post_Id__c = :mediaId];
         
         try{
             List<String> casePostIds = new List<String>();
@@ -79,12 +89,8 @@ public class InstagramUtilityClass {
                     postCommentIdByPostId.put(pocRec.Activity_ID__c,pocRec.Id);
                 }
             }
+            system.debug('postCommentIdByPostId==>'+postCommentIdByPostId);
             
-            String endpointUrl = basicUrl+mediaId+'?fields=media_url,comments_count,permalink,caption,media_type,shortcode,timestamp,username,comments{id,like_count,user,media,timestamp,username,replies{text,username,timestamp},text}';
-            Map<String, String> queryParams = new Map<String, String>();
-            Map<String, String> headers = new Map<String, String>{'Content-Type' => 'application/json','Authorization' => 'Bearer '+accessToken};
-                String jsonResponse = '';    
-            InstagramMediaResponseWrapper postInfo = new InstagramMediaResponseWrapper();   
             if(test.isRunningTest()){
                 jsonResponse = '{"id": "17841405793087218", "media_url": "https://www.example.com/image.jpg", "comments": { "data": [{"id": "17851087209098192", "text": "Awesome!", "username": "user1", "timestamp": "2023-07-29T12:40:00+0000"}] } }';
                 postInfo = (InstagramMediaResponseWrapper) JSON.deserialize(jsonResponse, InstagramMediaResponseWrapper.class);
@@ -92,8 +98,13 @@ public class InstagramUtilityClass {
                 HttpResponse response = DynamicHttpCallout.makeHttpGetCallout(endpointUrl, queryParams, headers);
                 postInfo = (InstagramMediaResponseWrapper) JSON.deserialize(response.getBody(), InstagramMediaResponseWrapper.class);
             }
+            system.debug('This is the response from instagram ==>'+postInfo);
+            
+            //Main Post id
             if(commentsOnPostByPostId.keyset().contains(postInfo.Id)){
                 if(postInfo.comments != null){
+                    //Comments on this post
+                    system.debug('Th related comments for this post are -->'+postInfo.comments.data.size());
                     for(InstagramMediaResponseWrapper.cls_data postInfoRec : postInfo.comments.data){
                         if(commentsOnPostByPostId.containsKey(postInfo.Id)){
                             List<String> postCommentIds = new List<String>();
@@ -101,21 +112,28 @@ public class InstagramUtilityClass {
                                 postCommentIds.add(poCom.Activity_ID__c);
                             }
                             if(!postCommentIds.contains(postInfoRec.id)){
-                                Case_Communication__c commentRec = new Case_Communication__c();
-                                commentRec.Case__c = caseIdByPostId.get(postInfo.Id);
-                                commentRec.Activity_Content__c = postInfoRec.text;
-                                commentRec.Activity_ID__c = postInfoRec.id;
-                                commentRec.Activity_Author__c = postInfoRec.username;
+                                system.debug('here is the comment rec==>'+postInfoRec);
+                                Case_Communication__c commentRec        = new Case_Communication__c();
+                                commentRec.Case__c                      = caseIdByPostId.get(postInfo.Id);
+                                commentRec.Activity_Content__c          = postInfoRec.text;
+                                commentRec.Activity_ID__c               = postInfoRec.id;
+                                commentRec.Activity_Author__c           = postInfoRec.username;
+                                commentRec.Activity_Type__c	            = 'Comment ';
                                 commentRec.Activity_Created_DateTime__c = getDateTime(postInfoRec.timestamp);
-                                commentRec.Platform_URL__c	 = postInfo.permalink;
-                                commentRec.Activity_Content__c = string.valueOf(postInfoRec.replies);
-                                system.debug('replies are'+postInfoRec.replies);
+                                commentRec.Platform_URL__c	            = postInfo.permalink;
+                                commentRec.Replied_Activities__c        = string.valueOf(postInfoRec.replies);
                                 postCommentList.add(commentRec);
                             }else{
-                                system.debug('replies are'+postInfoRec.replies);
-                                Case_Communication__c commentRec = new Case_Communication__c();
-                                commentRec.Id = postCommentIdByPostId.get(postInfoRec.id);
-                                commentRec.Activity_Content__c = string.valueOf(postInfoRec.replies);
+                                system.debug('here is the comment rec==>'+postInfoRec);
+                                Case_Communication__c commentRec        = new Case_Communication__c();
+                                commentRec.Id                           = postCommentIdByPostId.get(postInfoRec.id);
+                                commentRec.Activity_Content__c          = postInfoRec.text;
+                                commentRec.Activity_ID__c               = postInfoRec.id;
+                                commentRec.Activity_Author__c           = postInfoRec.username;
+                                commentRec.Activity_Type__c	            = 'Comment ';
+                                commentRec.Activity_Created_DateTime__c = getDateTime(postInfoRec.timestamp);
+                                commentRec.Platform_URL__c	            = postInfo.permalink;
+                                commentRec.Replied_Activities__c        = string.valueOf(postInfoRec.replies);
                                 postCommentListToBeUpdated.add(commentRec);
                             }
                         }
@@ -140,6 +158,8 @@ public class InstagramUtilityClass {
     }
     
     public static dateTime getDateTime (String dateTimeString){
+        system.debug('dateTimeString==>'+dateTimeString);
+        dateTimeString = dateTimeString.remove('+0000');
         List<String> dateTimeParts = dateTimeString.split('T');
         
         // Extract date part

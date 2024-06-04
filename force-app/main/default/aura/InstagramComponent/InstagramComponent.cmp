@@ -4,6 +4,7 @@
     <aura:attribute name="recordId" type="string" default="500D400000Bs1buIAB" />
     <aura:attribute name="isEditable" type="boolean" default="true"/>
     <aura:attribute name="tweetDescription" type="string" default=""/>
+    <aura:attribute name="totalCount" type="string" default=""/>
     <aura:attribute name="tweetId" type="string" default=""/>
     <aura:attribute name="showSpinner" type="boolean" default="false"/>
     <aura:attribute name="spinner" type="boolean" default="false"/>
@@ -57,8 +58,10 @@
                     <br/>
                     <div class="slds-text-heading_medium">
                         Click here to see the Insta Post : <lightning:formattedUrl value="{!v.urlToPost}" label="POST" target="_blank" />
-                        <br/><br/>
-                        <lightning:button variant="brand" label="Refresh Comments"  onclick="{!c.refreshFeed}" />
+                        <br/>
+                        <lightning:button variant="brand" label="Refresh Comments"  onclick="{!c.refreshFeed}" /> 
+                        <br/>
+                        <lightning:badge label="Total comments💬"/> : <lightning:badge label="{!v.totalCount}" iconName="utility:success"/>
                     </div>
                     <br/>
                     
@@ -115,8 +118,9 @@
                                                 </td>
                                                 
                                                 <td data-label="Action">
-                                                    
-                                                    <lightning:button title="{!acc.CommentId}" name="{!acc.CommentedBy}" value="{!acc.comment}" variant="brand" label="Reply"  onclick="{! c.openModel }" />
+                                                    <aura:if isTrue="{!acc.postType == 'Post'}">
+                                                        <lightning:button title="{!acc.CommentId}" name="{!acc.CommentedBy}" value="{!acc.comment}" variant="brand" label="Reply"  onclick="{! c.openModel }" />
+                                                    </aura:if>
                                                     <lightning:button title="{!acc.CommentId}" name="{!acc.CommentedBy}" value="{!acc.comment}" variant="brand" label="View Replies"  onclick="{! c.viewCommentReplies }" />
                                                 </td>
                                             </tr>

@@ -24,7 +24,7 @@
     <description>Used for Knowledge Articles to Caterogery the articles</description>
     <label>Knowledge Article Type</label>
     <objectUsage>
-        <object>SvcCatalogItemDef</object>
         <object>KnowledgeArticleVersion</object>
+        <object>SvcCatalogItemDef</object>
     </objectUsage>
 </DataCategoryGroup>

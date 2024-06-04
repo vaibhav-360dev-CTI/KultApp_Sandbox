@@ -22,7 +22,7 @@ public class instaComponentController {
     public Static List<ReplyWrapperRecords> getRepliesDetails(String commentId){
         List<ReplyWrapperRecords> repliesWrapperList = new List<ReplyWrapperRecords>();
         //List<ReplyWrapperRecords> replyDataList = new List<ReplyWrapperRecords>();
-        List<Case_Communication__c> postCommentDetails = [Select Activity_Content__c,Activity_ID__c,Activity_Author__c,Platform_URL__c,Activity_Created_DateTime__c,Replied_Activities__c from Case_Communication__c where Activity_ID__c =:commentId];
+        List<Case_Communication__c> postCommentDetails = [Select Activity_Content__c,Activity_ID__c,Activity_Author__c,Platform_URL__c,Activity_Created_DateTime__c,Replied_Activities__c from Case_Communication__c where Activity_ID__c =:commentId order by Activity_Created_DateTime__c desc];
         
         if(postCommentDetails.size() > 0){
             try{
@@ -71,7 +71,7 @@ public class instaComponentController {
         List<instaWrapper> instaWrapperList = new List<instaWrapper>();
         List<Case> CaseDetails = [Select id,subject,Post_Id__c,Description,Type_of_Post__c,Caption__c,POST_URL__c,
                                   (Select  Activity_ID__c,Activity_Created_DateTime__c,Activity_Content__c,Activity_Author__c,Platform_URL__c
-                                    from Case_Communications__r ) from case where id = :recordId];
+                                    from Case_Communications__r order by Activity_Created_DateTime__c desc) from case where id = :recordId ];
         
         for(Case caseRec : CaseDetails){
             try{

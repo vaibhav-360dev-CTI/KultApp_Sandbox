@@ -14,7 +14,6 @@ global class WS_OrderCreationv1 {
             Map<String,List<WS_OrderCreation.OrderDetails>> mapOrderDetailsByOrderId = new Map<String,List<WS_OrderCreation.OrderDetails>>();
             Map<String, Id> mapOfContractIdByAccPhone = new Map<String, Id>();
             Map<String, WS_OrderCreation.OrderDetails> subOrderDetailsBySubOrderId = new Map<String, WS_OrderCreation.OrderDetails>();
-            Map<String, WS_OrderCreation.ItemDetails> oliDetailsBySubOrderId = new Map<String, WS_OrderCreation.ItemDetails>();
             Map<String, WS_OrderCreation.ItemDetails> subOrderItemBySubOrderItemName = new Map<String, WS_OrderCreation.ItemDetails>();
             Map<String, String> subOrderNameBysubOrderItemName = new Map<String,String>();
             Map<String, String> subOrderIdBySubOrderName = new Map<String,String>();
@@ -58,15 +57,17 @@ global class WS_OrderCreationv1 {
                             mapOfPhoneNumberByRecDetails.put(ws_orderInput.data.customer_details.phone_number,ws_orderInput.data.customer_details);
                             mapOrderDetailsByOrderId.put(ws_orderInput.data.order_id, ws_orderInput.data.order_details);
                             for(WS_OrderCreation.OrderDetails orderRecords1: ws_orderInput.data.order_details){
+                                integer i = 0;
                                 for(WS_OrderCreation.ItemDetails itemRec : orderRecords1.item_details){
-                                    subOrderNameBysubOrderItemName.put(ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku, ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id);
-                                    subOrderItemBySubOrderItemName.put(ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku, itemRec);
-                                    String name = ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku;
-                                    if(itemQuantityBySKU.containsKey(name)){
-                                        itemQuantityBySKU.put(name, itemQuantityBySKU.get(name)+1); 
-                                    }else{
-                                        itemQuantityBySKU.put(name, 1); 
-                                    }
+                                    subOrderNameBysubOrderItemName.put(ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku + '-' + i, ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id);
+                                    subOrderItemBySubOrderItemName.put(ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku + '-' + i, itemRec);
+                                    // String name = ws_orderInput.data.order_id + '-' + orderRecords1.sub_order_id + '-' + itemRec.sku;
+                                    // if(itemQuantityBySKU.containsKey(name)){
+                                    //     itemQuantityBySKU.put(name, itemQuantityBySKU.get(name)+1); 
+                                    // }else{
+                                    //     itemQuantityBySKU.put(name, 1); 
+                                    // }
+                                    i++;
                                 }
                             }
                         }else if(ws_orderInput.data.customer_details != null && ws_orderInput.data.customer_details.phone_number == null){
@@ -85,6 +86,7 @@ global class WS_OrderCreationv1 {
                         // System.debug('subOrderNameBysubOrderItemName==> ' + subOrderNameBysubOrderItemName);
                         // System.debug('subOrderItemBySubOrderItemName==> ' + subOrderItemBySubOrderItemName);
                     }
+                    System.debug('subOrderItemBySubOrderItemName==> ' + subOrderItemBySubOrderItemName);
 
                     for(String mapKey : mapOrderDetailsByOrderId.keySet()){
                         Map<String, WS_OrderCreation.OrderDetails> tempMap = new Map<String, WS_OrderCreation.OrderDetails>();
@@ -311,6 +313,7 @@ global class WS_OrderCreationv1 {
                         }
                         if(!subOrderItemBySubOrderItemName.isEmpty()){
                             for(String mapKey : subOrderItemBySubOrderItemName.keySet()){
+                                System.debug('mapKey=> ' + mapKey);
                                 OrderItem ordItemRec = new OrderItem();
                                 ordItemRec.Name__c = mapKey;
                                 ordItemRec.PricebookEntryId = pbeToTag.Id;
@@ -319,7 +322,8 @@ global class WS_OrderCreationv1 {
                                 ordItemRec.UnitPrice = subOrderItemBySubOrderItemName.get(mapKey).mrp != null ? Decimal.valueOf(subOrderItemBySubOrderItemName.get(mapKey).mrp) : 0;
                                 ordItemRec.Selling_Price__c = subOrderItemBySubOrderItemName.get(mapKey).selling_price != null ? subOrderItemBySubOrderItemName.get(mapKey).selling_price : 0;
                                 //ordItemRec.Quantity = subOrderItemBySubOrderItemName.get(mapKey).quantity != null ? subOrderItemBySubOrderItemName.get(mapKey).quantity : 0;
-                                ordItemRec.Quantity = itemQuantityBySKU.get(mapKey) != null ? itemQuantityBySKU.get(mapKey) : 1;
+                                //ordItemRec.Quantity = itemQuantityBySKU.get(mapKey) != null ? itemQuantityBySKU.get(mapKey) : 1;
+                                ordItemRec.Quantity = 1;
                                 if(subOrderItemBySubOrderItemName.get(mapKey).refunded_price != '' && subOrderItemBySubOrderItemName.get(mapKey).refunded_price != null)
                                 ordItemRec.Refunded_Price__c = Decimal.valueOf(subOrderItemBySubOrderItemName.get(mapKey).refunded_price);
                                 ordItemRec.SKU__c = subOrderItemBySubOrderItemName.get(mapKey).sku != null ? subOrderItemBySubOrderItemName.get(mapKey).sku : '';

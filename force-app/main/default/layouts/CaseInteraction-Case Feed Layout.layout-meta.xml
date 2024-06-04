@@ -740,6 +740,10 @@
                 <behavior>Readonly</behavior>
                 <field>SLA_Status__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Order_Shipping_Name__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns/>
         <style>TwoColumnsTopToBottom</style>
@@ -811,11 +815,6 @@
             <posY>3</posY>
         </summaryLayoutItems>
         <summaryLayoutItems>
-            <field>Status</field>
-            <posX>2</posX>
-            <posY>0</posY>
-        </summaryLayoutItems>
-        <summaryLayoutItems>
             <field>Priority</field>
             <posX>2</posX>
             <posY>1</posY>
@@ -824,6 +823,11 @@
             <field>OwnerId</field>
             <posX>2</posX>
             <posY>2</posY>
+        </summaryLayoutItems>
+        <summaryLayoutItems>
+            <field>Status</field>
+            <posX>2</posX>
+            <posY>0</posY>
         </summaryLayoutItems>
         <summaryLayoutStyle>CaseInteraction</summaryLayoutStyle>
     </summaryLayout>

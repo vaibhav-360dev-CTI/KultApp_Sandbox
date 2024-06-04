@@ -2,6 +2,6 @@
 public class ContactFormWithPhoneNoVfControllerTest {
 	@isTest
     static void testClass(){
-        ContactFormWithPhoneNoVfController.dumMethod();
+       // ContactFormWithPhoneNoVfController.dumMethod();
     }
 }

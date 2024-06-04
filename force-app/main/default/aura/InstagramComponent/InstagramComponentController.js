@@ -1,63 +1,7 @@
 ({
     doInit : function(component, event, helper) {
         debugger;
-        var recId = component.get("v.recordId");
-        var action = component.get("c.getCaseDetails");
-        
-        action.setParams({
-            recordId: recId
-        });
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === 'SUCCESS') {
-                var paginationList = [];
-                var temResult=[];
-                var temResultSize;
-                console.log(serverresponse);
-                var serverresponse = response.getReturnValue();
-                component.set("v.tweetDescription",serverresponse[0].postCaption);
-                component.set("v.urlToPost",serverresponse[0].PostUrl);
-                component.set("v.typeOfPost",serverresponse[0].postType);
-                component.set("v.relatedCommentList",serverresponse);
-                
-                
-                var lengthVar = component.get("v.relatedCommentList").length;
-                console.log('length///'+lengthVar);
-                component.set("v.totalRecords",lengthVar); 
-                //---------------------------------------------------------------------------
-                //number of records in each page---------------------------------------------
-                var perPage = component.get("v.perPageSize");
-                //---------------------------------------------------------------------------
-                var values=[];
-                console.log('perPage///'+perPage);
-                //If total number of records are more than 5 or equals 5-----------------------
-                if(lengthVar >= perPage){
-                    for(var i=0;i<perPage;i++){
-                        values.push(response.getReturnValue()[i]);
-                    }
-                }//--------------------------------------------------------------------------
-                else{//If total number of records are lesser than 5--------------------------
-                    for(var i=0;i<lengthVar;i++){
-                        values.push(response.getReturnValue()[i]);
-                    }
-                }//--------------------------------------------------------------------------
-                console.log('values///'+values);
-                component.set("v.PaginationList",values);
-                component.set("v.startValue",0);
-                //if there are only 5 records or lesser than that in total-------------------
-                if(lengthVar <= (component.get("v.startValue")+perPage)){
-                    component.set("v.isLastPage",true);
-                }
-                component.set("v.endValue",component.get("v.startValue")+perPage-1);
-                
-                
-            }
-            
-            else{
-                
-            }
-        });
-        $A.enqueueAction(action); 
+       	helper.doInithelper(component, event, helper);
     },
     replyToTweet : function(component) {
         debugger;
@@ -93,7 +37,6 @@
     },
     refreshFeed : function(component, event, helper) {
         debugger;
-        
         component.set("v.showSpinner",true);
         var recId = component.get("v.recordId");
         var action = component.get("c.getUpdatedComments");
@@ -103,9 +46,8 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === 'SUCCESS') {
-                component.set("v.showSpinner",false);
-                window.location.reload();
-            }else{
+                helper.doInithelper(component, event, helper);
+             }else{
                 component.set("v.showSpinner",false);
             }
         });
@@ -179,9 +121,19 @@
                     component.set("v.showReplies",true);
                     component.set("v.spinner",false);    
                 }else{
-                    component.set("v.relatedReplyList",[]);
-                    component.set("v.showReplies",true);
+                    //component.set("v.relatedReplyList",[]);
+                    //component.set("v.showReplies",true);
                     component.set("v.spinner",false);  
+                    var toastEvent = $A.get("e.force:showToast");
+                    toastEvent.setParams({
+                        title : 'No Replies Yet!',
+                        message: 'No replies on this comment!!',
+                        duration:' 5000',
+                        key: 'info_alt',
+                        type: 'error',
+                        mode: 'pester'
+                    });
+                    toastEvent.fire();
                 }
                 
             }else{

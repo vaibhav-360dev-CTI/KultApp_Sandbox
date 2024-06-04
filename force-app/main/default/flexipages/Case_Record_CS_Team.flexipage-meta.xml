@@ -1670,6 +1670,9 @@
                         <valueListItems>
                             <value>Selling_Price__c</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Refund_Amount__c</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

@@ -560,6 +560,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>affectedSKUtriggerHelperTest</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>batchForCaseAssignInBusinnessHours</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -816,6 +820,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Deleted_At__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.Delivery_Mobile_Number__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -927,6 +936,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Affected_SKU__c.Product_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Affected_SKU__c.Refund_Amount__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1542,6 +1556,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.Order_Shipping_Mobile_No__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Case.Order_Shipping_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
