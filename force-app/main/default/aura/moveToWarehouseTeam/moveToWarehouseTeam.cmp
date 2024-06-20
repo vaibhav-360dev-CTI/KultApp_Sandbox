@@ -92,13 +92,13 @@
                     </aura:if>
                     <aura:set attribute="else">
                         <div class="twoColumns">
-                            <lightning:input type="text" label="Record Type" value="{!v.caseRec.RecordType.Name}"
+                            <lightning:input type="text" label="Type" value="{!v.caseRec.Type}"
                                 class="columnChild" disabled="true" />
-                            <lightning:input type="text" label="Case Type" value="{!v.caseRec.Sub_Type__c}"
+                            <lightning:input type="text" label="Sub Type" value="{!v.caseRec.Sub_Type__c}"
                                 class="columnChild" disabled="true" />
                         </div>
                         <div class="twoColumns">
-                            <lightning:input type="text" label="Sub Type" value="{!v.caseRec.Sub_Sub_Type__c}"
+                            <lightning:input type="text" label="Sub Sub Type" value="{!v.caseRec.Sub_Sub_Type__c}"
                                 class="columnChild" disabled="true" />
                             <!-- <lightning:input type="text" label="Case Type" value="{!v.caseRec.Sub_Type__c}" class="columnChild"/> -->
                         </div>

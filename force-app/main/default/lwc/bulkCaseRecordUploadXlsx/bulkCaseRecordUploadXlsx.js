@@ -100,7 +100,7 @@ export default class BulkCaseRecordUploadXlsx extends LightningElement {
                          // // Create the desired format
                          // const formattedDate = `${day}-${month}-${year}`;
 
-                         if(!orderNumbers.includes(data[i]["Order No"])){
+                         if(!orderNumbers.includes(data[i]["Order No"]) && !orderNumbers.includes(data[i]["Order Id"])){
                               var obj = {
                                    "orderno": data[i]["Order No"],
                                    // "dateoforder": formattedDate,
@@ -130,10 +130,17 @@ export default class BulkCaseRecordUploadXlsx extends LightningElement {
                                    "sku2cancelledquantity": data[i]["SKU 2 Cancelled Quantity"],
                                    "sku2id": data[i]["SKU 2 ID"],
                                    "sku2orderquantity": data[i]["SKU 2 Order Quantity"],
-                                   "sno": index
+                                   "sno": index,
+                                   "callType": data[i]["Call Type"],
+                                   "subject": data[i]["Subject"],
+                                   "phoneNumber": data[i]["Phone Number"]
                               };
                               objList.push(obj);
-                              orderNumbers.push(data[i]["Order No"]);
+                              if(data[i]["Order No"] != undefined){
+                                   orderNumbers.push(data[i]["Order No"]);
+                              }else if(data[i]["Order Id"] != undefined){
+                                   orderNumbers.push(data[i]["Order Id"]);
+                              }
                          }
                     }
                     console.log('data == ' + objList);

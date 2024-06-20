@@ -112,6 +112,7 @@ export default class MergeCasesComponent extends LightningElement {
             this.onlyOneRowWhichIsSelectedId = selectedRows[0].Id;
         }
     }
+    
     mergeRelatedCases() {
         debugger; 
         mergeSelectedCasesOfOneOrder({ caseId: this.onlyOneRowWhichIsSelectedId, cases: this.selectedRowsObjects })

@@ -5,6 +5,14 @@ global class WS_OrderUpdateV1 {
         RestRequest req = RestContext.request;
         RestResponse response = RestContext.response;
         List<ResponseBody> respBodyList = new List<ResponseBody>();
+
+        DateTime processingStartTime = System.now();
+        Blob body = req.requestBody;
+        String requestString = body.toString();
+        System.debug('--- requestString' + requestString);
+        String responseBody;
+        Id integrationLogId;
+        integrationLogId = HttpUtility.getInstance().createServiceLogger(null, requestString, null, '/OrderUpdation', 'POST', null, processingStartTime, System.now(), null,'SERVICE');
         try{
             List<WS_OrderUpdate> orderRecords = (List<WS_OrderUpdate>) JSON.deserialize(req.requestBody.toString(), List<WS_OrderUpdate>.class);
             Set<String> order_idSet = new Set<String>();
@@ -29,9 +37,11 @@ global class WS_OrderUpdateV1 {
                         order_idSet.add(ordRec.order_id);
                         for(WS_OrderUpdate.Order_details subOrderRec : ordRec.order_details){
                             subOrderDetailsBySubOrderId.put(ordRec.order_id + '-' + subOrderRec.sub_order_id, subOrderRec);
+                            integer i = 1;
                             for(WS_OrderUpdate.Item_details itemRec : subOrderRec.item_details){
-                                subOrderItemBySubOrderItemName.put(ordRec.order_id + '-' + subOrderRec.sub_order_id + '-' + itemRec.sku, itemRec);
-                                subOrderNameBysubOrderItemName.put(ordRec.order_id + '-' + subOrderRec.sub_order_id + '-' + itemRec.sku, ordRec.order_id + '-' + subOrderRec.sub_order_id);
+                                subOrderItemBySubOrderItemName.put(ordRec.order_id + '-' + subOrderRec.sub_order_id + '-' + itemRec.sku + '-' + i, itemRec);
+                                subOrderNameBysubOrderItemName.put(ordRec.order_id + '-' + subOrderRec.sub_order_id + '-' + itemRec.sku + '-'+ i, ordRec.order_id + '-' + subOrderRec.sub_order_id);
+                                i++;
                             }
                         }
                     }
@@ -43,6 +53,17 @@ global class WS_OrderUpdateV1 {
                         for(Order ordRec : existingOrderList){
                             orderRecByName.put(ordRec.Name, ordRec);
                         }
+                    }else{
+                        ResponseBody res = new ResponseBody();
+                                    res.status = 'Error';
+                                res.message = 'No existing order found: ';
+                                res.order_id = null;
+                                   res.sub_order_id = null;
+                                //res.new_status = upsertedSubOrder.Status;
+                                respBodyList.add(res);
+                                RestContext.response.statusCode = 404;
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
+                                return respBodyList;
                     }
                 }
                 
@@ -72,12 +93,23 @@ global class WS_OrderUpdateV1 {
                     }
                 }
                 List<Order> existingSubOrders = [SELECt Id, Sub_Order_Id__c,Name, AccountId FROM Order WHERE ParentOrder__c IN: setOfOrderIds AND Name IN: subOrderDetailsBySubOrderId.keySet()];
-                System.debug('existingSubOrders: ' + existingSubOrders);
                 Map<String, Order> subOrderRecByName = new Map<String, Order>();
                 if(!existingSubOrders.isEmpty()){
                     for(Order ordRec : existingSubOrders){
                         subOrderRecByName.put(ordRec.Name, ordRec);
                     }
+                }
+                else{
+                    ResponseBody res = new ResponseBody();
+                                res.status = 'Error';
+                            res.message = 'No existing sub-order found: ';
+                            res.order_id = null;
+                               res.sub_order_id = null;
+                            //res.new_status = upsertedSubOrder.Status;
+                            respBodyList.add(res);
+                            RestContext.response.statusCode = 404;
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
+                            return respBodyList;
                 }
                 if(!subOrderDetailsBySubOrderId.isEmpty()){
                     for(String mapKey : subOrderDetailsBySubOrderId.keySet()){
@@ -86,7 +118,7 @@ global class WS_OrderUpdateV1 {
                         SubOrdRec.AWB_Number__c = subOrderDetailsBySubOrderId.get(mapKey).awb_number != null ? subOrderDetailsBySubOrderId.get(mapKey).awb_number : ''; 
                         SubOrdRec.EffectiveDate = System.today();
                         SubOrdRec.Courier__c = subOrderDetailsBySubOrderId.get(mapKey).courier != null ? subOrderDetailsBySubOrderId.get(mapKey).courier : '';
-                        SubOrdRec.Pricebook2Id = '01sIR000002f36lYAA';
+                        //SubOrdRec.Pricebook2Id = '01sIR000002f36lYAA';
                         if(subOrderDetailsBySubOrderId.get(mapKey).expected_delivery_date != null){
                             SubOrdRec.Expected_Delivery_Date__c = Date.ValueOf(subOrderDetailsBySubOrderId.get(mapKey).expected_delivery_date);
                         }
@@ -105,7 +137,6 @@ global class WS_OrderUpdateV1 {
                         }
                         subOrderListToBeUpserted.add(SubOrdRec);
                     }
-                    System.debug('subOrderListToBeUpserted: ' + subOrderListToBeUpserted);
                     
                     Database.UpsertResult[] subOrderUpsertResult = Database.upsert(subOrderListToBeUpserted,Order.Id, false);
                     Set<Id> setOfSubOrderIds = new Set<Id>();
@@ -127,6 +158,7 @@ global class WS_OrderUpdateV1 {
                                res.sub_order_id = subOrderId;
                             res.new_status = upsertedSubOrder.Status;
                             respBodyList.add(res);
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 200, processingStartTime, System.now(), null, 'SERVICE');
                         } else {
                             for(Database.Error error : result.getErrors()) {
                                 System.debug('Error message: ' + error.getMessage());
@@ -136,31 +168,39 @@ global class WS_OrderUpdateV1 {
                             res.order_id = null;
                                res.sub_order_id = null;
                             res.new_status = upsertedSubOrder.Status;
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
                             respBodyList.add(res);
                             }
                             RestContext.response.statusCode = 400;
                             return respBodyList;
                         }
-                        System.debug('setOfSubOrderIds==>' + setOfSubOrderIds);
                     }
                     
                     
                     List<OrderItem> existingOrderItemList = [SELECT Id, Name__c, SKU__c, OrderId FROM OrderItem WHERE OrderId IN: setOfSubOrderIds];
-                    System.debug('existingOrderItemList==>' + existingOrderItemList);
                     List<OrderItem> orderItemToUpsert = new List<OrderItem>();
                     if(!existingOrderItemList.isEmpty()){
                         for(OrderItem ordItemRec : existingOrderItemList){
                             orderItemIdByOrderItemName.put(ordItemRec.Name__c, ordItemRec);
                         }
+                    }else{
+                        ResponseBody res = new ResponseBody();
+                                    res.status = 'Error';
+                                res.message = 'No existing order item found: ';
+                                res.order_id = null;
+                                   res.sub_order_id = null;
+                                //res.new_status = upsertedSubOrder.Status;
+                                respBodyList.add(res);
+                                RestContext.response.statusCode = 404;
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
+                                return respBodyList;
                     }
-                    System.debug('orderItemIdByOrderItemName==>' + orderItemIdByOrderItemName);
                     if(!subOrderItemBySubOrderItemName.isEmpty()){
                         for(String mapKey : subOrderItemBySubOrderItemName.keySet()){
                             OrderItem ordItemRec = new OrderItem();
                             if(orderItemIdByOrderItemName.containsKey(mapKey)){
                                 ordItemRec = orderItemIdByOrderItemName.get(mapKey);
                             }
-                            System.debug('Order Item Record==> ' + ordItemRec);
                             ordItemRec.Name__c = mapKey;
                             ordItemRec.SKU__c = subOrderItemBySubOrderItemName.get(mapKey).sku != null ? subOrderItemBySubOrderItemName.get(mapKey).sku : '';
                             ordItemRec.Status__c = subOrderItemBySubOrderItemName.get(mapKey).status != null ? subOrderItemBySubOrderItemName.get(mapKey).status : '';
@@ -179,6 +219,7 @@ global class WS_OrderUpdateV1 {
                                     ResponseBody res = new ResponseBody();
                             res.status = 'Error';
                             res.message = 'Failed to update status. ' + error.getMessage();
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
                             respBodyList.add(res);
                                 }
                                 RestContext.response.statusCode = 400;
@@ -197,6 +238,7 @@ global class WS_OrderUpdateV1 {
             //res.orderId = upsertedOrder.Id;
             respBodyList.add(res);
             RestContext.response.statusCode = 400;
+            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
             return respBodyList;
         }
     }
@@ -210,301 +252,4 @@ global class WS_OrderUpdateV1 {
         public String sub_order_id;
         public String new_status;
     }
-    
-    /* public static void dumMethod() {
-    Integer i = 0;
-    Integer j = 0;
-    Integer k = 0;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    } */
-    
 }

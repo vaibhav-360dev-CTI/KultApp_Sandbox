@@ -8,6 +8,7 @@
     <columns>showFlags__c</columns>
     <columns>CASES.STATUS</columns>
     <columns>Refund_WH_Team_Status__c</columns>
+    <columns>CASES.LAST_UPDATE</columns>
     <columns>Created_Time__c</columns>
     <columns>CASES.RECORDTYPE</columns>
     <columns>CASES.CREATED_DATE_DATE_ONLY</columns>

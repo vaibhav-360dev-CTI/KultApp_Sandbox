@@ -25,6 +25,7 @@ export default class CreateCaseFromAccount extends LightningElement {
     selectedUsr;
     inpName;
     selectedOrd;
+    @track isLoading = false;
     @track orderHasItemAvailable = false;
     @track AllOrderItems = [];
     @track isModalOpen = true;
@@ -305,6 +306,7 @@ export default class CreateCaseFromAccount extends LightningElement {
 
     handleClick() {
         debugger;
+        this.isLoading = true;
         createCaseFromAccount({
             Subjt: this.Subject,
             recId: this.recordId,
@@ -323,6 +325,7 @@ export default class CreateCaseFromAccount extends LightningElement {
                     });
                     this.dispatchEvent(event);
                     this.dispatchEvent(new CloseActionScreenEvent());
+                    this.isLoading = false;
                     this.dispatchEvent(new RefreshEvent());
                     window.location.replace(this.CaseBaseURL + result.Id + '/view');
                 }

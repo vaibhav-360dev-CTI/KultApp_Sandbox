@@ -1,4 +1,5 @@
 import { LightningElement, api, track, wire } from 'lwc';
+import { getRecord } from 'lightning/uiRecordApi';
 import getCaseById from '@salesforce/apex/referBackToCsTeamController.getCaseById';
 import getCaseAndOrderDetails from '@salesforce/apex/referBackToCsTeamController.getCaseAndOrderDetails';
 import getCaseTeamAndType from '@salesforce/apex/referBackToCsTeamController.getCaseTeamAndType';
@@ -7,7 +8,10 @@ import { CloseActionScreenEvent } from 'lightning/actions';
 import { getPicklistValues} from 'lightning/uiObjectInfoApi';
 import CASE_OBJECT from '@salesforce/schema/Case';
 import REFERBACKREASON_FIELD from '@salesforce/schema/Case.Refer_Back_Reason__c';
+import Tech_Issue from '@salesforce/schema/Case.Tech_Issue_Type__c';
 import { getRecordNotifyChange } from "lightning/uiRecordApi";
+import Id from '@salesforce/user/Id'
+import ProfileName from '@salesforce/schema/User.Profile.Name'; 
 export default class ReferBackToCSTeam extends LightningElement {
 
 
@@ -35,7 +39,13 @@ export default class ReferBackToCSTeam extends LightningElement {
     @track updateDesc;
     @track orderId;
     @track orderRefundAmount;
+    @track adminResolved = false;
+    @track techIssue;
+    @track techIssueList=[];
+    @track isLoading=false;
+    returnValue;
     RefrebackOption=[];
+    userProfileName;
     fileData = {
         'filename': null,
         'base64': null,
@@ -45,11 +55,36 @@ export default class ReferBackToCSTeam extends LightningElement {
 
     @api recordId;
 
+    @wire(getRecord, {recordId: Id, fields: [ProfileName]})
+    userDetails({data,error}){
+        debugger;
+        if (error) {
+            this.error = error;
+        } else if (data) {
+            if (data.fields.Profile.displayValue != null) {
+                this.userProfileName = data.fields.Profile.displayValue;
+                if(this.userProfileName == "System Administrator"){
+                    this.adminResolved = true;
+                }
+            }
+    }
+}
+
     @wire(getPicklistValues, {recordTypeId: '012000000000000AAA', fieldApiName: REFERBACKREASON_FIELD})
     referbackField({data,error}){
         if(data){
             console.log(data);
             this.RefrebackOption = this.getPicklist(data);
+        }else{
+            console.log(error);
+        }
+    }
+
+    @wire(getPicklistValues, {recordTypeId: '012000000000000AAA', fieldApiName: Tech_Issue})
+    techIssueField({data,error}){
+        if(data){
+            console.log(data);
+            this.techIssueList = this.getPicklist(data);
         }else{
             console.log(error);
         }
@@ -171,6 +206,10 @@ export default class ReferBackToCSTeam extends LightningElement {
 
     }
 
+    handelTechIssue(event){
+        this.techIssue = event.target.value;
+    }
+
     handelApprovalremark(event) {
         debugger;
         this.approvalRemarks = event.target.value;
@@ -275,7 +314,7 @@ export default class ReferBackToCSTeam extends LightningElement {
                 return null;
             }
         }
-
+        this.isLoading = true;
         const {base64, filename, recordId} = this.fileData;
         getCaseAndOrderDetails({
             caseId: this.recordId,
@@ -292,18 +331,26 @@ export default class ReferBackToCSTeam extends LightningElement {
             base64: base64,
             filename: filename,
             awbNumber: this.awbNumber,
-            focOrderId: this.focOrderId
+            focOrderId: this.focOrderId,
+            techIssueType: this.techIssue,
+            isRefundCase: this.refundResolved
         })
             .then((result) => {
                 console.log("result===>" + JSON.stringify(result));
-                this.ListOfCaseRecords = result;
+                this.returnValue = result;
+                if(this.returnValue == 'Success'){
                 this.showToast('Success', 'Records saved successfully', 'success');
                 this.handleClose();
                 getRecordNotifyChange([{ recordId: this.recordId }]);
+                }else{
+                    this.showToast('Error', this.returnValue, 'error');
+                }
+                this.isLoading = false;
             }).catch((err) => {
                 console.log("err===>" + JSON.stringify(err));
                 this.error = err;
                 this.showToast('Error', 'Error occurred while saving records', 'error');
+                this.isLoading = false;
             });
 
     }

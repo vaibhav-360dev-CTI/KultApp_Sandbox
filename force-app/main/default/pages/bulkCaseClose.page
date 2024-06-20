@@ -1,0 +1,11 @@
+<apex:page standardController="Case" showHeader="true" sidebar="false" recordSetVar="Cases">
+<apex:includeLightning />  
+<div id="LightningComponentid" />
+<script>
+        $Lightning.use("c:bulkCaseClose", function() {
+            $Lightning.createComponent("c:bulkCloseCases", {}, "LightningComponentid", function(cmp) {
+                console.log('LWC Component added in VF page');
+            });
+        });
+</script>
+</apex:page>

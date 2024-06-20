@@ -21,6 +21,14 @@ global class WS_CustomerCreation {
             RestResponse response = RestContext.response;
             List<ResponseBody> respBodyList = new List<ResponseBody>();
             String jsonResponse = '';
+
+            DateTime processingStartTime = System.now();
+        Blob body = req.requestBody;
+        String requestString = body.toString();
+        System.debug('--- requestString' + requestString);
+        String responseBody;
+        Id integrationLogId;
+        integrationLogId = HttpUtility.getInstance().createServiceLogger(null, requestString, null, '/CustomerCreation', 'POST', null, processingStartTime, System.now(), null,'SERVICE');
             
             try{
                 List<OMSToSFDCAccount> requestBody = (List<OMSToSFDCAccount>)JSON.deserialize(req.requestBody.toString(), List<OMSToSFDCAccount>.class);
@@ -66,6 +74,8 @@ global class WS_CustomerCreation {
                         res.status = 'Success';
                         res.message = 'User created/updated successfully';
                         res.accountId = upsertedAccount.Id;
+
+                        integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/CustomerCreation', 'POST', 200, processingStartTime, System.now(), null, 'SERVICE');
                         respBodyList.add(res);
                     } else {
                         for(Database.Error error : result.getErrors()) {
@@ -74,6 +84,8 @@ global class WS_CustomerCreation {
                         res.status = 'Error';
                         res.message = 'Failed to create user. ' + error.getMessage();
                         res.accountId = upsertedAccount.Id;
+
+                        integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/CustomerCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
                         respBodyList.add(res);
                         }
                         RestContext.response.statusCode = 400;
@@ -89,6 +101,7 @@ global class WS_CustomerCreation {
                 res.message = 'Failed to create user. ' + e.getMessage();
                 respBodyList.add(res);
                 RestContext.response.statusCode = 400;
+                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/CustomerCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
             }
               return respBodyList;            
         }

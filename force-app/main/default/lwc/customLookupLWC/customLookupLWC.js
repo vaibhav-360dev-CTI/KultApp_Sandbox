@@ -15,7 +15,7 @@ displayLabelField = 'Name';
 @api labelHidden = false;
 searchKeyWord = '';
 @api selectedRecord = {}; // Use, for store SELECTED sObject Record
-@api where = '';
+@api where = 'ParentOrder__c = null';
  selectedCandidateId = '';
 
 // private properties
@@ -43,6 +43,7 @@ noRecordFound = false;
      }
   }
 
+
      connectedCallback() {
      debugger;
      if (this.initialLookupValue != '') {
@@ -64,7 +65,7 @@ noRecordFound = false;
      }
 
      handleClickOnInputBox(event) {
-     // debugger;
+      debugger;
      let container = this.template.querySelector('.custom-lookup-container');
      container.classList.add('slds-is-open');
      this.spinnerShow = true;
@@ -119,6 +120,8 @@ noRecordFound = false;
 
      handleKeyChange(event) {
      this.searchKeyWord = event.detail.value;
+     let container = this.template.querySelector('.custom-lookup-container');
+     container.classList.add('slds-is-open');
      console.log(this.searchKeyWord);
      if (typeof this.searchKeyWord === 'string' && this.searchKeyWord.trim().length > 0) {
           this.searchRecordList = [];

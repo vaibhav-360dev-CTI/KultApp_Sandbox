@@ -53,6 +53,12 @@
                 <identifier>RecordDescriptionField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Refund_Team__c</fieldItem>
+                <identifier>RecordAssigned_to_Refund_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-267ea9dc-3fdf-4e88-9933-09f3821a4c6d</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -521,26 +527,20 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Coupon__c</fieldItem>
-                <identifier>RecordCoupon_cField2</identifier>
+                <fieldItem>Record.Order_Is_Coupon_Used__c</fieldItem>
+                <identifier>RecordOrder_Is_Coupon_Used_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Coupon_Code__c</fieldItem>
-                <identifier>RecordCoupon_Code_cField2</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.OrderId__r.Payment_Id__c</fieldItem>
-                <identifier>RecordOrderId_rPayment_Id_cField</identifier>
+                <fieldItem>Record.Order_Payment_Id__c</fieldItem>
+                <identifier>RecordOrder_Payment_Id_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -557,10 +557,20 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Order_Source__c</fieldItem>
+                <identifier>RecordOrder_Source_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.OOS_Quantity__c</fieldItem>
-                <identifier>RecordOOS_Quantity_cField2</identifier>
+                <fieldItem>Record.Order_Shipping_Address__c</fieldItem>
+                <identifier>RecordOrder_Shipping_Address_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -569,18 +579,8 @@
                     <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Address_With_Pin_Code__c</fieldItem>
-                <identifier>RecordAddress_With_Pin_Code_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Receiver_Name__c</fieldItem>
-                <identifier>RecordReceiver_Name_cField</identifier>
+                <fieldItem>Record.Expected_Date_Time__c</fieldItem>
+                <identifier>RecordExpected_Date_Time_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-5f1ca6ea-d13d-4a93-95cc-326c1eb37d7e</name>
@@ -599,68 +599,52 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OrderId__r.Paid_Amount__c</fieldItem>
-                <identifier>RecordOrderId_rPaid_Amount_cField</identifier>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Order_Coupon_Code__c</fieldItem>
+                <identifier>RecordOrder_Coupon_Code_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Amount_Paid__c</fieldItem>
-                <identifier>RecordAmount_Paid_cField2</identifier>
+                <fieldItem>Record.Order_Paid_Amount__c</fieldItem>
+                <identifier>RecordOrder_Paid_Amount_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Payment_ID__c</fieldItem>
-                <identifier>RecordPayment_ID_cField</identifier>
+                <fieldItem>Record.OOS_Quantity__c</fieldItem>
+                <identifier>RecordOOS_Quantity_cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Order_Source__c</fieldItem>
-                <identifier>RecordOrder_Source_cField</identifier>
+                <fieldItem>Record.Order_Shipping_Mobile_No__c</fieldItem>
+                <identifier>RecordOrder_Shipping_Mobile_No_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>readonly</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Shipping_Mobile_No__c</fieldItem>
-                <identifier>RecordShipping_Mobile_No_cField2</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Receiver_contact_number__c</fieldItem>
-                <identifier>RecordReceiver_contact_number_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Expected_Date_Time__c</fieldItem>
-                <identifier>RecordExpected_Date_Time_cField</identifier>
+                <fieldItem>Record.Order_Shipping_Name__c</fieldItem>
+                <identifier>RecordOrder_Shipping_Name_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-77fcfd9d-a2e3-4f42-b296-5d3e57a5e830</name>
@@ -2069,6 +2053,12 @@
                                     <rightValue>Natasha</rightValue>
                                 </criteria>
                             </visibilityRule>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Case.Bulk_Close_Cases</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Case.Tag_A_Call_Log</value>
                         </valueListItems>
                         <valueListItems>
                             <value>Case.Send_Request_Info</value>

@@ -3436,7 +3436,7 @@
                 <componentName>InstagramComponent</componentName>
                 <identifier>c_InstagramComponent</identifier>
                 <visibilityRule>
-                    <booleanFilter>1 OR 2 OR 3</booleanFilter>
+                    <booleanFilter>1 OR 2 OR 3 OR 4</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.Type_of_Post__c}</leftValue>
                         <operator>EQUAL</operator>
@@ -3451,6 +3451,11 @@
                         <leftValue>{!Record.Type_of_Post__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Post</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue>{!Record.Type_of_Post__c}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Reel</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>

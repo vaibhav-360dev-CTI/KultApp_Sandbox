@@ -111,6 +111,7 @@
             <template if:true={contacts}>
                 <div>
                     <lightning-card title="Create Case">
+                        <lightning-spinner if:true={isLoading} style=""></lightning-spinner>
                         <lightning-layout multiple-rows>
                             <lightning-layout-item padding="around-small" size="12">
                                 <div class="slds-grid slds-gutters">

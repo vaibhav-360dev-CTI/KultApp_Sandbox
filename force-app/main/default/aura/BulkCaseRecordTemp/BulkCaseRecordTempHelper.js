@@ -6,24 +6,27 @@
         lineDivider =  '\n';
         var tempName =  component.get("v.docTempName"); 
         if(tempName == 'OutOfStock'){
-            keys = ['Order No','Shipping Mobile No','Reason','Item','OOS Quantity','OOS SKU Code','Remarks'];
+            keys = ['Order No','Reason','OOS Quantity','OOS SKU Code','Remarks'];
         }
         if(tempName == 'PinCodeService'){
-             keys = ['Order No','Shipping Mobile No','Reason','Current PIN Code'];
+             keys = ['Order No','Reason','Current PIN Code'];
         }
         if(tempName == 'DeliveryIssue'){
-             keys = ['Order No','Shipping Mobile No','Reason','Current PIN Code','City Name'];
+             keys = ['Order No','Reason','Current PIN Code','City Name'];
         }
          if(tempName == 'LostInTransit'){
-             keys = ['Order No','Shipping Mobile No','Reason','Courier Partner','AWB Number'];
+             keys = ['Order No','Reason','Courier Partner'];
         }
          if(tempName == 'DeleayInDelivery'){
-             keys = ['Order No','Shipping Mobile No','Reason','Courier Partner','AWB Number'];
+             keys = ['Order No','Reason','Courier Partner'];
         }
         if(tempName == 'RToOrders'){
-             keys = ['Order No','Shipping Mobile No','Reason','Remarks','Order Status'];
+             keys = ['Order No','Reason','Order Status'];
         }
-        
+        if(tempName == 'CSoutbound'){
+            keys = ['Phone Number','Call Type'];
+       }
+
         csvStringResult = '';
         csvStringResult += keys.join(columnDivider);
         csvStringResult += lineDivider; 

@@ -6,6 +6,9 @@ trigger TriggerOnTask on Task (before insert, after insert, before update) {
        // taskTriggerHelper.createFeedItemAfterInsertOrUpdate(trigger.new);
     }
     if((trigger.isUpdate || trigger.isInsert) && trigger.isBefore){
-        taskTriggerHelper.changeWhatIdAndAccountId(trigger.new, trigger.oldMap);
+       // taskTriggerHelper.changeWhatIdAndAccountId(trigger.new, trigger.oldMap);
+    }
+    if((trigger.isUpdate || trigger.isInsert) && trigger.isAfter){
+        taskTriggerHelper.tagCaseOnWhatIdIfAccountIsNotTagged(trigger.new);
     }
 }

@@ -31,7 +31,7 @@
                                     <td>
                                           <div class="slds-truncate">{orderValue}</div>
                                     </td>
-                                    <th style="padding: 5px 20px 5px;">Order Status:</th>
+                                    <th style="padding: 5px 20px 5px;">Payment Status:</th>
                                     <td>
                                           <div class="slds-truncate">{orderStatus}</div>
                                     </td>
@@ -98,10 +98,13 @@
                               <div class="slds-truncate" title="Selling Price">Selling Price</div>
                               </th>
                               <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;">
-                                    <div class="slds-truncate" title="Selling Price">Refunded Price</div>
+                                    <div class="slds-truncate" title="Refunded Price">Refunded Price</div>
                                     </th>
+                                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;">
+                                          <div class="slds-truncate" title="Courier">Courier</div>
+                                          </th>
                               <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 13%;">
-                              <div class="slds-truncate" title="Quantity">Quantity</div>
+                              <div class="slds-truncate" title="Quantity">AWB Number</div>
                               </th>
                               <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 13%;">
                                     <div class="slds-truncate" title="Status">Status</div>
@@ -136,8 +139,11 @@
                   <td data-label="Selling Price">
                         <div class="slds-truncate" title={item.Selling_Price__c}>{item.Refunded_Price__c}</div>
                   </td>
-                  <td data-label="Quantity">
-                        <div class="slds-truncate" title={item.Quantity}>{item.Quantity}</div>
+                  <td data-label="Courier">
+                        <div class="slds-truncate" title={item.Order.Courier__c}>{item.Order.Courier__c}</div>
+                  </td>
+                  <td data-label="AWB Number">
+                        <div class="slds-truncate" title={item.Quantity}><a href={item.Order.Tracking_Link__c} target="_blank">{item.Order.AWB_Number__c}</a></div>
                   </td>
                   <td data-label="Status">
                         <div class="slds-truncate" title={item.Status__c}>{item.Status__c}</div>

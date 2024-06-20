@@ -25,6 +25,7 @@
             <value>
                 <fullName>Feedback</fullName>
                 <default>false</default>
+                <isActive>false</isActive>
                 <label>Feedback</label>
             </value>
         </valueSetDefinition>

@@ -1,0 +1,19 @@
+<template>
+
+	<lightning-quick-action-panel header="Bulk Close Cases">
+		<template if:true={showUnder2ndPage}>
+			<div>
+				<b class="slds-align_absolute-center"></b>
+				<br>
+				<lightning-datatable key-field="Id" data={CaseData} columns={columns} suppress-bottom-bar="true"
+					onrowselection={handleRowSelection} oncellchange={handleCellChange} draft-values={draftValues}>
+				</lightning-datatable>
+			</div>
+		</template>
+		<br><br><br>
+		<div class="slds-align_absolute-center">
+			<lightning-button variant="Brand" onclick={handleSave} label="Close"></lightning-button>&nbsp;&nbsp;
+		</div>
+
+	</lightning-quick-action-panel>
+</template>

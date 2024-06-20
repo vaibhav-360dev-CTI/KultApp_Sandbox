@@ -3,10 +3,6 @@
     <label></label>
     <name>Type_of_Call__c</name>
     <picklistValues>
-        <masterLabel>Feedback</masterLabel>
-        <translation></translation>
-    </picklistValues>
-    <picklistValues>
         <masterLabel>Sales</masterLabel>
         <translation></translation>
     </picklistValues>

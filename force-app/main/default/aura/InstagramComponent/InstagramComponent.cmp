@@ -118,7 +118,7 @@
                                                 </td>
                                                 
                                                 <td data-label="Action">
-                                                    <aura:if isTrue="{!acc.postType == 'Post'}">
+                                                    <aura:if isTrue="{!acc.postType == 'Post' || acc.postType == 'Reel'}">
                                                         <lightning:button title="{!acc.CommentId}" name="{!acc.CommentedBy}" value="{!acc.comment}" variant="brand" label="Reply"  onclick="{! c.openModel }" />
                                                     </aura:if>
                                                     <lightning:button title="{!acc.CommentId}" name="{!acc.CommentedBy}" value="{!acc.comment}" variant="brand" label="View Replies"  onclick="{! c.viewCommentReplies }" />

@@ -226,8 +226,8 @@ export default class MoveToRefundTeam extends LightningElement {
                         productName: item.Product_Name__c,
                         brandName: item.Brand__c,
                         Id: item.Id,
-                        totalQuantity: item.Quantity,
-                        refundQuantity: item.Quantity,
+                        // totalQuantity: item.Quantity,
+                        // refundQuantity: item.Quantity,
                         //totalprice: item.TotalPrice,
                         isAlreadyUtilized: item.Is_Already_Utilized__c,
                         totalprice: item. UnitPrice,                      
@@ -245,12 +245,12 @@ export default class MoveToRefundTeam extends LightningElement {
                         productName: item.Product_Name__c,
                         brandName: item.Brand__c,
                         Id: item.Id,
-                        totalQuantity: item.Quantity,
-                        refundQuantity: item.Refund_Quantity__c,
+                        // totalQuantity: item.Quantity,
+                        // refundQuantity: item.Refund_Quantity__c,
                         //totalprice: item.TotalPrice,
                         isAlreadyUtilized: item.Is_Already_Utilized__c,
                         totalprice: item.UnitPrice,     //Total_Selling_Price__c,
-                        refundPrice: item.Refund_Price__c,
+                        refundPrice: item.Refunded_Price__c,
                         skudetail: item.SKU__c,
                         OliRefundReason: item.Refund_Reason__c,
                         refundtypeOli: item.Refund_Type__c,
@@ -327,48 +327,48 @@ export default class MoveToRefundTeam extends LightningElement {
 
     }
 
-    handelrefundChange(event) {
-        debugger;
-        const rowIndex = event.target.dataset.rowIndex;
-        if (parseInt(event.target.value) > this.records2[rowIndex].totalQuantity) {
-            alert('Refund Quantity Cannot be Greater Than Total Quantity!');
-            this.records2[rowIndex].refundQuantity = null;
-        } else {
-            this.records2[rowIndex].refundQuantity = parseInt(event.target.value);
-            console.log('test');
-            if (this.records2[rowIndex].refundQuantity != null && this.records2[rowIndex].totalQuantity != null && this.records2[rowIndex].totalprice != null) {
-                this.records2[rowIndex].refundPrice = (this.records2[rowIndex].Refunded_Price__c / this.records2[rowIndex].totalQuantity) * this.records2[rowIndex].refundQuantity;
-            }
-            this.records2 = [...this.records2];
-        }
-        //this.refundQuantity = event.target.value;
-    }
+    // handelrefundChange(event) {
+    //     debugger;
+    //     const rowIndex = event.target.dataset.rowIndex;
+    //     if (parseInt(event.target.value) > this.records2[rowIndex].totalQuantity) {
+    //         alert('Refund Quantity Cannot be Greater Than Total Quantity!');
+    //         this.records2[rowIndex].refundQuantity = null;
+    //     } else {
+    //         this.records2[rowIndex].refundQuantity = parseInt(event.target.value);
+    //         console.log('test');
+    //         if (this.records2[rowIndex].refundQuantity != null && this.records2[rowIndex].totalQuantity != null && this.records2[rowIndex].totalprice != null) {
+    //             this.records2[rowIndex].refundPrice = (this.records2[rowIndex].Refunded_Price__c / this.records2[rowIndex].totalQuantity) * this.records2[rowIndex].refundQuantity;
+    //         }
+    //         this.records2 = [...this.records2];
+    //     }
+    //     //this.refundQuantity = event.target.value;
+    // }
 
 
-    handelRefundTypeOLIChange(event) {
-        debugger;
-        const rowIndex = event.target.dataset.rowIndex;
-        this.records2[rowIndex].refundtypeOli = event.target.value;
-        if (this.records2[rowIndex].refundtypeOli == 'Full') {
-            this.records2[rowIndex].refundPrice = this.records2[rowIndex].Refunded_Price__c;
-            this.records2[rowIndex].refundQuantity = this.records2[rowIndex].totalQuantity;
-            this.records2[rowIndex].editable = true;
-            this.records2[rowIndex].disableReason = false;
-        }
-        else {
-            if (this.records2[rowIndex].refundQuantity != null && this.records2[rowIndex].totalQuantity != null && this.records2[rowIndex].totalprice != null) {
-                this.records2[rowIndex].refundPrice = (this.records2[rowIndex].Refunded_Price__c / this.records2[rowIndex].totalQuantity) * this.records2[rowIndex].refundQuantity;
-            } else {
-                this.records2[rowIndex].refundPrice = 0;
-            }
-            this.records2[rowIndex].refundtypeOli = event.target.value;
-            this.records2[rowIndex].editable = false;
-            if (this.totalprice != undefined && this.totalQuantity != null && this.refundQuantity != '') {
-            this.refundPrice = (this.totalprice / this.totalQuantity) * this.refundQuantity;
-            console.log('refund price' ,this.refundPrice);
-            }
-        }
-    }
+    // handelRefundTypeOLIChange(event) {
+    //     debugger;
+    //     const rowIndex = event.target.dataset.rowIndex;
+    //     this.records2[rowIndex].refundtypeOli = event.target.value;
+    //     if (this.records2[rowIndex].refundtypeOli == 'Full') {
+    //         this.records2[rowIndex].refundPrice = this.records2[rowIndex].Refunded_Price__c;
+    //         this.records2[rowIndex].refundQuantity = this.records2[rowIndex].totalQuantity;
+    //         this.records2[rowIndex].editable = true;
+    //         this.records2[rowIndex].disableReason = false;
+    //     }
+    //     else {
+    //         if (this.records2[rowIndex].refundQuantity != null && this.records2[rowIndex].totalQuantity != null && this.records2[rowIndex].totalprice != null) {
+    //             this.records2[rowIndex].refundPrice = (this.records2[rowIndex].Refunded_Price__c / this.records2[rowIndex].totalQuantity) * this.records2[rowIndex].refundQuantity;
+    //         } else {
+    //             this.records2[rowIndex].refundPrice = 0;
+    //         }
+    //         this.records2[rowIndex].refundtypeOli = event.target.value;
+    //         this.records2[rowIndex].editable = false;
+    //         if (this.totalprice != undefined && this.totalQuantity != null && this.refundQuantity != '') {
+    //         this.refundPrice = (this.totalprice / this.totalQuantity) * this.refundQuantity;
+    //         console.log('refund price' ,this.refundPrice);
+    //         }
+    //     }
+    // }
 
     handelRefundReasonChange(event) {
         debugger;
@@ -494,13 +494,15 @@ export default class MoveToRefundTeam extends LightningElement {
                 let obj = this.records2[i];
                 if (!obj.editable || ! obj.disableReason) {
                     isAtleastOneSelected = true;
-                    if(obj.refundtypeOli == null || obj.refundtypeOli == undefined || obj.refundtypeOli == ''){
-                        alert("Please Fill Refund Type for Product " + (i + 1));
-                    return;
-                    }else if(obj.refundQuantity == undefined || obj.refundQuantity == null || obj.refundQuantity == 0){
-                        alert("Please Fill Refund Quantity for record " + (i + 1));
-                        return;
-                    }else if(obj.refundreasonPickListValue == undefined || obj.refundreasonPickListValue == null || obj.refundreasonPickListValue == ''){
+                    // if(obj.refundtypeOli == null || obj.refundtypeOli == undefined || obj.refundtypeOli == ''){
+                    //     alert("Please Fill Refund Type for Product " + (i + 1));
+                    // return;
+                    // }else 
+                    // if(obj.refundQuantity == undefined || obj.refundQuantity == null || obj.refundQuantity == 0){
+                    //     alert("Please Fill Refund Quantity for record " + (i + 1));
+                    //     return;
+                    // }else 
+                    if(obj.refundreasonPickListValue == undefined || obj.refundreasonPickListValue == null || obj.refundreasonPickListValue == ''){
                         alert("Please Fill Refund Reason for record " + (i + 1));
                         return;
                     }                  
@@ -510,9 +512,9 @@ export default class MoveToRefundTeam extends LightningElement {
                     }
                     updatedRecords.push({
                         Refund_Price__c: obj.refundPrice,
-                        Refund_Quantity__c: obj.refundQuantity,
+                        //Refund_Quantity__c: obj.refundQuantity,
                         Refund_Reason__c: obj.OliRefundReason,
-                        Refund_Type__c: obj.refundtypeOli,
+                       // Refund_Type__c: obj.refundtypeOli,
                         Refund_Reasons__c: obj.refundreasonPickListValue,
                         Is_Already_Utilized__c : true,
                         Id: obj.Id
@@ -521,9 +523,9 @@ export default class MoveToRefundTeam extends LightningElement {
                 else {
                     updatedRecords.push({
                         Refund_Price__c: 0,
-                        Refund_Quantity__c: 0,
+                        //Refund_Quantity__c: 0,
                         Refund_Reason__c: null,
-                        Refund_Type__c: null,
+                        //Refund_Type__c: null,
                         Refund_Reasons__c:null,
                         Is_Already_Utilized__c : false,
                         Id: obj.Id
@@ -539,10 +541,11 @@ export default class MoveToRefundTeam extends LightningElement {
         } else {
             for (let i = 0; i < this.records.length; i++) {
                 let obj = this.records[i];
-                if(obj.refundtypeOli == null || obj.refundtypeOli == undefined || obj.refundtypeOli == ''){
-                    alert("Please Fill Refund Type for Product " + (i + 1));
-                return;
-                }else if(obj.refundreasonPickListValue == undefined || obj.refundreasonPickListValue == null || obj.refundreasonPickListValue == ''){
+                // if(obj.refundtypeOli == null || obj.refundtypeOli == undefined || obj.refundtypeOli == ''){
+                //     alert("Please Fill Refund Type for Product " + (i + 1));
+                // return;
+                // }else 
+                if(obj.refundreasonPickListValue == undefined || obj.refundreasonPickListValue == null || obj.refundreasonPickListValue == ''){
                     alert("Please Fill Refund Reason for record " + (i + 1));
                     return;
                 }                  
@@ -552,9 +555,9 @@ export default class MoveToRefundTeam extends LightningElement {
                 }
                 updatedRecords.push({
                     Refund_Price__c: obj.refundPrice,
-                    Refund_Quantity__c: obj.refundQuantity,
+                   // Refund_Quantity__c: obj.refundQuantity,
                     Refund_Reason__c: obj.OliRefundReason,
-                    Refund_Type__c : obj.refundOptions,
+                    //Refund_Type__c : obj.refundOptions,
                     Refund_Reasons__c: obj.refundreasonPickListValue,
                     Is_Already_Utilized__c : true,
                     Id: obj.Id

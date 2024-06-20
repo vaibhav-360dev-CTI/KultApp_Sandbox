@@ -47,6 +47,14 @@ export default class InstaDmLwcComp extends LightningElement {
             caseId: this.recordId
         })
         .then(result => {
+            if(result == 'Conversation window ended by customer..!!'){
+            const event = new ShowToastEvent({
+                title: 'Message Failed!',
+                message: result,
+                variant: 'error'
+            });
+            this.dispatchEvent(event);
+            }else{
             const event = new ShowToastEvent({
                 title: 'Success!',
                 message: 'Message sent successfully!!',
@@ -54,6 +62,7 @@ export default class InstaDmLwcComp extends LightningElement {
             });
             this.dispatchEvent(event);
             this.doInit();
+            }
         })
         .catch(error => {
             console.error('Error sending message:', error);

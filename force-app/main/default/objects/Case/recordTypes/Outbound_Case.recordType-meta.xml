@@ -1448,6 +1448,41 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Tech_Issue_Type__c</picklist>
+        <values>
+            <fullName>Compatibility Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Crash Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Functionality Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Network Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Performance Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Security Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UI%2FUX Issues</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Update Issues</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Type</picklist>
         <values>
             <fullName>Courier Partner Remarks</fullName>
@@ -1511,10 +1546,6 @@
     </picklistValues>
     <picklistValues>
         <picklist>Type_of_Call__c</picklist>
-        <values>
-            <fullName>Feedback</fullName>
-            <default>false</default>
-        </values>
         <values>
             <fullName>Sales</fullName>
             <default>false</default>

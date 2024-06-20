@@ -3,6 +3,9 @@
 <template>
     <template if:true={show1stPage}>
         <lightning-card title="Merge Cases" icon-name="utility:merge">
+            <div class="slds-align_absolute-center" style="height:5rem">
+                <lightning-input type="text" onchange={handleChange} label="Filter by Case Number"></lightning-input>
+            </div>
             <div class="slds-m-around_medium">
                 <lightning-datatable
                 key-field="Id"

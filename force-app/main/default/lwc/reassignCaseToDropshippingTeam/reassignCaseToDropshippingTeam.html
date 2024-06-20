@@ -1,0 +1,24 @@
+<template>
+	<lightning-quick-action-panel header="Re-Assign To Dropshipping Team ">
+		<lightning-layout multiple-rows>
+			<lightning-layout-item size="12" small-device-size="12" medium-device-size="6" large-device-size="6"
+				padding="horizontal-small">
+				<div class="custom-box">
+					<lightning-input type="text" name="AssignReason" label="Reason for Reassignment" onchange={handleChange} required></lightning-input>
+				</div>
+			</lightning-layout-item>
+			<lightning-layout-item size="12" small-device-size="12" medium-device-size="6" large-device-size="6"
+				padding="horizontal-small">
+				<div class="custom-box"> 
+					<lightning-combobox label="Select User" placeholder="Choose User" value={value} onchange={handleChange} options={statusOptions} name="userName"></lightning-combobox> 
+				</div>
+			</lightning-layout-item>
+		</lightning-layout>
+		<div slot="footer">
+			<lightning-button variant="neutral" onclick={closeAction} name="cancel" label="Cancel"></lightning-button>
+			&nbsp;&nbsp;
+			<lightning-button variant="Brand" onclick={handleSave} name="Save" label="Save" disabled={disableButton}>
+			</lightning-button>
+		</div>
+	</lightning-quick-action-panel>
+</template>

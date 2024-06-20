@@ -75,10 +75,17 @@
         component.set("v.showFirstScreen",false);
         component.set('v.NotRefundMember', false);
     },
-
     handleClickDelayInDelivery : function(component,event,helper){
         debugger;
         var tempName = 'DeleayInDelivery';
+        component.set("v.tempNameToDownload",tempName);
+        component.set("v.showScondScreen",true);
+        component.set("v.showFirstScreen",false);
+    },
+
+    handleClickCSOutbound : function(component,event,helper){
+        debugger;
+        var tempName = 'CSoutbound';
         component.set("v.tempNameToDownload",tempName);
         component.set("v.showScondScreen",true);
         component.set("v.showFirstScreen",false);

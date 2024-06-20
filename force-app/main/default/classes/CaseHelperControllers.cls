@@ -72,7 +72,6 @@ public class CaseHelperControllers {
             List<String> caseFieldSetList = new List<String>();
             List<Schema.FieldSetMember> FieldSetListFromCase  = SobjectType.Case.FieldSets.Field_set_For_Order_Related.getFields();
             for(Schema.FieldSetMember fieldsToAdd : FieldSetListFromCase){
-                System.debug('Fields === >'+String.valueOf(fieldsToAdd.sobjectfield));
                 caseFieldSetList.add(String.valueOf(fieldsToAdd.sobjectfield));
             }
             if(caseFieldSetList.size()>0){
@@ -96,7 +95,6 @@ public class CaseHelperControllers {
         try {
             case recordToupdate = [Select Id,Status from case WHERE Id =: recId];
             recordToupdate.Status =  Status;
-            System.debug('case status====>'+Status);
             update recordToupdate;       
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage() + ' AND Error Line No :' + e.getLineNumber());
@@ -122,7 +120,6 @@ public class CaseHelperControllers {
             List<String> caseFieldSetList = new List<String>();
             List<Schema.FieldSetMember> FieldSetListFromCase  = SobjectType.Case.FieldSets.Field_Set_For_Case_Child_Creation.getFields();
             for(Schema.FieldSetMember fieldsToAdd : FieldSetListFromCase){
-                System.debug('Fields === >'+String.valueOf(fieldsToAdd.sobjectfield));
                 caseFieldSetList.add(String.valueOf(fieldsToAdd.sobjectfield));
             }
             if(caseFieldSetList.size()>0){
@@ -175,17 +172,13 @@ public class CaseHelperControllers {
     
     @AuraEnabled
     public static Case caseRecord(String caseId){
-        system.debug('recordId::::::::>'+caseId);
         case cs =  [SELECT Id,RecordTypeId,Parent_Case__c FROM Case where Id =: caseId];
-        system.debug('cs::::::::>'+cs);
         return cs;
         
     }
     @AuraEnabled
     public static Case getCaseRecord(String caseId){
-        system.debug('recordId::::::::>'+caseId);
         case cs =  [SELECT Id,RecordTypeId,Parent_Case__c,Sub_Type__c,Sub_Sub_Type__c,OwnerId,Subject,Status,Origin,AccountId,Contact_Number__c,ContactId,Owner.Name FROM Case where Id =: caseId];
-        system.debug('cs::::::::>'+cs);
         return cs;
         
     }
@@ -193,7 +186,6 @@ public class CaseHelperControllers {
     @AuraEnabled
     public static Case getCaseRecords(){
         case cs =  [SELECT Id,RecordTypeId,Parent_Case__c,Sub_Type__c,Sub_Sub_Type__c,OwnerId,Subject,Status,Origin,AccountId,Contact_Number__c,ContactId,Owner.Name FROM Case LIMIT 1];
-        system.debug('cs::::::::>'+cs);
         return cs;
         
     }
@@ -228,7 +220,6 @@ public class CaseHelperControllers {
         for(Schema.RecordTypeInfo info : recordTypeInfo){
             mapOfRecordTypeIdWithName.put(info.getRecordTypeId(), info.getName());
         }
-        System.debug('Record Type Id With Name' + mapOfRecordTypeIdWithName);
         return mapOfRecordTypeIdWithName;
         
     }
@@ -258,7 +249,6 @@ public class CaseHelperControllers {
         
         for(Schema.PicklistEntry currControllingValue : controllingValues)
         {
-            System.debug('ControllingField: Label:' + currControllingValue.getLabel());
             controllingInfo.put(currControllingValue.getLabel(), new List<String>());
         }
         
@@ -269,9 +259,7 @@ public class CaseHelperControllers {
             MyPickListInfo info = (MyPickListInfo) JSON.deserialize(jsonString, MyPickListInfo.class);
             
             String hexString = EncodingUtil.convertToHex(EncodingUtil.base64Decode(info.validFor)).toUpperCase();
-            
-            System.debug('DependentField: Label:' + currDependentValue.getLabel() + ' ValidForInHex:' + hexString + ' JsonString:' + jsonString);
-            
+                    
             Integer baseCount = 0;
             
             for(Integer curr : hexString.getChars())
@@ -289,31 +277,25 @@ public class CaseHelperControllers {
                 
                 if((val & 8) == 8)
                 {
-                    System.debug('Dependent Field: ' + currDependentValue.getLabel() + ' Partof ControllingField:' + controllingValues[baseCount + 0].getLabel());
                     controllingInfo.get(controllingValues[baseCount + 0].getLabel()).add(currDependentValue.getLabel());
                 }
                 if((val & 4) == 4)
                 {
-                    System.debug('Dependent Field: ' + currDependentValue.getLabel() + ' Partof ControllingField:' + controllingValues[baseCount + 1].getLabel());
                     controllingInfo.get(controllingValues[baseCount + 1].getLabel()).add(currDependentValue.getLabel());                    
                 }
                 if((val & 2) == 2)
                 {
-                    System.debug('Dependent Field: ' + currDependentValue.getLabel() + ' Partof ControllingField:' + controllingValues[baseCount + 2].getLabel());
                     controllingInfo.get(controllingValues[baseCount + 2].getLabel()).add(currDependentValue.getLabel());                    
                 }
                 if((val & 1) == 1)
                 {
-                    System.debug('Dependent Field: ' + currDependentValue.getLabel() + ' Partof ControllingField:' + controllingValues[baseCount + 3].getLabel());
                     controllingInfo.get(controllingValues[baseCount + 3].getLabel()).add(currDependentValue.getLabel());                    
                 }
                 
                 baseCount += 4;
             }            
         }
-        
-        System.debug('ControllingInfo: ' + controllingInfo);
-        
+                
         return controllingInfo;
     }
     class MyPickListInfo {
@@ -326,18 +308,17 @@ public class CaseHelperControllers {
     
     @AuraEnabled
     public static string reOpenCase(String RecId, String Reason){
-        system.debug('RecId:::::::::>'+RecId);
-        system.debug('Reason:::::::::>'+Reason);
         try {
             Case Cs = new Case();
+            Cs.Id = RecId;
+            Cs.OwnerId = userInfo.getUserId();
+            update Cs;
             set<Id> setOfOwnerId = new set<Id>();
             if(Reason != null){                   
-                cs.Id = RecId;
                 cs.Status = 'Re-Opened';
                 cs.Re_Opening_Reason__c = Reason;  
             }
             update cs;
-            system.debug('cs:::::>'+cs);
             Case cseList = [SELECT Id,ContactId,Contact.Email,OwnerId,Owner.email From Case Where Id =: cs.Id];
             String CaseOwnId = cseList.Owner.email;
             
@@ -350,7 +331,6 @@ public class CaseHelperControllers {
             notification.setSenderId(UserInfo.getUserId());
             notification.setNotificationTypeId(customNotiList.Id); 
             notification.setTargetId(cs.Id);
-            System.debug('notification:::::::::::>' + notification);
             if(cseList.OwnerId != null){
                 notification.send(new set<String>{cseList.OwnerId});
             }
@@ -424,9 +404,7 @@ public class CaseHelperControllers {
                 } else {
                     mapOfPicklist.get(data.RecordType__c).addAll(listOfString);
                 }
-            }
-            system.debug('mapOfPicklist:::::::>'+mapOfPicklist);
-            
+            }            
             return mapOfPicklist;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -434,7 +412,6 @@ public class CaseHelperControllers {
     }
     @AuraEnabled
     public static String createChildCase(String RecordTypeName, String Type, String SubType, String AccId, String conId, String Subjt, String conNumber, String recId, Id ownId) {
-        system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'AccId===>'+AccId+ 'conId===>'+conId+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId+ 'ownId===>'+ownId);
         try {
             Case newCase = new Case();
             if (RecordTypeName != null && Type != null && SubType != null) {
@@ -466,7 +443,6 @@ public class CaseHelperControllers {
                 insert newCase;
                 setOfOwnerId.add(newCase.OwnerId);
                 cseList.add(newCase);
-                System.debug('newCase:::::::::::>' + newCase);
                 
                 // Case caseRec = new Case(Id = recId, Parent_Case__c = newCase.Id);
                 // update caseRec;
@@ -479,11 +455,9 @@ public class CaseHelperControllers {
                 List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
                 EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
                 Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
-                System.debug('userList:::::::::::>' + userList);
                 for (User us : userList) {
                     setOfUserId.add(us.Id);
                 }
-                System.debug('setOfUserId:::::::::::>' + setOfUserId);
                 
                 // notification to user
                 notification.setBody('A New Case Has been created. Please check the details.');
@@ -501,8 +475,6 @@ public class CaseHelperControllers {
                 //mail.setTargetObjectId(newCase.Id);
                 mail.setToAddresses(new List<String> { UserInfo.getUserId() });
                 mailList.add(mail);
-                
-                System.debug('notification:::::::::::>' + notification);
                 notification.send(new Set<String> { newCase.OwnerId });
                 // Messaging.sendEmail(mailList);
                 
@@ -518,7 +490,6 @@ public class CaseHelperControllers {
     @AuraEnabled
     public static List<Case>  getRelatedCases(String recId) {
         Case cse = [SELECT Id, CaseNumber, Subject,Order_Number__c, OrderId__r.Name,RecordType.Name,OrderId__c,Sub_Type__c,Sub_Sub_Type__c,AccountId,ContactId,Email_Id__c FROM Case WHERE Id = :recId];
-        System.debug('cse:::::::::::>' + cse);
         Set<Id> caseOrderIds = new Set<Id>();
         set<String> TypeString = new set<String>();
         set<String> SubTypeString = new set<String>();
@@ -527,15 +498,12 @@ public class CaseHelperControllers {
             TypeString.add(cse.Sub_Type__c);
             SubTypeString.add(cse.Sub_Sub_Type__c);
         }
-        System.debug('caseOrderIds:::::::::::>' + caseOrderIds);
         List<Case> caseList = [SELECT Id, Subject, Origin, Status, OrderId__r.OrderNumber,CaseNumber,Sub_Type__c,Sub_Sub_Type__c,RecordType.Name,RecordTypeId FROM Case WHERE OrderId__c IN :caseOrderIds AND Sub_Type__c IN: TypeString  AND  Sub_Sub_Type__c IN: SubTypeString AND ParentId = null Order By CreatedDate];
-        System.debug('caseList:::::::::::>' + caseList);
         return caseList;
     }
     @AuraEnabled
     public static List<Case>  mergeCaseBasedOnAccIdConIdEmailIdPhoneNumberInstagram(String recId) {
         Case cse = [SELECT Id, CaseNumber, SuppliedEmail, SuppliedPhone, Subject, Order_Number__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE Id = :recId];
-        System.debug('cse:::::::::::>' + cse);
         Set<Id> caseAccountIds = new Set<Id>();
         Set<Id> caseContactIds = new Set<Id>();
         set<String> TypeString = new set<String>();
@@ -564,19 +532,15 @@ public class CaseHelperControllers {
                                 OR Contact_Number__c IN :contactNumberString OR SuppliedPhone IN :contactNumberString OR Instagram_ID__c IN :InstagramString) AND Status != 'Closed' Order By CreatedDate];
         return caseList;
     }
-    
+     
     @AuraEnabled
     public static String mergeDuplicateCases(List<String> cases) {
         try{
-            System.debug('cases:::::::::::>' + cases);
             String caseId; 
             String caseNo; 
             List<Case> cseList = [SELECT Id,Status,CreatedDate,caseNumber,Case_Reason_Description__c From Case Where Id IN: cases Order By CreatedDate ASC];
-            System.debug('cseList:::::::::::>' + cseList);
             caseId = cseList[0].Id;
             caseNo = cseList[0].caseNumber;
-            System.debug('caseId:::::::::::>' + caseId);
-            System.debug('caseNo:::::::::::>' + caseNo);
             List<Case> updatingCaseList = new List<Case>();
             for(Case cse : cseList){
                 if(cse.Id != caseId){
@@ -586,7 +550,6 @@ public class CaseHelperControllers {
                 }
             }
             update updatingCaseList;
-            system.debug('updatingCaseList=============>'+updatingCaseList);
             return 'SUCCESS';
         }catch(Exception e ){
             System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
@@ -596,32 +559,24 @@ public class CaseHelperControllers {
     
     @AuraEnabled
     public static List<Case> mergeSelectedCases(String caseId, List<Case> cases) {
-        System.debug('CaseId:::::::::::>' + caseId);
-        System.debug('cases:::::::::::>' + cases);
-        
+
         Set<Id> setOfCaseId = new Set<Id>();
         List<String> caseIdList = caseId.split(',');
         for (String cs : caseIdList) {
             setOfCaseId.add(cs);
-        }
-        System.debug('setOfCaseId:::::::::::>' + setOfCaseId);
-        
+        }        
         Set<Id> caseIdsToMerge = new Set<Id>();
         for (Case cs : cases) {
             caseIdsToMerge.add(cs.Id);
         }
-        System.debug('caseIdsToMerge:::::::::::>' + caseIdsToMerge);
         
         caseIdsToMerge.removeAll(setOfCaseId);
-        System.debug('caseIdsToMerge:::::::::::>' + caseIdsToMerge);
         
         List<Case> casesToMerge = [SELECT Id, CaseNumber, Subject, Origin, Status, OrderId__r.OrderNumber, ParentId FROM Case WHERE Id IN :caseIdsToMerge];
-        System.debug('casesToMerge:::::::::::>' + casesToMerge);
         List<Case> casesToUpdate = new List<Case>();
         
         for (Case c : casesToMerge) {
             c.ParentId = setOfCaseId.isEmpty() ? null : setOfCaseId.iterator().next();
-            System.debug('c.ParentId:::::::::::>' + c.ParentId);
             casesToUpdate.add(c);
         }
         
@@ -629,478 +584,8 @@ public class CaseHelperControllers {
         return casesToUpdate;
     }
     
-    
-    //this method is not used anywhere
-    /*  public static void sendEmailToUserAndNotificationToUserPincodeNotServiceable(List<Case> caseList,  map<Id,Case> oldMapCase) {
-EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Order_Issue_Pin_Code_Unserviceable_Refund_Initiated'];
-List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_pincode_not_serviceable'];
-Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
-List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
-
-String str = temp.HTMLValue;
-String body = temp.body;
-
-set<Id> setOfId = new set<Id>();
-set<Id> setOfOrderId = new set<Id>();
-for(case cs : caseList){
-setOfId.add(cs.contactId);
-setOfOrderId.add(cs.OrderId__c);
-}
-List<User> userList = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'Refund Team'];
-set<String> refundTeamUsers = new set<String>();
-List<Id> refundTeamTaskUsers = new List<Id>();
-for(User usr : userList){
-refundTeamUsers.add(usr.Id);
-refundTeamTaskUsers.add(usr.Id);
-}
-
-List<User> userListForWareHouse = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'WareHouse Team'];
-set<String> WareHouseUsers = new set<String>();
-for(User usr : userListForWareHouse){
-WareHouseUsers.add(usr.Id);
-
-}
-
-
-List<String> emailString1 = new List<String>();
-List<decimal> ordNumber = new List<decimal>();
-Map<Id,Contact> mapOfContact = new Map<Id,Contact>();
-
-List<Contact> conList =[SELECT Id,Name,Email From Contact Where Id IN:setOfId];
-
-Map<Id,Order> mapOfOrd = new Map<Id,Order>();
-List<Order> orderList = [SELECT Id,CreatedDate,OrderNumber From Order Where Id IN:setOfOrderId];
-for(Order ord : orderList){
-if(!mapOfOrd.containsKey(ord.Id)){
-mapOfOrd.put(Ord.Id,Ord);
-}
-}
-
-for(Contact con : conList){
-mapOfContact.put(con.Id, con);
-}
-
-List<String> emailString = new List<String>();
-
-List<task> taskList = new List<task>();
-for (Case cse : caseList) {
-
-if(cse.OutBound_PinCode_not_Serviceable__c != oldMapCase.get(cse.Id).OutBound_PinCode_not_Serviceable__c){
-// if (cse.OutBound_PinCode_not_Serviceable__c == true) {
-Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-Messaging.CustomNotification notification = new Messaging.CustomNotification();
-Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-
-if (cse.ContactId != null) {
-Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-}
-if (cse.OrderId__c != null) {
-Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-}
-if (cse.CreatedDate != null) {
-Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-}
-if (cse.Address_With_Pin_Code__PostalCode__s != null) {
-Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
-}
-if (cse.Amount_Paid__c != null) {
-Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
-}if(mapOfContact.get(cse.ContactId).Email != null){
-emailString.add(mapOfContact.get(cse.ContactId).Email);
-}
-mail.setSubject(temp != null ? temp.Subject : '');
-mail.setPlainTextBody(Body);
-mail.setTemplateId(temp != null ? temp.Id : null);
-mail.setSaveAsActivity(true);
-mail.setWhatId(cse.Id);
-mail.setToAddresses(emailString);
-mailList.add(mail);
-
-notification.setBody('Dear Refund teams, Please take a look of this Order as pincode is not serviceable, Please Do the Refund as early as Possible'); 
-notification.setTitle('Pincode Not ServiceAble'); 
-notification.setSenderId(Userinfo.getUserId()); 
-notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-notification.setTargetId(cse.id);
-notification.send(refundTeamUsers);
-
-WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order as pincode is not serviceable, Please Do not delivery the Order'); 
-WareHouseNotification.setTitle('Pincode Not ServiceAble'); 
-WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-WareHouseNotification.setTargetId(cse.id);
-WareHouseNotification.send(WareHouseUsers);
-
-task tsk = new task();
-tsk.subject ='Refund the Money To Customer';
-tsk.Priority = 'High';
-tsk.ActivityDate = System.today().addDays(2);
-tsk.whatId =   cse.Id;
-tsk.OwnerId = refundTeamTaskUsers[0];
-taskList.add(tsk);
-
-} 
-if(cse.InBound_PinCode_not_Serviceable__c != oldMapCase.get(cse.Id).InBound_PinCode_not_Serviceable__c) {   
-//  else if (cse.InBound_PinCode_not_Serviceable__c == true) {
-Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-Messaging.CustomNotification notification = new Messaging.CustomNotification();
-Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-
-if (cse.ContactId != null) {
-Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-}
-if (cse.OrderId__c != null) {
-Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-}
-if (cse.CreatedDate != null) {
-Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-}
-if (cse.Address_With_Pin_Code__PostalCode__s != null) {
-Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
-}
-if (cse.Amount_Paid__c != null) {
-Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
-}
-if(mapOfContact.get(cse.ContactId).Email != null){
-emailString.add(mapOfContact.get(cse.ContactId).Email);
-}
-mail.setPlainTextBody(Body);
-mail.setTemplateId(temp != null ? temp.Id : null);
-mail.setSaveAsActivity(true);
-mail.setWhatId(cse.Id);
-mail.setToAddresses(emailString);
-mailList.add(mail);
-system.debug('mailList:::::::::>' + mailList);
-
-notification.setBody('Dear Refund teams, Please take a look of this Order as pincode is not serviceable, Please Do the Refund as early as Possible'); 
-notification.setTitle('Pincode Not ServiceAble'); 
-notification.setSenderId(Userinfo.getUserId()); 
-notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-notification.setTargetId(cse.id);
-notification.send(refundTeamUsers); 
-system.debug('notification:::::::::>' + notification);
-
-
-WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order as pincode is not serviceable, Please Do not delivery the Order'); 
-WareHouseNotification.setTitle('Pincode Not ServiceAble'); 
-WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-WareHouseNotification.setTargetId(cse.id);
-WareHouseNotification.send(WareHouseUsers);
-
-task tsk = new task();
-tsk.subject ='Refund the Money To Customer';
-tsk.Priority = 'High';
-tsk.ActivityDate = System.today().addDays(2);
-tsk.whatId =   cse.Id;
-tsk.OwnerId = refundTeamTaskUsers[0];
-taskList.add(tsk);
-}
-}
-
-if (!mailList.isEmpty()) {
-//Messaging.sendEmail(mailList);
-}
-Insert taskList;
-system.debug('taskList:::::::::>' + taskList);
-
-} */
-    
-    
-    
-    
-    //this method is not used anywhere
-    /*  public static void sendEmailToUserAndNotificationToUserDelayInDelivery(List<Case> caseList, map<Id,Case> oldMapCase) {
-EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Urgent_Customer_Unresponsive_After_3_Attempted_Calls_Regarding_Delayed_Order'];
-List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_dealy_delivery'];
-Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
-List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
-
-String str = temp.HTMLValue;
-String body = temp.body;
-
-set<Id> setOfId = new set<Id>();
-set<Id> setOfOrderId = new set<Id>();
-for(case cs : caseList){
-setOfId.add(cs.contactId);
-setOfOrderId.add(cs.OrderId__c);
-}
-List<User> userList = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'Refund Team'];
-set<String> refundTeamUsers = new set<String>();
-List<Id> refundTeamTaskUsers = new List<Id>();
-for(User usr : userList){
-refundTeamUsers.add(usr.Id);
-refundTeamTaskUsers.add(usr.Id);
-}
-
-
-List<User> userListForWareHouse = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'WareHouse Team'];
-set<String> WareHouseUsers = new set<String>();
-for(User usr : userListForWareHouse){
-WareHouseUsers.add(usr.Id);
-}
-
-List<User> usersListForOwner = [SELECT Id,Name,Email From User];
-Map<Id,User> mapOfUser = new Map<Id,User>();
-for(User usr : usersListForOwner){
-mapOfUser.put(usr.Id,usr);
-}
-List<String> emailString1 = new List<String>();
-List<decimal> ordNumber = new List<decimal>();
-Map<Id,Contact> mapOfContact = new Map<Id,Contact>();
-
-List<Contact> conList =[SELECT Id,Name,Email From Contact Where Id IN:setOfId];
-
-Map<Id,Order> mapOfOrd = new Map<Id,Order>();
-List<Order> orderList = [SELECT Id,CreatedDate,OrderNumber From Order Where Id IN:setOfOrderId];
-for(Order ord : orderList){
-if(!mapOfOrd.containsKey(ord.Id)){
-mapOfOrd.put(Ord.Id,Ord);
-}
-}
-
-for(Contact con : conList){
-mapOfContact.put(con.Id, con);
-}
-List<String> emailString = new List<String>();
-
-List<task> taskList = new List<task>();
-for (Case cse : caseList) {
-
-if(cse.OutBound_Dealy_In_Delivery__c != oldMapCase.get(cse.Id).OutBound_Dealy_In_Delivery__c){
-Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-Messaging.CustomNotification notification = new Messaging.CustomNotification();
-Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-
-if (cse.ContactId != null) {
-Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-} 
-if (cse.OrderId__c != null) {
-Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-}
-if (cse.CreatedDate != null) {
-Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-}
-if (cse.OwnerId != null) {
-Body = Body.replace('{!Case.OwnerFullName}', mapOfUser.get(cse.OwnerId).Name);
-}
-
-
-if(mapOfContact.get(cse.ContactId).Email != null){
-emailString.add(mapOfContact.get(cse.ContactId).Email);
-}
-mail.setSubject(temp != null ? temp.Subject : '');
-mail.setPlainTextBody(Body);
-mail.setTemplateId(temp != null ? temp.Id : null);
-mail.setSaveAsActivity(true);
-mail.setWhatId(cse.Id);
-mail.setToAddresses(emailString);
-mailList.add(mail);
-
-notification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
-notification.setTitle('Delay in Delivery'); 
-notification.setSenderId(Userinfo.getUserId()); 
-notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-notification.setTargetId(cse.id);
-notification.send(refundTeamUsers);
-
-WareHouseNotification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
-WareHouseNotification.setTitle('Delay in Delivery'); 
-WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-WareHouseNotification.setTargetId(cse.id);
-WareHouseNotification.send(WareHouseUsers);
-
-task tsk = new task();
-tsk.subject ='Delay in Delivery';
-tsk.Priority = 'High';
-tsk.ActivityDate = System.today().addDays(2);
-tsk.whatId =   cse.Id;
-tsk.OwnerId = refundTeamTaskUsers[0];
-taskList.add(tsk);
-
-}
-if(cse.Inbound_Dealy_In_Delivery__c != oldMapCase.get(cse.Id).Inbound_Dealy_In_Delivery__c){
-// else if (cse.Inbound_Dealy_In_Delivery__c == true) {
-Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-Messaging.CustomNotification notification = new Messaging.CustomNotification();
-Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-
-if (cse.ContactId != null) {
-Body = Body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-}
-
-if (cse.OrderId__c != null) {
-Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-}
-if (cse.CreatedDate != null) {
-Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-}
-if (cse.OwnerId != null) {
-Body = Body.replace('{!Case.OwnerFullName}', mapOfUser.get(cse.OwnerId).Name);
-}
-if(mapOfContact.get(cse.ContactId).Email != null){
-emailString.add(mapOfContact.get(cse.ContactId).Email);
-}
-mail.setPlainTextBody(Body);
-mail.setTemplateId(temp != null ? temp.Id : null);
-mail.setSaveAsActivity(true);
-mail.setWhatId(cse.Id);
-mail.setToAddresses(emailString);
-mailList.add(mail);
-system.debug('mailList:::::::::>' + mailList);
-
-notification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
-notification.setTitle('Delay in Delivery'); 
-notification.setSenderId(Userinfo.getUserId()); 
-notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-notification.setTargetId(cse.id);
-notification.send(refundTeamUsers);   
-system.debug('notification:::::::::>' + notification);
-
-WareHouseNotification.setBody('Dear Warehouse and Refund teams,Please take a look at product delays in delivery and correct the issue promptly.'); 
-WareHouseNotification.setTitle('Delay in Delivery'); 
-WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-WareHouseNotification.setTargetId(cse.id);
-WareHouseNotification.send(WareHouseUsers);
-
-task tsk = new task();
-tsk.subject ='Delay in Delivery';
-tsk.Priority = 'High';
-tsk.ActivityDate = System.today().addDays(2);
-tsk.whatId =   cse.Id;
-tsk.OwnerId = refundTeamTaskUsers[0];
-taskList.add(tsk);
-}
-}
-
-if (!mailList.isEmpty()) {
-//  Messaging.sendEmail(mailList);
-}
-Insert taskList;
-system.debug('taskList:::::::::>' + taskList);
-
-} */
-    
-    
-    //this method is not used anywhere
-    /*   public static void sendEmailToContactOwnerAndSendNotificationToOMSTeam(List<Case> caseList, map<Id,Case> oldMapCase){
-EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Order_Issue_Pin_Code_Unserviceable_Refund_Initiated'];
-List<CustomNotificationType> TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='custom_notification_to_refund_team_on_pincode_not_serviceable'];
-Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
-List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
-
-String str = temp.HTMLValue;
-String body = temp.Body;
-
-Set<Id> setOfId = new Set<Id>();
-Set<Id> setOfAccId = new Set<Id>();
-Set<Id> setOfOrderId = new Set<Id>();
-for (Case cs : caseList) {
-if(cs.AccountId != null){
-setOfAccId.add(cs.AccountId);
-}else if(cs.ContactId != null){
-setOfId.add(cs.ContactId);
-}
-setOfOrderId.add(cs.OrderId__c);
-}
-System.debug('setOfOrderId:::::::::>' + setOfOrderId);
-System.debug('setOfId:::::::::>' + setOfId);
-System.debug('setOfAccId:::::::::>' + setOfAccId);
-List<User> userList = [SELECT Id, Name, Profile.Name,Email FROM User WHERE Profile.Name = 'Order Management Team'];
-System.debug('userList:::::::::>' + userList);
-Set<String> OrderManagementTeamUsers = new Set<String>();
-List<String> OMTEmail = new List<String>();
-List<Id> OrderManagementTeamTaskUsers = new List<Id>();
-for (User usr : userList) {
-OrderManagementTeamUsers.add(usr.Id);
-OrderManagementTeamTaskUsers.add(usr.Id);
-OMTEmail.add(usr.Email);
-}
-System.debug('OrderManagementTeamUsers:::::::::>' + OrderManagementTeamUsers);
-System.debug('OrderManagementTeamTaskUsers:::::::::>' + OrderManagementTeamTaskUsers);
-
-List<String> emailString1 = new List<String>();
-List<Decimal> ordNumber = new List<Decimal>();
-Map<Id, Contact> mapOfContact = new Map<Id, Contact>();
-Map<Id, Account> mapOfAccount = new Map<Id, Account>();
-
-List<Contact> conList = [SELECT Id, Name, Email FROM Contact WHERE Id IN :setOfId];
-List<Account> accList = [SELECT Id, Name, Email__c FROM Account WHERE Id IN: setOfAccId];
-
-Map<Id, Order> mapOfOrd = new Map<Id, Order>();
-List<Order> orderList = [SELECT Id, CreatedDate, OrderNumber FROM Order WHERE Id IN :setOfOrderId];
-for (Order ord : orderList) {
-if (!mapOfOrd.containsKey(ord.Id)) {
-mapOfOrd.put(ord.Id, ord);
-}
-}
-
-for (Contact con : conList) {
-mapOfContact.put(con.Id, con);
-}
-for (Account acc : accList) {
-mapOfAccount.put(acc.Id, acc);
-}
-List<String> emailString = new List<String>();
-
-List<Task> taskList = new List<Task>();
-for (Case cse : caseList) {
-if (cse.Reason_for_RTO__c != null) {
-if(cse.Reason_for_RTO__c != oldMapCase.get(cse.Id).Reason_for_RTO__c){
-Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-Messaging.CustomNotification notification = new Messaging.CustomNotification();
-
-if (cse.AccountId != null) {
-body = body.replace('{!Case.Account}', mapOfAccount.get(cse.AccountId).Name);
-}
-else if (cse.ContactId != null) {
-body = body.replace('{!Case.Contact}', mapOfContact.get(cse.ContactId).Name);
-}
-if (cse.OrderId__c != null) {
-body = body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-}
-if (cse.CreatedDate != null) {
-body = body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-}
-mail.setSubject(temp != null ? temp.Subject : '');
-mail.setPlainTextBody(body);
-mail.setTemplateId(temp != null ? temp.Id : null);
-mail.setSaveAsActivity(true);
-mail.setWhatId(cse.Id);
-mail.setToAddresses(OMTEmail);
-mailList.add(mail);
-
-notification.setBody('Dear OrderManagement, Please take a look at this Order as the it is been returing to Origin. Please do not deliver the Order and initiate the refund as early as possible.');
-notification.setTitle('Return to Origin');
-notification.setSenderId(UserInfo.getUserId());
-notification.setNotificationTypeId(TemplateInfoDetail[0].Id);
-notification.setTargetId(cse.Id);
-notification.send(OrderManagementTeamUsers);
-
-Task tsk = new Task();
-tsk.Subject = 'Check the Order Which Is Delivered';
-tsk.Priority = 'High';
-tsk.ActivityDate = System.today().addDays(2);
-tsk.WhatId = cse.Id;
-tsk.OwnerId = OrderManagementTeamTaskUsers[0];
-taskList.add(tsk);
-}
-}
-}
-
-if (!mailList.isEmpty()) {
-// Messaging.sendEmail(mailList);
-}
-Insert taskList;
-System.debug('taskList:::::::::>' + taskList);
-} */
     @AuraEnabled
     public static Case courierRelatedCase(String recId) {
-        System.debug('recId ==>' + recId);
         try {
             // Use Database.queryById to handle potential exceptions if record not found
             Case cse = [SELECT Id, Address_With_Pin_Code__PostalCode__s, Address_With_Pin_Code__Street__s, Address_With_Pin_Code__City__s, Address_With_Pin_Code__StateCode__s, 
@@ -1118,7 +603,6 @@ System.debug('taskList:::::::::>' + taskList);
     
     @AuraEnabled
     public static String updateCaseAndOrder(String recId) {
-        system.debug('recId=======>'+ recId);
         Case cse = [SELECT Id, ContactId, OrderId__c,Address_With_Pin_Code__Street__s,Address_With_Pin_Code__City__s,Contact_Number__c,
                     Address_With_Pin_Code__PostalCode__s,Address_With_Pin_Code__CountryCode__s,Address_With_Pin_Code__StateCode__s FROM Case WHERE Id = :recId LIMIT 1];
         if (cse != null) {
@@ -1188,7 +672,6 @@ System.debug('taskList:::::::::>' + taskList);
             String ProfileNamesString = System.Label.profile_names;
             Set<String> ProfilenamesList = new Set<String>();
             ProfilenamesList.addAll(ProfileNamesString.split(',')); 
-            System.debug('ProfilenamesList == >'+ProfilenamesList);
             List<User> userList = [SELECT Id, Name, Profile.Name FROM User WHERE Profile.Name IN:ProfilenamesList];
             for(User u : userList) {
                 String profileName = u.Profile.Name;
@@ -1198,7 +681,6 @@ System.debug('taskList:::::::::>' + taskList);
                 profileUserMap.get(profileName).add(u);
             }
             if(profileUserMap.size()>0){
-                System.debug('profileUserMap === >'+profileUserMap);
                 return profileUserMap;
             }
         }catch(Exception e){
@@ -1207,36 +689,8 @@ System.debug('taskList:::::::::>' + taskList);
         return null;
     }
     
-    @AuraEnabled
-    public static Case createCaseUnderAccount(String recId, String RecordTypeName, String Type, String SubType, String Subjt, String Description, String OrderId, String Category) {
-        try {
-            Case newCase = new Case();
-            
-            if (RecordTypeName != null && Type != null && SubType != null) {
-                RecordType rt = [SELECT Id FROM RecordType WHERE DeveloperName = :RecordTypeName LIMIT 1];
-                newCase.RecordTypeId = rt.Id;
-                newCase.Sub_Type__c = Type;
-                newCase.Sub_Sub_Type__c = SubType;
-                newCase.AccountId = recId;
-                newCase.Subject = Subjt;
-                newCase.Status = 'New';
-                newCase.Description = Description;
-                newCase.Category__c = Category;
-                newCase.OrderId__c = OrderId;
-                
-                insert newCase;
-                System.debug('newCase.Subject ::'+newCase.Subject +'  newCase.Status  :'+ newCase.Status + 'newCase.Description::::::::' + newCase.Description +'newCase.Category__c::::::::::::' +newCase.Category__c );
-                
-                return newCase;
-            } 
-        } catch (Exception e) {
-            System.debug('The Error ::'+e.getMessage() +' AND Error Line No :'+e.getLineNumber());
-        }return null;
-    }
-    
-    @AuraEnabled
+   /* @AuraEnabled
     public static string returnToOrigin(String recId, String reasonForRto, String rtoResolution){
-        System.debug('recId  == >'+recId +'  reasonForRto === >>'+ reasonForRto + 'rtoResolution ===>' +rtoResolution);
         try {
             List<User> CsTeamUserList = [SELECT Id,Name,Profile.Name,Email From User Where Profile.Name =:'Customer Service Executive' AND Name Like '%Aisha%' LIMIT 1];
             Case cs = new Case();
@@ -1245,10 +699,8 @@ System.debug('taskList:::::::::>' + taskList);
             cs.Id = recId;
             cs.OwnerId = CsTeamUserList[0].Id;
             update cs;
-            System.debug('Update CS   ==>'+cs );
             
             List<Case> csList = [SELECT Id,OrderId__c,ContactId,CreatedDate,OwnerId,AccountId,Reason_for_RTO__c From Case Where Id=: recId LIMIT 1];
-            System.debug('csList 1  ==>'+csList );
             
             set<Id> setOfOrderId = new set<Id>();
             set<Id> setOfContact = new set<Id>();
@@ -1278,7 +730,6 @@ System.debug('taskList:::::::::>' + taskList);
             if(ordList.size() > 0){
                 update ordList;
             }
-            System.debug('cs ::'+cs +'  csList:::::>'+ csList + 'ListOfOrder::::::::' +ListOfOrder );
             List<OrderItem> OrderItemList = [SELECT Id,OrderId,TotalPrice,Refund_Price__c From OrderItem  Where OrderId IN: setOfOrderId];
             if(OrderItemList.size()>0){
                 List<OrderItem> ordItmList = new List<OrderItem>();
@@ -1292,14 +743,9 @@ System.debug('taskList:::::::::>' + taskList);
                 }
                 if(ordItmList.size() > 0){
                     update ordItmList;
-                    System.debug('Updated  ordItmList == >'+ordItmList );
                 }
-            }else{
-                system.debug(' OrderItemList is Empty ');
             }
-            
-            system.debug(' CsTeamUserList  == > '+CsTeamUserList);
-            
+                        
             set<String> CsTeamUsers = new set<String>();
             List<String> CsTeamUsersInList = new List<String>();
             List<Id> CsteamTaskUsers = new List<Id>();
@@ -1324,7 +770,6 @@ System.debug('taskList:::::::::>' + taskList);
             EmailTemplate Reftemp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'ReturnToOriginForRefundTeam'];
             OrgWideEmailAddress owea = [SELECT Id, Address, DisplayName FROM OrgWideEmailAddress WHERE DisplayName='refund team'];
             
-            System.debug('conList ::'+conList +'  TemplateInfoDetail:::::>'+ TemplateInfoDetail + 'temp::::::::' +temp +'Reftemp:::::>'+Reftemp +'  owea:::::>'+ owea );
             Map<Id,Order> mapOfOrd = new Map<Id,Order>();
             List<Order> orderList = [SELECT Id,CreatedDate,OrderNumber,Refund_Amount__c From Order Where Id IN:setOfOrderId];
             for(Order ord : orderList){
@@ -1339,7 +784,6 @@ System.debug('taskList:::::::::>' + taskList);
             for(Account acc : accList){
                 mapOfAccount.put(acc.Id, acc);
             }
-            System.debug('conList ::'+conList +'  TemplateInfoDetail:::::>'+ TemplateInfoDetail + 'temp::::::::' +temp +'Reftemp:::::>'+Reftemp +'  owea:::::>'+ owea +'mapOfOrd::::>'+mapOfOrd + 'mapOfContact::::::::>'+mapOfContact);
             List<String> emailString = new List<String>();
             
             List<task> taskList = new List<task>();
@@ -1410,14 +854,12 @@ System.debug('taskList:::::::::>' + taskList);
             System.debug('e.getLineNumber::::::::::::>' + e.getLineNumber() + ' e.getMessage::::::>' + e.getMessage());
             return null;
         }
-    }
+    } */
     
     @AuraEnabled(cacheable=true)
     public static createDupLicateWrapper showAllCaseData(String recId) {
         try {
-            System.debug('recId before if==> ' + recId);
             if (String.isNotBlank(recId)) {
-                System.debug('recId==> ' + recId);
                 createDupLicateWrapper oosWr = new createDupLicateWrapper();
                 //AND OrderId__r.OrderNumber != null AND Order_Date__c != null AND OrderId__r.OrderNumber != null
                 Case caseRec = [SELECT Id, CaseNumber, OrderId__r.OrderNumber, OrderId__r.Status, OrderId__c, Order_Date__c, Status, ContactId, Reason_for_RTO__c,Contact.Email FROM Case WHERE Id = :recId  LIMIT 1 ];
@@ -1428,7 +870,6 @@ System.debug('taskList:::::::::>' + taskList);
                         oosWr.oliList = oliList;
                     }
                 }
-                System.debug('oosWr==> ' + oosWr);
                 return oosWr;
             }
             return null;
@@ -1445,21 +886,6 @@ System.debug('taskList:::::::::>' + taskList);
         public List<OrderItem> oliList;
     }
     
-    // @AuraEnabled
-    // public static String UpdateCaseRecord(String recId, String OrdId){
-    //     try{
-    //         LiveChatTranscript lct = new LiveChatTranscript();
-    //         lct.Id = recId;
-            
-            
-    //         System.debug('cse=====> ' + lct);
-            
-    //         return 'SUCCESS';
-    //     }catch(exception e){
-    //         System.debug('Error Message==> ' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
-    //         return null;
-    //     }
-    // }
     @AuraEnabled
     public static List<OrderItem> getAllRelatedOrderItems(String OrdId){
         try{
@@ -1469,18 +895,6 @@ System.debug('taskList:::::::::>' + taskList);
             return null;
         }
     }
-    //     @AuraEnabled(cacheable=true)
-    // public static Map<String, List<String>> getAllPickListVal(Map<String, String> ObjectByField){
-    //     Map<String, List<String>> picklistValByField = new Map<String, List<String>>();
-    //     for(String field : ObjectByField.keySet()){
-    //         String objName = ObjectByField.get(field);
-    //         System.debug('Object Name: ' + objName);
-    //         List<String> picklistValues = getPicklistValuesList(objName, field);
-    //         System.debug('Picklist Values for ' + field + ': ' + picklistValues);
-    //         picklistValByField.put(field, picklistValues);
-    //     }
-    //     return picklistValByField;
-    // }
     
     
     @AuraEnabled
@@ -1495,22 +909,19 @@ System.debug('taskList:::::::::>' + taskList);
             
             if(OrdId != null){
                 orderRec = [SELECT Id, Name, ParentOrder__c FROM Order WHERE Id =: OrdId];
-                System.debug('orderRec==> ' + orderRec);
             }
             if(orderRec.ParentOrder__c == null){
                 List<Order> subOrderList = [SELECT Id FROM Order WHERE ParentOrder__c =: orderRec.Id];
-                System.debug('subOrderList==> ' + subOrderList);
                 if(!subOrderList.isEmpty()){
                     for(Order orderRecord : subOrderList){
                         subOrderIds.add(orderRecord.Id);
                     }
-                    System.debug('subOrderIds==> ' + subOrderIds);
                 }
                 if(!subOrderIds.isEmpty()){
-                    itmList = [SELECT Id,Refunded_Price__c,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId IN: subOrderIds];
+                    itmList = [SELECT Id,Refunded_Price__c,Status__c, SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId IN: subOrderIds];
                 }
             }else{
-                itmList = [SELECT Id,Refunded_Price__c,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId =: OrdId];
+                itmList = [SELECT Id,Refunded_Price__c,SKU__C,OrderId,Status__c, product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber FROM OrderItem  Where OrderId =: OrdId];
             }
             
             return itmList;
@@ -1526,7 +937,6 @@ System.debug('taskList:::::::::>' + taskList);
     
     @AuraEnabled
     public static Case createCaseInLiveChatTranscript(String RecordTypeName, String Type, String SubType, String AccId, String conId, String Subjt, String conNumber, String recId, Id ownId, String ordId) {
-        system.debug('RecordTypeName ==> '+RecordTypeName + 'Type===>'+Type + 'SubType===>'+SubType+ 'AccId===>'+AccId+ 'conId===>'+conId+ 'Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId+ 'ownId===>'+ownId + '      ' + 'ordId=====>'+ ordId);
         try {
             Case newCase = new Case();
                 Set<Id> setOfOwnerId = new Set<Id>();
@@ -1570,24 +980,21 @@ System.debug('taskList:::::::::>' + taskList);
                 insert newCase;
                 setOfOwnerId.add(newCase.OwnerId);
                 cseList.add(newCase);
-                System.debug('newCase:::::::::::>' + newCase);
                 
                // LiveChatTranscript LCTRec = new LiveChatTranscript(Id = recId, CaseId = newCase.Id);
                // update LCTRec;
                // System.debug('LCTRec:::::::::::>' + LCTRec);
                 
                 Set<String> setOfUserId = new Set<String>();
-                Messaging.CustomNotification notification = new Messaging.CustomNotification();
-                List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+                 Messaging.CustomNotification notification = new Messaging.CustomNotification();
+                // List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
                 CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
                 List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
-                EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
-                Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
-                System.debug('userList:::::::::::>' + userList);
+                // EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
+                // Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
                 for (User us : userList) {
                     setOfUserId.add(us.Id);
                 }
-                System.debug('setOfUserId:::::::::::>' + setOfUserId);
                 
                 if(newCase.OwnerId != null){
                     usr = [SELECT Id,Name,Email From User Where Id=:newCase.OwnerId Limit 1];
@@ -1602,27 +1009,26 @@ System.debug('taskList:::::::::>' + taskList);
                 // email to user
                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
                 
-                String body = temp.body;
-                body = body.replace('{!Case.Id}',newCase.Id);
-                mail.setPlainTextBody(body);
-                mail.setTemplateId(temp.id);
-                //mail.setTargetObjectId(newCase.Id);
-                mail.setToAddresses(new List<String> {usr[0].Email});
-                mailList.add(mail);
+                // String body = temp.body;
+                // body = body.replace('{!Case.Id}',newCase.Id);
+                // mail.setPlainTextBody(body);
+                // mail.setTemplateId(temp.id);
+                // //mail.setTargetObjectId(newCase.Id);
+                // mail.setToAddresses(new List<String> {usr[0].Email});
+                // mailList.add(mail);
                 
-                System.debug('notification:::::::::::>' + notification);
                 notification.send(new Set<String> { newCase.OwnerId });
                // Messaging.sendEmail(mailList);
-            List<Messaging.SendEmailResult> sendResults = Messaging.sendEmail(mailList);
-            for(Messaging.SendEmailResult result : sendResults) {
-                System.debug('result === >'+result);
-                if(result.isSuccess()) {
-                    System.debug('Email sent successfully.');
-                    return newCase;
-                } else {
-                    System.debug('Failed to send email: ' + result.getErrors()[0].getMessage());
-                }
-            }
+            // List<Messaging.SendEmailResult> sendResults = Messaging.sendEmail(mailList);
+            // for(Messaging.SendEmailResult result : sendResults) {
+            //     System.debug('result === >'+result);
+            //     if(result.isSuccess()) {
+            //         System.debug('Email sent successfully.');
+            //         return newCase;
+            //     } else {
+            //         System.debug('Failed to send email: ' + result.getErrors()[0].getMessage());
+            //     }
+            // }
            // return newCase;
         } catch (Exception e) {
             System.debug('getMessage:::::::::>'+e.getMessage()+ 'lineNumber::::::::::>'+ e.getLineNumber());
@@ -1632,7 +1038,6 @@ System.debug('taskList:::::::::>' + taskList);
     
     @AuraEnabled
     public static Case createCaseFromContact(String Subjt, String conNumber, String recId, String ordId) {
-        system.debug('Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId);        
         try {
             
             List<Order> ord = new List<Order>();
@@ -1641,8 +1046,6 @@ System.debug('taskList:::::::::>' + taskList);
                 con = [SELECT Id,Name,AccountId From Contact Where Id =: recId LIMIT 1];
             }
             
-            system.debug('ContactAccountId===============>'+ con[0].AccountId );
-
             if(ordId != null){
                  ord = [SELECT Id,AccountId From Order where Id =: ordId LIMIT 1];
                  
@@ -1686,25 +1089,20 @@ System.debug('taskList:::::::::>' + taskList);
             
             
             insert newCase;
-            system.debug('newCaseId==============> '+ newCase.Id);
-            system.debug('Order_SKU_details__c===============>'+ newCase.OwnerId);
             setOfOwnerId.add(newCase.OwnerId);
             cseList.add(newCase);
-            System.debug('newCase:::::::::::>' + newCase);
             
             
             Set<String> setOfUserId = new Set<String>();
             Messaging.CustomNotification notification = new Messaging.CustomNotification();
-            List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+            // List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
             CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
             List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
-            EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
-            Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
-            System.debug('userList:::::::::::>' + userList);
+            //EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
+            //Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
             for (User us : userList) {
                 setOfUserId.add(us.Id);
             }
-            System.debug('setOfUserId:::::::::::>' + setOfUserId);
             
             User usr = [SELECT Id,Name,Email From User Where Id=: newCase.OwnerId];
             // notification to user
@@ -1716,17 +1114,17 @@ System.debug('taskList:::::::::>' + taskList);
             // email to user
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
             
-            String body = temp.body;
-            body = body.replace('{!Case.Id}',newCase.Id);
-            mail.setPlainTextBody(body);
-            mail.setTemplateId(temp.id);
-            //mail.setTargetObjectId(newCase.Id);
-            mail.setToAddresses(new List<String> {usr.Email});
-            mailList.add(mail);
+            // String body = temp.body;
+            // body = body.replace('{!Case.Id}',newCase.Id);
+            // mail.setPlainTextBody(body);
+            // mail.setTemplateId(temp.id);
+            // //mail.setTargetObjectId(newCase.Id);
+            // mail.setToAddresses(new List<String> {usr.Email});
+            // mailList.add(mail);
             
-            System.debug('notification:::::::::::>' + notification);
-            notification.send(new Set<String> { newCase.OwnerId });
-            Messaging.sendEmail(mailList);
+            // System.debug('notification:::::::::::>' + notification);
+             notification.send(new Set<String> { newCase.OwnerId });
+            // Messaging.sendEmail(mailList);
             
             
             return newCase;
@@ -1738,17 +1136,14 @@ System.debug('taskList:::::::::>' + taskList);
     
     @AuraEnabled
     public static Case createCaseFromAccount(String Subjt, String conNumber, String recId, String ordId) {
-        system.debug('Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId + 'ordId====>'+ordId);
         try {
             Case newCase = new Case();
             Set<Id> setOfOwnerId = new Set<Id>();
             List<Order> ordList = new List<Order>();
             List<Case> cseList = new List<Case>();
             RecordType rt = [SELECT Id FROM RecordType WHERE Name = 'Inbound Case' LIMIT 1];
-            system.debug('RecordTypeName =============> '+rt.Id );
             if(ordId != null){
                  ordList = [SELECT Id,AccountId From Order where Id =: ordId LIMIT 1];
-                 system.debug('ordList =============> '+ordList[0]);
             }
             
             
@@ -1763,7 +1158,9 @@ System.debug('taskList:::::::::>' + taskList);
                     newCase.AccountId = recId;
                 }
                 
-                newCase.Subject = 'Manual Case Creation';
+                newCase.Subject = 'Call - Manual Case Creation';
+                newCase.Communication_Mode__c = 'Call';
+                newCase.Origin = 'Inbound Phone';
                 
                 if(conNumber != null){
                     newCase.Contact_Number__c = conNumber;
@@ -1780,7 +1177,9 @@ System.debug('taskList:::::::::>' + taskList);
                 }
                 newCase.RecordTypeId = rt.Id;
                 newCase.AccountId = recId;
-                newCase.Subject = 'Manual Case Creation';
+                newCase.Subject = 'Call - Manual Case Creation';
+                newCase.Communication_Mode__c = 'Call';
+                newCase.Origin = 'Inbound Phone';
                 newCase.Status = 'New';
                 newCase.OwnerId = UserInfo.getUserId();
             }
@@ -1790,25 +1189,19 @@ System.debug('taskList:::::::::>' + taskList);
             
             
             insert newCase;
-            system.debug('newCaseId==============> '+ newCase.Id);
-            system.debug('Order_SKU_details__c===============>'+ newCase.OwnerId);
             setOfOwnerId.add(newCase.OwnerId);
-            cseList.add(newCase);
-            System.debug('newCase:::::::::::>' + newCase);
-            
+            cseList.add(newCase);            
             
             Set<String> setOfUserId = new Set<String>();
             Messaging.CustomNotification notification = new Messaging.CustomNotification();
-            List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+            // List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
             CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
             List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
-            EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
-            Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
-            System.debug('userList:::::::::::>' + userList);
+            // EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
+            // Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
             for (User us : userList) {
                 setOfUserId.add(us.Id);
             }
-            System.debug('setOfUserId:::::::::::>' + setOfUserId);
             
             User usr = [SELECT Id,Name,Email From User Where Id=:newCase.OwnerId ];
             // notification to user
@@ -1820,17 +1213,16 @@ System.debug('taskList:::::::::>' + taskList);
             // email to user
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
             
-            String body = temp.body;
-            body = body.replace('{!Case.Id}',newCase.Id);
-            mail.setPlainTextBody(body);
-            mail.setTemplateId(temp.id);
-            //mail.setTargetObjectId(newCase.Id);
-            mail.setToAddresses(new List<String> {usr.Email});
-            mailList.add(mail);
+            // String body = temp.body;
+            // body = body.replace('{!Case.Id}',newCase.Id);
+            // mail.setPlainTextBody(body);
+            // mail.setTemplateId(temp.id);
+            // //mail.setTargetObjectId(newCase.Id);
+            // mail.setToAddresses(new List<String> {usr.Email});
+            // mailList.add(mail);
             
-            System.debug('notification:::::::::::>' + notification);
             notification.send(new Set<String> { newCase.OwnerId });
-            Messaging.sendEmail(mailList);
+            // Messaging.sendEmail(mailList);
             
             
             return newCase;
@@ -1846,7 +1238,6 @@ System.debug('taskList:::::::::>' + taskList);
             List<String> caseFieldSetList = new List<String>();
             List<Schema.FieldSetMember> FieldSetListFromCase  = SobjectType.Case.FieldSets.courierIssue.getFields();
             for(Schema.FieldSetMember fieldsToAdd : FieldSetListFromCase){
-                System.debug('Fields === >'+String.valueOf(fieldsToAdd.sobjectfield));
                 caseFieldSetList.add(String.valueOf(fieldsToAdd.sobjectfield));
             }
             if(caseFieldSetList.size()>0){
@@ -1869,22 +1260,19 @@ System.debug('taskList:::::::::>' + taskList);
                 
                 if(cseRec.OrderId__c != null){
                     orderRec = [SELECT Id, Name, ParentOrder__c FROM Order WHERE Id =: cseRec.OrderId__c];
-                    System.debug('orderRec==> ' + orderRec);
                 }
                 if(orderRec.ParentOrder__c == null){
                     List<Order> subOrderList = [SELECT Id FROM Order WHERE ParentOrder__c =: orderRec.Id];
-                    System.debug('subOrderList==> ' + subOrderList);
                     if(!subOrderList.isEmpty()){
                         for(Order orderRecord : subOrderList){
                             subOrderIds.add(orderRecord.Id);
                         }
-                        System.debug('subOrderIds==> ' + subOrderIds);
                     }
                     if(!subOrderIds.isEmpty()){
-                        itmList = [SELECT Refunded_Price__c,Brand__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber, Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId IN: subOrderIds];
+                        itmList = [SELECT Refunded_Price__c,Brand__c, Status__c,Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,Order.ParentOrder__c,product2Id,Order.Name,Order.OrderNumber, Order.ParentOrder__r.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.Name, Order.ParentOrder__r.OrderNumber, Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId IN: subOrderIds];
                     }
                 }else{
-                    itmList = [SELECT Brand__c, Refunded_Price__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber,  Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId =: cserec.OrderId__c];
+                    itmList = [SELECT Brand__c, Refunded_Price__c, Status__c, Product_Name__c, Quantity, UnitPrice, Selling_Price__c, Id,SKU__C,OrderId,product2.Name,product2Id,Order.Name,Order.OrderNumber,Order.ParentOrder__c, Order.ParentOrder__r.Paid_Amount__c, Order.CreatedDate,Order.Paid_Amount__c, Order.ParentOrder__r.CreatedDate, Order.ParentOrder__r.OrderNumber,  Order.ParentOrder__r.Coupon_Code__c,  Order.ParentOrder__r.Coupon_Discount__c FROM OrderItem  Where OrderId =: cserec.OrderId__c];
                 }
                 
                 return itmList;
@@ -1898,9 +1286,6 @@ System.debug('taskList:::::::::>' + taskList);
     
     @AuraEnabled
     public static String updateSKUdetailsAndCreateRecordOfSKU( String recId,String ordId, List<Id> ordLinItmList, List<OrderItem> oliList) {
-        system.debug('recId===>'+recId+ 'ordId========>'+ordId);
-        system.debug('ordLinItmList==============>'+ordLinItmList);
-        system.debug('oliList==============>'+oliList);
         try {
             List<String> skuString = new List<String>();
             List<Affected_SKU__c> affectedSKUsList = new List<Affected_SKU__c>(); 
@@ -1940,9 +1325,7 @@ System.debug('taskList:::::::::>' + taskList);
             
             
             // Create a comma-separated string from the SKU values
-            String commaSeparatedSKUs = String.join(skuString, ';');
-            System.debug('commaSeparatedSKUs==> ' + commaSeparatedSKUs);
-            
+            String commaSeparatedSKUs = String.join(skuString, ';');            
             Case newCase = new Case();
             if (recId != null ) {
                 
@@ -1955,13 +1338,9 @@ System.debug('taskList:::::::::>' + taskList);
                 newCase.Id = recId;
                 
                 
-                update newCase;
-                system.debug('newCase.SKU_Details__c==============>'+newCase.SKU_Details__c);
+                update newCase;                
                 
-                
-                List<String> splitSKUs = newCase.SKU_Details__c.split(';');
-                system.debug('splitSKUs==============>'+splitSKUs);
-                
+                List<String> splitSKUs = newCase.SKU_Details__c.split(';');                
                 
                 
                 // Create a list to store the Affected_SKU__c records
@@ -1981,7 +1360,6 @@ System.debug('taskList:::::::::>' + taskList);
                 // Insert the list of Affected_SKU__c records
                 insert affectedSKUsList;
                 update orderItemToUpdate;
-                system.debug('affectedSKUsList==============>'+affectedSKUsList);
             }
             return 'SUCCESS';
         } catch (Exception e) {
@@ -1991,7 +1369,6 @@ System.debug('taskList:::::::::>' + taskList);
     }
     @AuraEnabled
     public static boolean getRecentProgress(String recId) {
-        system.debug('recId=============>'+recId);
         try {
             // Fetch necessary fields in the SOQL query
             boolean isCpdRemakrs = false;
@@ -2003,13 +1380,11 @@ System.debug('taskList:::::::::>' + taskList);
                 WHERE (Case__c = :recId AND Current_Action__c = 'Requested more Info from CS Team')
                 ORDER BY CreatedDate DESC LIMIT 1
             ];
-            system.debug('recentProgress==============>'+recentProgress);
             // Check if recentProgress exists and CS_Remarks__c is null
             if(recentProgress.size()>0){
                 if(recentProgress != null && recentProgress[0].CS_Remarks__c == null){
                     isCpdRemakrs = true;
                 }
-                system.debug('isCpdRemakrs==============>'+isCpdRemakrs);
             }
             
             return isCpdRemakrs;
@@ -2052,2826 +1427,5 @@ System.debug('taskList:::::::::>' + taskList);
             System.debug('Error Message: ' + e.getMessage() + ' Error Line: ' + e.getLineNumber());
             return null;
         }
-    }
-     public static void dumMethod() {
-    Integer i = 0;
-    Integer j = 0;
-    Integer k = 0;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-         i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-         i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-         i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-         i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-           i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-         i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k; 
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k; 
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-         i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-         i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-          i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-        i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    i = j + k;
-    } 
-    
-    
-    
+    }    
 }

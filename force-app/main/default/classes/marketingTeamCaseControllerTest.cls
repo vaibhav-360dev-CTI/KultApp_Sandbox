@@ -3,7 +3,7 @@ public class marketingTeamCaseControllerTest {
     @isTest
     static void testClass(){
         
-        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Marketing Team']; 
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Marketing']; 
         
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',

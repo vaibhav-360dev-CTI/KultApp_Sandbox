@@ -112,15 +112,16 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                     this.AllOrderItems.push({
                         productName: item.Product2.Name,
                         Id: item.Id,
-                        Affected_Quantity__c: item.Affected_Quantity__c,
-                        totalQuantity: item.Quantity,
+                       // Affected_Quantity__c: item.Affected_Quantity__c,
+                       // totalQuantity: item.Quantity,
                         Selling_Price__c: item.Selling_Price__c,
                         UnitPrice: item.UnitPrice,
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
                         brand : item.Brand__c,
                         disabled: true,
-                        Refunded_Price__c : item.Refunded_Price__c
+                        Refunded_Price__c : item.Refunded_Price__c,
+                        Status__c: item.Status__c
                     });
                 });
                 this.error = undefined;
@@ -140,15 +141,16 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                     this.AllOrderItems.push({
                         productName: item.Product2.Name,
                         Id: item.Id,
-                        Affected_Quantity__c: item.Affected_Quantity__c,
-                        totalQuantity: item.Quantity,
+                       // Affected_Quantity__c: item.Affected_Quantity__c,
+                      //  totalQuantity: item.Quantity,
                         Selling_Price__c: item.Selling_Price__c,
                         UnitPrice: item.UnitPrice,
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
                         brand : item.Brand__c,
                         disabled: true,
-                        Refunded_Price__c : item.Refunded_Price__c
+                        Refunded_Price__c : item.Refunded_Price__c,
+                        Status__c: item.Status__c
                     });
                 });
                 this.error = undefined;
@@ -226,15 +228,16 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
                     this.AllOrderItems.push({
                         productName: item.Product_Name__c,
                         Id: item.Id,
-                        Affected_Quantity__c: item.Affected_Quantity__c,
-                        totalQuantity: item.Quantity,
+                        //Affected_Quantity__c: item.Affected_Quantity__c,
+                      //  totalQuantity: item.Quantity,
                         Selling_Price__c: item.Selling_Price__c,
                         UnitPrice: item.UnitPrice,
                         totalprice: item.Total_Selling_Price__c,
                         skudetail: item.SKU__c,
                         brand : item.Brand__c,
                         disabled: true,
-                        Refunded_Price__c : item.Refunded_Price__c
+                        Refunded_Price__c : item.Refunded_Price__c,
+                        Status__c: item.Status__c
                     });
                 });
 
@@ -383,22 +386,22 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
     //     // }
     // }
 
-    handelaffectedChange(event) {
-        debugger;
-        var index = event.currentTarget.dataset.index;
-        var newValue = parseInt(event.target.value);
-        let updatedOrderItems = JSON.parse(JSON.stringify(this.AllOrderItems)); // Deep copy of the array
+    // handelaffectedChange(event) {
+    //     debugger;
+    //     var index = event.currentTarget.dataset.index;
+    //     var newValue = parseInt(event.target.value);
+    //     let updatedOrderItems = JSON.parse(JSON.stringify(this.AllOrderItems)); // Deep copy of the array
 
-        if (updatedOrderItems[index].totalQuantity < newValue) {
-            updatedOrderItems[index].Affected_Quantity__c = null;
-            //alert('Affected Quantity Cannot be Greater than Order Quantity');
-        } else {
-            updatedOrderItems[index].Affected_Quantity__c = newValue;
-        }
+    //     if (updatedOrderItems[index].totalQuantity < newValue) {
+    //         updatedOrderItems[index].Affected_Quantity__c = null;
+    //         //alert('Affected Quantity Cannot be Greater than Order Quantity');
+    //     } else {
+    //         updatedOrderItems[index].Affected_Quantity__c = newValue;
+    //     }
 
-        this.AllOrderItems = updatedOrderItems;
+    //     this.AllOrderItems = updatedOrderItems;
 
-    }
+    // }
 
     handleClick() {
         debugger;
@@ -407,7 +410,7 @@ export default class UpdateSKUDetailsOnCase extends LightningElement {
             if (!this.AllOrderItems[i].disabled) {
                 listToSend.push({
                     Id: this.AllOrderItems[i].Id,
-                    Affected_Quantity__c: this.AllOrderItems[i].Affected_Quantity__c,
+                    Affected_Quantity__c: 1,
                     Is_Already_Utilized__c:true
                 });
             }else{

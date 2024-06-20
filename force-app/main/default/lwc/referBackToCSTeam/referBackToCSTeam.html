@@ -1,6 +1,6 @@
 <template>
 	<lightning-quick-action-panel header="Refer Back To CS Team">
-
+		<lightning-spinner if:true={isLoading} style=""></lightning-spinner>
 		<!-- <lightning-combobox label="Select Refer Back Reason" options={RefrebackOption} onchange={handelreferbackChange} required>
 		</lightning-combobox> -->
 		<lightning-combobox label="Select Refer Back Reason" options={RefrebackOption} onchange={handelreferbackChange}  required>
@@ -91,7 +91,10 @@
 			<template for:each={ListOfCaseRecords} for:item="cs" for:index="index">
 				<lightning-input key={cs.Id} type="text" variant="standard" name="Resolution"  value={resolutionRemarks}
 					label="Resolution Remarks" onchange ={handelResolutionRemarks} required></lightning-input>
-
+					<template if:true={adminResolved}>
+						<lightning-combobox key={cs.Id} label="Select Tech Issue Type" options={techIssueList} onchange={handelTechIssue}  required>
+						</lightning-combobox>
+					</template>
 					<div key={cs.Id} class="slds-m-around_medium">
 						<lightning-input type="file" 
 						accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"

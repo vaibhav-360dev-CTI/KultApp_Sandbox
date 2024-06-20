@@ -57,20 +57,14 @@ public class instaDmLWCCompController {
     }
     
     @AuraEnabled
-    public static void sendMessage(String recipientId, String messageText, String caseId) {        
+    public static string sendMessage(String recipientId, String messageText, String caseId) {        
         String apiUrl = FB_GRAPH_API_BASE_URL + '/me/messages?access_token='+pageaccessToken;
         // Construct the request body
         messageText = removeHTMLTags(messageText);
-        Map<String, Object> requestBody = new Map<String, Object>{
-            'recipient' => new Map<String, Object>{
-                'id' => recipientId
-                    },
-                        'message' => new Map<String, Object>{
-                            'text' => messageText
-                                }
-        };
-            // Send the POST request
-            HttpRequest request = new HttpRequest();
+        Map<String, Object> requestBody = new Map<String, Object>{'recipient' => new Map<String, Object>{'id' => recipientId},'message' => new Map<String, Object>{'text' => messageText}};
+        
+		// Send the POST request
+       	HttpRequest request = new HttpRequest();
         request.setEndpoint(apiUrl);
         request.setMethod('POST');
         request.setHeader('Content-Type', 'application/json');
@@ -81,29 +75,29 @@ public class instaDmLWCCompController {
         if (response.getStatusCode() != 200) {
             // Handle error response
             System.debug('Error sending message: ' + response.getBody());
+            return 'Conversation window ended by customer..!!';
         } else {
             try {
                 Map<String,Object> responseMessage = (Map<String,Object>)JSON.deserializeUntyped(response.getBody());
-                Case_Communication__c pc = new Case_Communication__c();
-                pc.Case__c = caseId;
-                pc.Activity_Content__c  = messageText;
-                //pc.Case_Communication__c = parentCommentId;
-                pc.Activity_ID__c = responseMessage.containsKey('message_id') ? (String)responseMessage.get('message_id') : '';
-                pc.Sent_from_SFDC__c  = true;
-                pc.Activity_Created_DateTime__c = system.now();
-                pc.Activity_Author__c  = 'Sokultsokool';
-                insert pc;
+                Case_Communication__c commentRec = new Case_Communication__c();
+                commentRec.Case__c = caseId;
+                commentRec.Activity_Content__c  = messageText;
+                commentRec.Activity_ID__c = responseMessage.containsKey('message_id') ? (String)responseMessage.get('message_id') : '';
+                commentRec.Sent_from_SFDC__c  = true;
+                commentRec.Activity_Created_DateTime__c = system.now();
+                commentRec.Activity_Author__c  = 'Sokultsokool';
+                insert commentRec;
                 
                 case caseRec = [Select id ,record_changed__c from case where id = : caseId];
                 caseRec.record_changed__c = caseRec.record_changed__c ? true : false;
                 new case(record_changed__c = true);
-                System.debug('--- reply insert: '+ pc);
+                System.debug('--- reply insert: '+ commentRec);
             }catch(DmlException e){
                 System.debug('--- e.getmessage: '+e.getMessage());
                 System.debug('--- e.getLineNo: '+e.getLineNumber());
             }
-            // Message sent successfully
             System.debug('Message sent successfully');
+            return 'Message was Sent!!';
         }
     }
     
@@ -138,6 +132,6 @@ public class instaDmLWCCompController {
         @AuraEnabled
         public boolean isInbound{get;set;}
     }
-        
+    
     
 }

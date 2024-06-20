@@ -200,8 +200,24 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Refund_Amount__c</fieldItem>
+                <identifier>RecordRefund_Amount_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Case_Assigned_DateTime__c</fieldItem>
                 <identifier>RecordCase_Assigned_DateTime_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.OrderId__r.Refund_Amount__c</fieldItem>
+                <identifier>RecordOrderId_rRefund_Amount_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -488,6 +504,24 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Sub_Sub_Type__c</fieldItem>
                 <identifier>RecordSub_Sub_Type_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Refund_Team__c</fieldItem>
+                <identifier>RecordAssigned_to_Refund_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_WH_Team__c</fieldItem>
+                <identifier>RecordAssigned_to_WH_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Marketing_Team__c</fieldItem>
+                <identifier>RecordAssigned_to_Marketing_Team__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-c4ec26ee-dbee-43d5-b6c4-9c463fa45608</name>

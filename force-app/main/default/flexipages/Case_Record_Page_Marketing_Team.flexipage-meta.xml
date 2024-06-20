@@ -135,6 +135,24 @@
                 <identifier>RecordOrderId_rPaid_Amount_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Refund_Team__c</fieldItem>
+                <identifier>RecordAssigned_to_Refund_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Admin__c</fieldItem>
+                <identifier>RecordAssigned_to_Admin__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Marketing_Team__c</fieldItem>
+                <identifier>RecordAssigned_to_Marketing_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-18fe451a-49da-460b-9de5-6ec9089ac90e</name>
         <type>Facet</type>
     </flexiPageRegions>

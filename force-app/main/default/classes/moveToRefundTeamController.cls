@@ -3,7 +3,7 @@ public class moveToRefundTeamController {
     @AuraEnabled
     public static RefundWrapper getOrderLineItem(String caseId) { 
         
-        List<Case> caseList = [SELECT Id,Contact_Number__c,RefundTeamMember__c, Sub_Type__c, Sub_Sub_Type__c, OrderId__c, Type, OrderId__r.Name,OrderId__r.Refund_Type__c, OrderId__r.Refund_Reason__c, OrderId__r.Coupon__c,OrderId__r.Refund_Amount__c,OrderId__r.Paid_Amount__c, OrderId__r.ParentOrder__c
+        List<Case> caseList = [SELECT Id,Contact_Number__c,RefundTeamMember__c, Movement_Date_Time__c,Sub_Type__c, Sub_Sub_Type__c, OrderId__c, Type, OrderId__r.Name,OrderId__r.Refund_Type__c, OrderId__r.Refund_Reason__c, OrderId__r.Coupon__c,OrderId__r.Refund_Amount__c,OrderId__r.Paid_Amount__c, OrderId__r.ParentOrder__c
                                FROM Case WHERE Id = :caseId];
         System.debug('caseList=====>'+caseList);
         
@@ -24,10 +24,10 @@ public class moveToRefundTeamController {
                     }
                 }
                 if(!subOrderIds.isEmpty()){
-                    orderItems = [SELECT Id, Product2.Name,Product_Name__c, Brand__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refunded_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId IN: subOrderIds];
+                    orderItems = [SELECT Id, Product2.Name,Product_Name__c, Brand__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refunded_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c FROM OrderItem  Where OrderId IN: subOrderIds AND Refunded__c != true];
                 }
             }else{
-                orderItems = [SELECT Id, Product2.Name,Product_Name__c, Brand__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c,Refunded_Price__c FROM OrderItem  Where OrderId =: orderRecord.Id];
+                orderItems = [SELECT Id, Product2.Name,Product_Name__c, Brand__c, Quantity,Is_Already_Utilized__c,UnitPrice, Refund_Quantity__c,TotalPrice,Refund_Price__c,Refund_Reason__c,Refund_Reasons__c,Refund_Type__c,SKU__c, Total_Selling_Price__c, Selling_Price__c,Refunded_Price__c FROM OrderItem  Where OrderId =: orderRecord.Id AND Refunded__c != true];
             }
             System.debug('orderItems=====>'+orderItems);
             return new RefundWrapper(caseRecord, orderRecord, orderItems);
@@ -39,8 +39,6 @@ public class moveToRefundTeamController {
     @AuraEnabled
     public static String updateOrderAndCaseFields(String caseId, String caseRefund, String refundReason, String coupon,String refundValue/*,String refundTeamMemberId, integer refundamount*/,integer paidamount/*,String type,string subtype*/,List<OrderItem> orderItemsToUpdate) {
         String result;
-        
-        System.debug('orderItemsToUpdate=====>'+orderItemsToUpdate);
         //System.debug('contactNumber====>'+contactNumber);
         
         try{
@@ -69,6 +67,8 @@ public class moveToRefundTeamController {
                 caseRecord.Refund_Reason__c = refundReason;
                 caseRecord.Case_Sub_Status__c = 'Assigned to Refund Team';
                 caseRecord.Is_With_Refund_Team__c = true;
+                caseRecord.Assigned_to_Refund_Team__c = true;
+                caseRecord.Movement_Date_Time__c = System.now();
                 if(caseRecord.Status == 'New'){
                     caseRecord.Status = 'In Progress'; 
                 }
@@ -123,6 +123,7 @@ public class moveToRefundTeamController {
                                 affectedSKUrec.Total_Quantity__c = ori.Quantity;
                                 affectedSKUrec.Selling_Price__c = ori.Selling_Price__c;
                                 affectedSKUrec.Refund_Amount__c = ori.Refunded_Price__c;
+                                affectedSKUrec.Order_Item__c = ori.Id;
 
                                 affectedSKUsToInsert.add(affectedSKUrec);
                             }
@@ -189,9 +190,6 @@ public class moveToRefundTeamController {
     
     @AuraEnabled
     public static void sendingCustomNotification(String refundTeamMemberId,String caseId,String notificationTitle, String notificationBody){
-        
-        System.debug('refundTeamMemberId====>'+refundTeamMemberId);
-        System.debug('caseId====>'+caseId);
         CustomNotificationType notificationType = [SELECT Id, DeveloperName FROM CustomNotificationType 
                                                    WHERE DeveloperName='Refund_Team_Member'];
         
@@ -228,7 +226,7 @@ public class moveToRefundTeamController {
         }
     }
 
-    public static void dumMethod(){
+  /*  public static void dumMethod(){
         integer i = 0;
         i++;
         i++;
@@ -554,7 +552,7 @@ public class moveToRefundTeamController {
         i++;
         i++;
         i++;
-    }
+    } */
     
 
 }

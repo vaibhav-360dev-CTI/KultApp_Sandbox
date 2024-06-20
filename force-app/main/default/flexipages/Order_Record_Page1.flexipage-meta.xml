@@ -178,6 +178,16 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Courier__c</fieldItem>
+                <identifier>RecordCourier_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Tracking_Link__c</fieldItem>
@@ -306,6 +316,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Expected_Delivery_Date__c</fieldItem>
                 <identifier>RecordExpected_Delivery_Date_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Shipping_Name__c</fieldItem>
+                <identifier>RecordShipping_Name_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-8eee0704-f171-4763-a0a4-cc887c82c189</name>

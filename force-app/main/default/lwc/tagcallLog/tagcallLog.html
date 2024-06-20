@@ -1,0 +1,21 @@
+<template>
+
+	<lightning-quick-action-panel header="Tag A Call Log">
+		<template if:true={showUnder2ndPage}>
+			<div>
+				<b class="slds-align_absolute-center"></b>
+				<br>
+				<lightning-datatable key-field="Id" data={TaskData} columns={columns}
+					onrowselection={OnlyOneSelection} >
+				</lightning-datatable>
+			</div>
+		</template>
+		<br><br><br>
+		<div class="slds-align_absolute-center">
+			<lightning-button variant="neutral" onclick={handleCancel} label="Cancel"></lightning-button>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<lightning-button variant="Brand" onclick={handleSave} label="Save"></lightning-button>&nbsp;&nbsp;
+		</div>
+
+	</lightning-quick-action-panel>
+</template>

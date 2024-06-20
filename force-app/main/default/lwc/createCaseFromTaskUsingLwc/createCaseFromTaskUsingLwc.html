@@ -1,7 +1,7 @@
 <template>
 
     <template if:true={show1stPage}>
-        <div>
+        <div onclick={handleParentClick}>
             <lightning-card>
                 <div class="slds-align_absolute-center">
                     <h1><b>Select Order</b></h1>
@@ -15,7 +15,7 @@
                                 object-api-name="Order" onchange={handleChangeInPicker}  display-info={displayInfo} onclick={handleNext}>
                             </lightning-record-picker> -->
 
-                            <c-custom-Lookup-L-W-C onprogressvaluechange={hanldeProgressValueChange} record-id={recordId}></c-custom-Lookup-L-W-C>
+                            <c-custom-Lookup-L-W-C onprogressvaluechange={hanldeProgressValueChange} record-id={recordId} hideresult={hideResult}></c-custom-Lookup-L-W-C>
                             <!-- <template if:true={orderHasItemAvailable}>
                                 <div class="slds-scrollable_x" style="height:auto;width:100%" tabindex="0">
                                     <table class="slds-table slds-table_bordered slds-table_cell-buffer">
@@ -111,6 +111,7 @@
             <template if:true={contacts}>
                 <div>
                     <lightning-card title="Create Case">
+                        <lightning-spinner if:true={isLoading} style=""></lightning-spinner>
                         <lightning-layout multiple-rows>
                             <lightning-layout-item padding="around-small" size="12">
                                 <div class="slds-grid slds-gutters">

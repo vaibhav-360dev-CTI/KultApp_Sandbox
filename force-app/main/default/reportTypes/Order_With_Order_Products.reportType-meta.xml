@@ -980,6 +980,11 @@
             <field>Name__c</field>
             <table>Order.Orders__r.OrderItems</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Refunded__c</field>
+            <table>Order.Orders__r.OrderItems</table>
+        </columns>
         <masterLabel>Order Products</masterLabel>
     </sections>
 </ReportType>

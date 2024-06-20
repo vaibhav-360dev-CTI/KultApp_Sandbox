@@ -155,17 +155,11 @@ public with sharing class taskHelperController {
     
     @AuraEnabled
     public static Case createCaseFromCase(String Subjt, String conNumber, String recId, String ordId) {
-        system.debug('Subjt===>'+Subjt +'conNumber===>'+conNumber+ 'recId===>'+recId); 
-        system.debug('conNumber===>'+conNumber  ); 
-        system.debug('recId===>'+recId ); 
-        system.debug('ordId===>'+ordId  ); 
         try {
             List<Task> ts = new List<Task>();
             //  Contact con = [SELECT Id,Name,AccountId From Contact Where Id =: recId];
             if(recId != null){
                 ts = [Select Id,Subject,Case__c,AccountId,whatId From Task Where Id =: recId LIMIT 1];
-                System.debug('ts=============>'+ts);
-                system.debug('ContactAccountId===============>'+ ts[0].AccountId);
             }
             Case newCase = new Case();
             Set<Id> setOfOwnerId = new Set<Id>();
@@ -175,6 +169,7 @@ public with sharing class taskHelperController {
                 Order ord = [SELECT Id,AccountId From Order where Id =: ordId]; 
                 newCase.OrderId__c = ordId;
                 newCase.RecordTypeId = rt.Id;
+                newCase.Origin = 'Inbound Phone';
                 if(ord.AccountId != null){
                     newCase.AccountId = ord.AccountId;
                 }
@@ -193,6 +188,7 @@ public with sharing class taskHelperController {
                 newCase.SuppliedPhone = conNumber;
                 newCase.Subject = 'Call - Manual Case Creation';
                 newCase.Communication_Mode__c = 'Call';
+                newCase.Origin = 'Inbound Phone';
                 newCase.Status = 'New';
                 newCase.OwnerId = UserInfo.getUserId();
                 if(ts.size()>0){
@@ -213,11 +209,11 @@ public with sharing class taskHelperController {
             
             Set<String> setOfUserId = new Set<String>();
             Messaging.CustomNotification notification = new Messaging.CustomNotification();
-            List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+            // List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
             CustomNotificationType customNotiList = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];
             List<User> userList = [SELECT Id, Email FROM User WHERE Email IN :setOfOwnerId];
-            EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
-            Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
+            // EmailTemplate temp = [SELECT Id,Subject,Body FROM EmailTemplate WHERE Name ='child case creation'];
+            // Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage();
             System.debug('userList:::::::::::>' + userList);
             for (User us : userList) {
                 setOfUserId.add(us.Id);
@@ -234,17 +230,17 @@ public with sharing class taskHelperController {
             // email to user
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
             
-            String body = temp.body;
-            body = body.replace('{!Case.Id}',newCase.Id);
-            mail.setPlainTextBody(body);
-            mail.setTemplateId(temp.id);
-            //mail.setTargetObjectId(newCase.Id);
-            mail.setToAddresses(new List<String> {usr.Email});
-            mailList.add(mail);
+            // String body = temp.body;
+            // body = body.replace('{!Case.Id}',newCase.Id);
+            // mail.setPlainTextBody(body);
+            // mail.setTemplateId(temp.id);
+            // //mail.setTargetObjectId(newCase.Id);
+            // mail.setToAddresses(new List<String> {usr.Email});
+            // mailList.add(mail);
             
             System.debug('notification:::::::::::>' + notification);
             notification.send(new Set<String> { newCase.OwnerId });
-            Messaging.sendEmail(mailList);
+            // Messaging.sendEmail(mailList);
             
             
             return newCase;

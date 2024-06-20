@@ -29,6 +29,10 @@
     </quickActions>
     <quickActions>
         <label></label>
+        <name>Bulk_Close_Cases</name>
+    </quickActions>
+    <quickActions>
+        <label></label>
         <name>CS_Outbound_Calls</name>
     </quickActions>
     <quickActions>
@@ -141,6 +145,10 @@
     </quickActions>
     <quickActions>
         <label></label>
+        <name>Tag_A_Call_Log</name>
+    </quickActions>
+    <quickActions>
+        <label></label>
         <name>Update_Affected_SKU</name>
     </quickActions>
     <recordTypes>
@@ -171,4 +179,8 @@
         <errorMessage></errorMessage>
         <name>Validation_For_Email_Replied_CheckBox</name>
     </validationRules>
+    <webLinks>
+        <label></label>
+        <name>Bulk_Close_Cases</name>
+    </webLinks>
 </CustomObjectTranslation>

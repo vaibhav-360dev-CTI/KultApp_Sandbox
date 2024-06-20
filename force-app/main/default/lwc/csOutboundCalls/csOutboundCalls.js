@@ -4,6 +4,7 @@ import getParentCaseDetails from '@salesforce/apex/csOutboundCallController.getP
 import updateCaseDetails from '@salesforce/apex/csOutboundCallController.updateCaseDetails';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { CloseActionScreenEvent } from 'lightning/actions';
+import { getRecordNotifyChange } from "lightning/uiRecordApi";
 
 export default class CsOutboundCalls extends LightningElement {
     @api recordId;
@@ -75,14 +76,28 @@ export default class CsOutboundCalls extends LightningElement {
     }
 
     handleSave() {
-        updateCaseDetails({ caseRec: this.parentCaseDetails })
+        updateCaseDetails({ caseRec: this.parentCaseDetails, close:true })
+            .then(result => {
+                console.log('case updated==>' + result);
+                this.showToast('Success', 'Case Updated!!!', 'success');
+                getRecordNotifyChange([{ recordId: this.recordId }]);
+                this.handleCancel();
+                
+            })
+            .catch(error => {
+                console.error('Error updating case==>' + JSON.stringify(error));
+            });
+    }
+
+    handleInProgress(){
+        updateCaseDetails({ caseRec: this.parentCaseDetails, close: false })
             .then(result => {
                 console.log('case updated==>' + result);
                 this.showToast('Success', 'Case Updated!!!', 'success');
                 this.handleCancel();
             })
             .catch(error => {
-                console.error('Error updating case==>' + error);
+                console.error('Error updating case==>' + JSON.stringify(error));
             });
     }
 

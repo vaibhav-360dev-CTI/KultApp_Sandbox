@@ -21,7 +21,7 @@ public class InstaDmUtilityClass {
     private static final String ACCESS_TOKEN;
     private static final String PAGE_NAME;
     
-    public static string getAllDmMessages(){
+    public static String getAllDmMessages() {
         
         List<Case_Communication__c> caseCommunicationList                    = new List<Case_Communication__c>();
         List<Case_Communication__c> caseCommunicationListToBeUpdated         = new List<Case_Communication__c>();
@@ -35,60 +35,38 @@ public class InstaDmUtilityClass {
         List<String> casePostIds                                             = new List<String>();
         Map<String, String> queryParams                                      = new Map<String, String>();
         Map<String, String> headers                                          = new Map<String, String>{'Content-Type' => 'application/json','Authorization' => 'Bearer '+pageaccessToken};
-            String jsonResponse                                              = '';
+            String jsonResponse                                                  = '';
         InstaDMWrapper messageInfo                                           = new InstaDMWrapper(); 
         List<String> senderIds                                               = new List<String>();
-        
         
         String endpointUrl = basicUrl+pageId+'/conversations?fields=message_count,messages{message,id,thread_id,created_time,from},id,can_reply,senders';
         system.debug('endpointUrl==>'+endpointUrl);
         //&user_id=25162329106715195 
         try{
-            system.debug('endpointUrl==>'+endpointUrl);
+            //All the DM messages along with sender ids..
+            map<String,List<String>> existingDmRecordsBySenderIds = new map<String,List<String>>();                
+            
             if(test.isRunningTest()){
                 jsonResponse = '{"id": "17841405793087218", "media_url": "https://www.example.com/image.jpg", "comments": { "data": [{"id": "17851087209098192", "text": "Awesome!", "username": "user1", "timestamp": "2023-07-29T12:40:00+0000"}] } }';
                 messageInfo = (InstaDMWrapper) JSON.deserialize(jsonResponse, InstaDMWrapper.class);
             }else{
                 HttpResponse response = DynamicHttpCallout.makeHttpGetCallout(endpointUrl, queryParams, headers);
                 String body = response.getBody();
-                system.debug('The response is ==>'+body);
                 body = body.replaceAll('from','fromDetails');
                 messageInfo = (InstaDMWrapper)JSON.deserialize(body, InstaDMWrapper.class);
             }
             if(messageInfo.data.size() > 0){
-                //Getting the Sender ids..
                 for(InstaDMWrapper.Data messageRec : messageInfo.data){
-                    for(InstaDMWrapper.SenderData senderRec : messageRec.senders.data){
-                        senderIds.add(senderRec.id);
-                    }
-                }
-                system.debug('Here is the sender ids==>'+senderIds);
-                List<Case> existingCaseList = [Select id,subject,Description,User_ID__c,Post_Id__c from Case where User_ID__c IN :senderIds ];
-                List<Case_Communication__c> caseCommunicationsList = [Select Id , Activity_ID__c ,Case__c , Case__r.User_ID__c from Case_Communication__c where Case__c IN : existingCaseList];
-                system.debug('caseCommunicationsList==>'+caseCommunicationsList.size());
-                map<String,List<String>> existingDmRecordsByCaseId = new map<String,List<String>>();
-                for(Case_Communication__c caseCommRec : caseCommunicationsList){
-                    if(existingDmRecordsByCaseId.containsKey(caseCommRec.Case__r.User_ID__c)){
-                        existingDmRecordsByCaseId.get(caseCommRec.Case__r.User_ID__c).add(caseCommRec.Activity_ID__c);
-                    }else{
-                        List<String> existingIdForCase = new List<String>();
-                        existingIdForCase.add(caseCommRec.Activity_ID__c);
-                        existingDmRecordsByCaseId.put(caseCommRec.Case__r.User_ID__c , existingIdForCase);
-                    }
-                }                
-                
-                if(existingCaseList.size() > 0){
-                    for(Case caseRec : existingCaseList){
-                        caseBySenderId.put(caseRec.User_ID__c , caseRec);    
-                    }
-                    system.debug(caseBySenderId);
-                    system.debug('existingDmRecordsByCaseId==>'+existingDmRecordsByCaseId);
-                    
-                    for(InstaDMWrapper.Data messageRec : messageInfo.data){
+                    system.debug(messageRec);
+                    Integer messageCount                                 = messageRec.messages.data.size();
+                    List<Case_Communication__c> newCaseCommunicationList = new List<Case_Communication__c>();
+                    Case newCase                                         = new Case();
+                    if(messageRec.messages.data.size() > 0){
                         for(Integer i = 0; i < messageRec.messages.data.size(); i++){
-                            InstaDMWrapper.MessageData dmRec = messageRec.messages.data[i];
+                            InstaDMWrapper.MessageData dmRec             = messageRec.messages.data[i];
+                            // This flow handles cases where the sender already exists and only new DM messages need to be added.
                             if(caseBySenderId.containsKey(dmRec.fromDetails.id)){
-                                if(existingDmRecordsByCaseId.containsKey(dmRec.fromDetails.id) && !existingDmRecordsByCaseId.get(dmRec.fromDetails.id).contains(dmRec.id)){
+                                if(existingDmRecordsBySenderIds.containsKey(dmRec.fromDetails.id) && !existingDmRecordsBySenderIds.get(dmRec.fromDetails.id).contains(dmRec.id)){
                                     Case_Communication__c communicationRec        = new Case_Communication__c();
                                     communicationRec.Case__c                      = caseBySenderId.get(dmRec.fromDetails.id).Id;
                                     communicationRec.Activity_Content__c          = dmRec.message;
@@ -97,76 +75,56 @@ public class InstaDmUtilityClass {
                                     communicationRec.Activity_Created_DateTime__c = getDateTime(String.valueOf(dmRec.created_time).removeEnd('+0000'));
                                     caseCommunicationList.add(communicationRec);
                                 }
-                            }
-                        }
-                    }
-                    if(caseCommunicationList.size() > 0){
-                        insert caseCommunicationList;
-                        List<String> caseIds = new List<String>();
-                        for(Case_Communication__c ccRec : caseCommunicationList){
-                            caseIds.add(ccRec.Case__c);
-                        }
-                        List<Case> caseRecList = [Select id ,record_changed__c from Case where id IN: caseIds];
-                        for(Case caseRec : caseRecList){
-                            caseRec.record_changed__c = caseRec.record_changed__c ? true : false;
-                        }
-                        update caseRecList;
-                    }
-                }else{
-                    for(InstaDMWrapper.Data messageRec : messageInfo.data){
-                        Integer messageCount = messageRec.messages.data.size();
-                        List<Case_Communication__c> newCaseCommunicationList = new List<Case_Communication__c>();
-                        Case newCase = new Case();
-                        for(Integer i = 0; i < messageRec.messages.data.size(); i++){
-                            InstaDMWrapper.MessageData dmRec = messageRec.messages.data[i];
-                            system.debug('dmRec==>'+dmRec);
-                            if(i == messageCount - 1){
-                                //This is the first message so create a case..
-                                newCase.User_Name__c              = dmRec.fromDetails.name;
-                                newCase.User_Id__c                = dmRec.fromDetails.id;
-                                newCase.Description               = dmRec.message;
-                                newCase.Brand__c                  = 'Kult App';
-                                newCase.Origin                    = 'Facebook';
-                                newCase.Type_of_Post__c           = 'DM';
-                                newCase.Post_Id__c                = dmRec.id;
-                                newCase.Created_DateTime__c       = getDateTime(String.valueOf(dmRec.created_time).removeEnd('+0000'));
-                                newCase.recordtypeId              = caseRecordTypeId;
-                                newCase.Priority                  = 'High';
-                                newCase.Subject                   = 'DM from ' + dmRec.fromDetails.name + ' (userId: ' + dmRec.fromDetails.id + ') Created at: ' + String.valueOf(dmRec.created_time).removeEnd('+0000');
-                                caseBythreadId.put(dmRec.thread_id,newCase);
-                            } else {
-                                //These will be the case communications..
-                                Case_Communication__c communicationRec        = new Case_Communication__c();
-                                communicationRec.Activity_Content__c          = dmRec.message;
-                                communicationRec.Activity_ID__c               = dmRec.id;
-                                communicationRec.Activity_User_ID__c          = dmRec.fromDetails.id;
-                                communicationRec.Activity_Author__c           = dmRec.fromDetails.name;
-                                communicationRec.Activity_Type__c             = 'DM';
-                                communicationRec.Activity_Created_DateTime__c = getDateTime(String.valueOf(dmRec.created_time).removeEnd('+0000'));
-                                if(caseCommunicationsByThreadId.containsKey(dmRec.thread_id)){
-                                    caseCommunicationsByThreadId.get(dmRec.thread_id).add(communicationRec);  
-                                }else{
-                                    newCaseCommunicationList.add(communicationRec);
-                                    caseCommunicationsByThreadId.put(dmRec.thread_id,newCaseCommunicationList);
+                            }else{
+                                if(i == messageCount - 1){
+                                    //This is the first message so create a case..
+                                    newCase.User_Name__c              = dmRec.fromDetails.name;
+                                    newCase.User_Id__c                = dmRec.fromDetails.id;
+                                    newCase.Description               = dmRec.message;
+                                    newCase.Brand__c                  = 'Kult App';
+                                    newCase.Origin                    = 'Facebook';
+                                    newCase.Type_of_Post__c           = 'DM';
+                                    newCase.Post_Id__c                = dmRec.id;
+                                    newCase.Created_DateTime__c       = getDateTime(String.valueOf(dmRec.created_time).removeEnd('+0000'));
+                                    newCase.recordtypeId              = caseRecordTypeId;
+                                    newCase.Priority                  = 'High';
+                                    newCase.Subject                   = 'DM from ' + dmRec.fromDetails.name + ' (userId: ' + dmRec.fromDetails.id + ') Created at: ' + String.valueOf(dmRec.created_time).removeEnd('+0000');
+                                    caseBythreadId.put(dmRec.thread_id,newCase);
+                                } else {
+                                    //These will be the case communications..
+                                    Case_Communication__c communicationRec        = new Case_Communication__c();
+                                    communicationRec.Activity_Content__c          = dmRec.message;
+                                    communicationRec.Activity_ID__c               = dmRec.id;
+                                    communicationRec.Activity_User_ID__c          = dmRec.fromDetails.id;
+                                    communicationRec.Activity_Author__c           = dmRec.fromDetails.name;
+                                    communicationRec.Activity_Type__c             = 'DM';
+                                    communicationRec.Activity_Created_DateTime__c = getDateTime(String.valueOf(dmRec.created_time).removeEnd('+0000'));
+                                    if(caseCommunicationsByThreadId.containsKey(dmRec.thread_id)){
+                                        caseCommunicationsByThreadId.get(dmRec.thread_id).add(communicationRec);  
+                                    }else{
+                                        newCaseCommunicationList.add(communicationRec);
+                                        caseCommunicationsByThreadId.put(dmRec.thread_id,newCaseCommunicationList);
+                                    }
                                 }
+                                
                             }
-                        }
+                        }    
                         communicationsByCase.put(newCase,newCaseCommunicationList);
                     }
-                    system.debug('communicationsByCase==>'+communicationsByCase);
-                    system.debug('caseCommunicationsByThreadId==>'+caseCommunicationsByThreadId);
-                    system.debug('caseBythreadId==>'+caseBythreadId);
-                    if(caseCommunicationsByThreadId.size() > 0){
-                        for(string threadId : caseBythreadId.keyset()){
-                            Case caseRec = caseBythreadId.get(threadId);
-                            insert caseRec;
-                            if(caseCommunicationsByThreadId.containsKey(threadId)){
-                                for(Case_Communication__c communicationRec : caseCommunicationsByThreadId.get(threadId)){
-                                    communicationRec.Case__c = caseRec.Id;
-                                }
-                                insert caseCommunicationsByThreadId.get(threadId);    
-                            }
+                }    
+            }
+            system.debug('communicationsByCase==>'+communicationsByCase);
+            system.debug('caseCommunicationsByThreadId==>'+caseCommunicationsByThreadId);
+            system.debug('caseBythreadId==>'+caseBythreadId);
+            if(caseCommunicationsByThreadId.size() > 0){
+                for(string threadId : caseBythreadId.keyset()){
+                    Case caseRec = caseBythreadId.get(threadId);
+                    insert caseRec;
+                    if(caseCommunicationsByThreadId.containsKey(threadId)){
+                        for(Case_Communication__c communicationRec : caseCommunicationsByThreadId.get(threadId)){
+                            communicationRec.Case__c = caseRec.Id;
                         }
+                        insert caseCommunicationsByThreadId.get(threadId);    
                     }
                 }
             }
@@ -175,6 +133,7 @@ public class InstaDmUtilityClass {
             system.debug('Error message'+e.getMessage()+'@'+e.getLineNumber());
             return e.getMessage();    
         }
+        
     }
     
     public static string getDmMessagesForUser(String recipientId, String caseId){
@@ -237,7 +196,9 @@ public class InstaDmUtilityClass {
                     for(InstaDMWrapper.Data messageRec : messageInfo.data){
                         for(InstaDMWrapper.MessageData dmRec : messageRec.messages.data){
                             if(caseBySenderId.containsKey(dmRec.fromDetails.id)){
-                                if(!existingDmRecordsByCaseId.get(dmRec.fromDetails.id).contains(dmRec.id)){
+                                system.debug('---dmRec.fromDetails.id-->'+dmRec.fromDetails.id+'--dmRec.id-->'+dmRec.id);
+                                system.debug('---existingDmRecordsByCaseId-->'+existingDmRecordsByCaseId);
+                                if(existingDmRecordsByCaseId.containsKey(dmRec.fromDetails.id) &&  !existingDmRecordsByCaseId.get(dmRec.fromDetails.id).contains(dmRec.id)){
                                     Case_Communication__c communication = new Case_Communication__c();
                                     communication.Case__c = caseBySenderId.get(dmRec.fromDetails.id).Id;
                                     communication.Activity_Content__c = dmRec.message;
@@ -264,8 +225,6 @@ public class InstaDmUtilityClass {
         }
     }
     
-    
-    
     public static dateTime getDateTime(String strDatetime){
         strDatetime = strDatetime.remove('+0000');
         List<String> datetimeParts = strDatetime.split('T');
@@ -288,6 +247,5 @@ public class InstaDmUtilityClass {
         Datetime dt = Datetime.newInstance(year, month, day, hours, minutes, seconds).addminutes(330);
         return dt;
     }
-    
     
 }

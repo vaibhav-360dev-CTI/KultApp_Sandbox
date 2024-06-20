@@ -18,6 +18,7 @@ const Casecolumns = [
 export default class MergeDuplicateCase extends LightningElement {
     @api recordId;
     casesData;
+    originalCases;
     error;
     errors;
     @track selectedCase;
@@ -57,6 +58,7 @@ export default class MergeDuplicateCase extends LightningElement {
                     });
                 }
                 this.casesData = result;
+                this.originalCases = JSON.parse(JSON.stringify(result));
                 // var setRows = [];
                 // for (var i = 0; i < this.casesData.length; i++) {
                 //     setRows.push(this.casesData[i].Id);
@@ -70,6 +72,15 @@ export default class MergeDuplicateCase extends LightningElement {
                 this.error = error;
                 this.casesData = undefined;
             });
+    }
+
+    handleChange(event){
+        debugger;
+        var input = event.detail.value;
+        if(input != null && input != undefined && input != ''){
+            this.casesData = this.originalCases.filter(caseRecord => 
+                caseRecord.CaseNumber.toLowerCase().includes(input));
+        }
     }
 
     handleBack() {

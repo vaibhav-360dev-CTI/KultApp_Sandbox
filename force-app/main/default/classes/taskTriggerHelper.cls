@@ -178,6 +178,23 @@ System.debug('caseToInsert==> ' + caseToInsert);
             System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
         }
     }
+
+    public static void tagCaseOnWhatIdIfAccountIsNotTagged(List<Task> taskList){
+        try{
+            List<Task> taskListToBeUpdated = new List<Task>();
+            for(Task tsk : taskList){
+                if(tsk.WhoId == null && tsk.WhatId == null && tsk.Case__c != null){
+                    Task taskRec = new Task();
+                    taskRec.Id = tsk.Id;
+                    taskRec.WhatId = tsk.Case__c;
+                    taskListToBeUpdated.add(taskRec);
+                }
+            }
+            update taskListToBeUpdated;
+        }catch(exception e){
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+        }
+    }
     
     public static void createCaseOnFirstMissedCall(Task taskRec){
         try{
@@ -319,7 +336,6 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
     @AuraEnabled
     public static taskWithCaseWrappper tagCaseOnTask(String recId){
         try {
-            System.debug('recId=========>'+recId);
             List<Task> tasList = new List<Task>();
             List<Task> AlltaskList = new List<Task>();
             List<Task> singleTaskList = new List<Task>();
@@ -550,50 +566,50 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
         return null;
     }
 
-    public static void changeWhatIdAndAccountId(List<Task> taskList, Map<Id, Task> oldMap){
-        try{
-            Map<Id,Id> accIdByCaseId = new Map<Id,Id>();
-            Set<Id> caseIds = new Set<Id>();
-            System.debug('oldMap'+ oldMap);
-            for(Task ts : taskList){
-                if(oldMap != null){
-                    if(ts.WhatId != null && String.valueOf(ts.WhatId).startsWithIgnoreCase('500') && ts.WhatId != oldMap.get(ts.Id).WhatId){
-                        caseIds.add(ts.WhatId);
-                    }
-                }else{
-                    if(ts.WhatId != null && String.valueOf(ts.WhatId).startsWithIgnoreCase('500')){
-                        caseIds.add(ts.WhatId);
-                    }
-                }
-            }
-            List<Case> caseList = new List<Case>();
-            if(!caseIds.isEmpty()){
-                caseList = [SELECT Id, AccountId FROM Case WHERE ID In: caseIds];
-            }
-            if(!caseList.isEmpty()){
-                for(Case csRec : caseList){
-                    if(csRec.AccountId != null){
-                        accIdByCaseId.put(csRec.Id, csRec.AccountId);
-                    }
-                }
-            }
-            for(Task ts : taskList){
-                if(oldMap != null){
-                    if(ts.WhatId != null && String.valueOf(ts.WhatId).startsWithIgnoreCase('500') && (!oldMap.isEmpty() && ts.WhatId != oldMap.get(ts.Id).WhatId)){
-                        ts.Case__c = ts.WhatId;
-                        ts.WhatId = accIdByCaseId.get(ts.WhatId);
-                    }
-                }else{
-                    if(ts.WhatId != null && String.valueOf(ts.WhatId).startsWithIgnoreCase('500')){
-                        ts.Case__c = ts.WhatId;
-                        ts.WhatId = accIdByCaseId.get(ts.WhatId);
-                    }
-                }
-            }
-        }catch(exception e){
-            System.debug('Error Message==> ' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
-        }
-    }
+    // public static void changeWhatIdAndAccountId(List<Task> taskList, Map<Id, Task> oldMap){
+    //     try{
+    //         Map<Id,Id> accIdByCaseId = new Map<Id,Id>();
+    //         Set<Id> caseIds = new Set<Id>();
+    //         System.debug('oldMap'+ oldMap);
+    //         for(Task ts : taskList){
+    //             if(oldMap != null){
+    //                 if(ts.WhatId != null && String.valueOf(ts.WhatId).startsWithIgnoreCase('500') && ts.WhatId != oldMap.get(ts.Id).WhatId){
+    //                     caseIds.add(ts.WhatId);
+    //                 }
+    //             }else{
+    //                 if(ts.WhatId != null && String.valueOf(ts.WhatId).startsWithIgnoreCase('500')){
+    //                     caseIds.add(ts.WhatId);
+    //                 }
+    //             }
+    //         }
+    //         List<Case> caseList = new List<Case>();
+    //         if(!caseIds.isEmpty()){
+    //             caseList = [SELECT Id, AccountId FROM Case WHERE ID In: caseIds];
+    //         }
+    //         if(!caseList.isEmpty()){
+    //             for(Case csRec : caseList){
+    //                 if(csRec.AccountId != null){
+    //                     accIdByCaseId.put(csRec.Id, csRec.AccountId);
+    //                 }
+    //             }
+    //         }
+    //         for(Task ts : taskList){
+    //             if(oldMap != null){
+    //                 if(ts.WhatId != null && String.valueOf(ts.WhatId).startsWithIgnoreCase('500') && (!oldMap.isEmpty() && ts.WhatId != oldMap.get(ts.Id).WhatId)){
+    //                     ts.Case__c = ts.WhatId;
+    //                     ts.WhatId = accIdByCaseId.get(ts.WhatId);
+    //                 }
+    //             }else{
+    //                 if(ts.WhatId != null && String.valueOf(ts.WhatId).startsWithIgnoreCase('500')){
+    //                     ts.Case__c = ts.WhatId;
+    //                     ts.WhatId = accIdByCaseId.get(ts.WhatId);
+    //                 }
+    //             }
+    //         }
+    //     }catch(exception e){
+    //         System.debug('Error Message==> ' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
+    //     }
+    // }
 
     // public static void createFeedItemAfterInsertOrUpdate(List<Task> taskList){
     //     try{
@@ -615,7 +631,7 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
     // }
     
     
-    /*public static void dumMethod() {
+    public static void dumMethod() {
     Integer i = 0;
     Integer j = 0;
     Integer k = 0;
@@ -2074,6 +2090,6 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
     i = j + k;
     i = j + k;
     i = j + k;
-  }*/
+  }
     
 }

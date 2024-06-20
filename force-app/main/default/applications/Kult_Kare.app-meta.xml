@@ -589,6 +589,7 @@
     <tabs>Case_Progress_Detail__c</tabs>
     <tabs>Follow_Up_Request__c</tabs>
     <tabs>Affected_SKU__c</tabs>
+    <tabs>Integration_Log__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Kult_Kare_UtilityBar</utilityBar>
 </CustomApplication>

@@ -3,7 +3,7 @@ public class CaseHelperControllerTest {
     @isTest
     static void testClass(){
         
-       /* Profile pro = [SELECT Id,Name FROM Profile WHERE Name='Refund Team']; 
+        Profile pro = [SELECT Id,Name FROM Profile WHERE Name='WareHouse Team' Limit 1]; 
         
         User userInstant = new User(Alias = 'standt', Email='sossfdc@cirrologix.com', 
                                     EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
@@ -56,6 +56,7 @@ public class CaseHelperControllerTest {
         ordItm.UnitPrice = 200;
         ordItm.PricebookEntryId = pbe.Id;
         ordItm.Quantity = 1;
+        ordItm.SKU__c = 'TESTSKU'; 
         Insert ordItm;
         
         
@@ -81,10 +82,7 @@ public class CaseHelperControllerTest {
         CaseHelperController.getCaseDetails(cse.id);
         CaseHelperController.getOrderDetailsFromCaseRecord(cse.Id);
         CaseHelperController.getOrder(cse.Id);
-        CaseHelperController.getCasesByOrder(cse.Id);   */
-        
-        
-        CaseHelperController.dumMethod();
+        CaseHelperController.getCasesByOrder(cse.Id);   
         
     }
     

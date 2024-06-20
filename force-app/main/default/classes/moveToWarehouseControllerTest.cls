@@ -56,6 +56,7 @@ public class moveToWarehouseControllerTest {
         ordItm.UnitPrice = 200;
         ordItm.PricebookEntryId = pbe.Id;
         ordItm.Quantity = 1;
+        ordItm.SKU__c = 'SKU1';
         Insert ordItm;
         
         

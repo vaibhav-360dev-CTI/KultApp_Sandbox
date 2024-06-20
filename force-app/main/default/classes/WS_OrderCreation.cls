@@ -19,7 +19,7 @@ public class WS_OrderCreation {
     
     public class CustomerDetails {
         public String name;
-        //public String mobile_number;
+        public String uuid;
         public String email;
         public String phone_number;
     }

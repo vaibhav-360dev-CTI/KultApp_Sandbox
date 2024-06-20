@@ -24,7 +24,7 @@
                             </template>
                             <lightning-input label="Discount Amount" type="Currency" value={discountAmount}
                                     disabled></lightning-input>
-                                    <lightning-input label="Coupon Code" type="test" value={couponCode}
+                                    <lightning-input label="Coupon Code" type="text" value={couponCode}
                                     disabled></lightning-input>
 
                             &nbsp;&nbsp;&nbsp;&nbsp;
@@ -52,11 +52,14 @@
                                                     <div class="slds-truncate" title="SKU Details">SKU</div>
                                                 </th>
                                                 <th scope="col">
+                                                    <div class="slds-truncate" title="SKU Status">Status</div>
+                                                </th>
+                                                <!-- <th scope="col">
                                                     <div class="slds-truncate" title="Quantity">Quantity</div>
                                                 </th>
                                                 <th scope="col">
                                                     <div class="slds-truncate" title="Affected Quantity">Aff. Quantity</div>
-                                                </th>
+                                                </th> -->
                                                 <!-- <th scope="col">
                                                     <div class="slds-truncate" title="MRP">MRP</div>
                                                 </th> -->
@@ -100,6 +103,13 @@
                                                     </td>
                                                     <td>
 
+                                                        <lightning-input type="Text" variant="standard"
+                                                            value={opls.Status__c} class="custom-input"
+                                                            name="skuStatus" label="" disabled style="width: 12rem;"></lightning-input>
+
+                                                    </td>
+                                                    <!-- <td>
+
                                                         <lightning-input type="number" variant="standard"
                                                             value={opls.totalQuantity} class="custom-inputtotalquantity"
                                                             name="totalQuantity" label="" disabled style="width: 80px;"></lightning-input>
@@ -110,7 +120,7 @@
                                                             class="custom-input" value={opls.Affected_Quantity__c}
                                                             name="refundQuantity" label=""  
                                                             onchange={handelaffectedChange} disabled={opls.disabled} style="width: 100px;"></lightning-input>
-                                                    </td>
+                                                    </td> -->
                                                     <!-- <td>
                                                         <lightning-input type="number" value={opls.UnitPrice}
                                                             class="custom-inputmrp" variant="standard" name="MRP"
@@ -147,115 +157,4 @@
             </lightning-card>
         </div>
     </template>
-    <!-- <template if:true={show2ndPage}>
-        <div>
-            <lightning-card>
-                <div class="slds-align_absolute-center">
-                    <h1><b>Select Order</b></h1>
-                </div>
-                <lightning-layout multiple-rows>
-                    <lightning-layout-item size="12" small-device-size="12" medium-device-size="6"
-                        large-device-size="12" padding="horizontal-small">
-                        <div class="custom-box">
-                            <c-custom-Lookup-L-W-C
-                                onprogressvaluechange={hanldeProgressValueChange}></c-custom-Lookup-L-W-C>
-
-                            <template if:true={orderHasItemAvailable}>
-                                <div class="slds-scrollable_x" style="height:auto;width:100%" tabindex="0">
-                                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
-
-                                        <thead>
-                                            <tr class="slds-text-title_caps">
-                                                <th scope="col">
-                                                    <div class="slds-truncate" title="CheckBox"></div>
-                                                </th>
-                                                <th scope="col">
-                                                    <div class="slds-truncate" title="Item">Item</div>
-                                                </th>
-                                                <th scope="col">
-                                                    <div class="slds-truncate" title="SKU Details">SKU Details</div>
-                                                </th>
-                                                <th scope="col">
-                                                    <div class="slds-truncate" title="Quantity">Quantity</div>
-                                                </th>
-                                                <th scope="col">
-                                                    <div class="slds-truncate" title="MRP">Total Price</div>
-                                                </th>
-
-                                                <th scope="col">
-                                                    <div class="slds-truncate" title="Brand">Brand</div>
-                                                </th>
-
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <template for:each={AllOrderItems} for:item="opls" for:index="index">
-
-                                                <tr key={opls.Id}>
-                                                    <td>
-                                                        <lightning-input class="slds-p-left_xx-small" type="checkbox"
-                                                            data-index={index} data-id={opls.Id} checked={checkboxVal}
-                                                            name="checkbox" onchange={handlesChange}>
-                                                        </lightning-input>
-                                                    </td>
-                                                    <td>
-                                                        <lightning-input type="text" value={opls.brand}
-                                                            class="custom-input" variant="standard" name="BrandName"
-                                                            label="" disabled></lightning-input>
-                                                    </td>
-                                                    <td>
-                                                        <lightning-input type="text" variant="standard"
-                                                            value={opls.productName} class="custom-input"
-                                                            name="productName" label="" disabled></lightning-input>
-
-                                                    </td>
-                                                    <td>
-
-                                                        <lightning-input type="Text" variant="standard"
-                                                            value={opls.skudetail} class="custom-input"
-                                                            name="SkuDetails" label="" disabled style="width: 120px;"></lightning-input>
-
-                                                    </td>
-                                                    <td>
-
-                                                        <lightning-input type="number" variant="standard"
-                                                            value={opls.totalQuantity} class="custom-inputtotalquantity"
-                                                            name="totalQuantity" label="" disabled style="width: 80px;"></lightning-input>
-
-                                                    </td>
-                                                    <td key={opls.Id}>
-                                                        <lightning-input data-index={index} type="number" variant="standard"
-                                                            class="custom-input" value={opls.Affected_Quantity__c}
-                                                            name="refundQuantity" label=""  
-                                                            onchange={handelaffectedChange} disabled={opls.disabled} style="width: 100px;"></lightning-input>
-                                                    </td>
-                                                    <td>
-                                                        <lightning-input type="number" value={opls.UnitPrice}
-                                                            class="custom-inputmrp" variant="standard" name="MRP"
-                                                            label="" disabled></lightning-input>
-                                                    </td>
-                                                    <td>
-                                                        <lightning-input type="number" value={opls.Selling_Price__c}
-                                                            class="custom-inputmrp" variant="standard" name="Selling Price"
-                                                            label="" disabled style="width: 100px;"></lightning-input>
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </template>
-                            <div class="slds-align_absolute-center" style="height:5rem">
-                                <lightning-button label="Save" onclick={handleClick}>
-                                </lightning-button>&nbsp;&nbsp;
-                                <lightning-button variant="neutral" onclick={closeAction}
-                                    label="Cancel"></lightning-button>
-                            </div>
-                        </div>
-                    </lightning-layout-item>
-                </lightning-layout>
-
-            </lightning-card>
-        </div>
-    </template> -->
 </template>

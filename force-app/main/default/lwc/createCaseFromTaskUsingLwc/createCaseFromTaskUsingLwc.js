@@ -25,8 +25,10 @@ export default class CreateCaseFromTaskUsingLwc extends LightningElement {
     selectedUsr;
     inpName;
     selectedOrd;
+    hideResult = false;
     selectedRows = [];
     @track orderHasItemAvailable = false;
+    @track isLoading = false;
     @track AllOrderItems = [];
     @track isModalOpen = true;
     @track OrderList = [];
@@ -170,6 +172,11 @@ export default class CreateCaseFromTaskUsingLwc extends LightningElement {
         } catch (error) {
             console.error('check error here', error);
         }
+    }
+
+    handleParentClick() {
+        debugger;
+        this.hideResult = true;
     }
 
     handleRatingChange(event) {
@@ -317,6 +324,7 @@ export default class CreateCaseFromTaskUsingLwc extends LightningElement {
 
     handleClick() {
         debugger;
+        this.isLoading = true;
         createCaseFromCase({
             RecordTypeName: this.selectedTypeValue,
             Type: this.selectedRatingValue,
@@ -338,6 +346,7 @@ export default class CreateCaseFromTaskUsingLwc extends LightningElement {
                     this.dispatchEvent(event);
                     this.dispatchEvent(new CloseActionScreenEvent());
                     this.dispatchEvent(new RefreshEvent());
+                    this.isLoading = false;
                     window.location.replace(this.CaseBaseURL + result.Id + '/view');
                 }
             })

@@ -70,6 +70,12 @@
                 <identifier>RecordDescriptionField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Admin__c</fieldItem>
+                <identifier>RecordAssigned_to_Admin__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-267ea9dc-3fdf-4e88-9933-09f3821a4c6d</name>
         <type>Facet</type>
     </flexiPageRegions>

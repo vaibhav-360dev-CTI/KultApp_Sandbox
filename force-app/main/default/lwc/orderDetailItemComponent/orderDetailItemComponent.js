@@ -45,7 +45,7 @@ export default class OrderDetailItems extends LightningElement {
                 this.discountValue = result[0].Order.ParentOrder__r.Coupon_Discount__c;
                 this.paymentId = result[0].Order.ParentOrder__r.Payment_Id__c;
                 this.loginNumber = result[0].Order.Account.Phone;
-                this.orderStatus = result[0].Order.ParentOrder__r.Status;
+                this.orderStatus = result[0].Order.ParentOrder__r.Payment_Status__c;
                 this.couponCode = result[0].Order.ParentOrder__r.Coupon_Code__c;
                 this.shippingaddress1 = result[0].Order.ParentOrder__r.ShippingStreet +',';
                 this.shippingaddress2 = result[0].Order.ParentOrder__r.ShippingCity + ',';

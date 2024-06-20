@@ -2,21 +2,18 @@ public without sharing class marketingTeamCaseController {
 
     @AuraEnabled
     public Static Case marketingTeamCase(String recId) {
-        return [SELECT Id, CaseNumber, Account.Name, OrderId__c,OrderId__r.OrderNumber,Subject,MT_Assignment_Reason__c,MT_Assignment_Remarks__c, RecordType.Name,CreatedBy.Name, Sub_Type__c, Sub_Sub_Type__c FROM Case WHERE Id = :recId LIMIT 1];
+        return [SELECT Id, CaseNumber, Account.Name, Movement_Date_Time__c,OrderId__c,OrderId__r.OrderNumber,Subject,MT_Assignment_Reason__c,MT_Assignment_Remarks__c, RecordType.Name,CreatedBy.Name, Sub_Type__c, Sub_Sub_Type__c FROM Case WHERE Id = :recId LIMIT 1];
        
         
     }
     @AuraEnabled
     public static List<User> getUsersByProfileName() {
         List<User> users = [SELECT Id, Name FROM User WHERE Profile.Name = 'Marketing Team'];       
-        System.debug('users=====>'+users);
         return users;
     }
 
     @AuraEnabled
     public static String userUpdate(String recId, String MarketingReason) {
-        System.debug('recId=====>' + recId);
-        System.debug('MarketingReason=====>' + MarketingReason);
         try {
             Set<Id> setOfOwnerId = new Set<Id>();
             List<Case> caseList1 = [SELECT Id, OwnerId, Owner.Email, Owner.Name, ContactId, Contact.Email, CreatedDate, CaseNumber, CS_Team_Member__c FROM Case WHERE Id =:recId];
@@ -41,6 +38,8 @@ public without sharing class marketingTeamCaseController {
             cs.Marketing__c = true;
             cs.Status = 'In Progress';
             cs.Case_Sub_Status__c = 'Assigned to Marketing Team';
+            cs.Movement_Date_Time__c = System.Now();
+            cs.Assigned_to_Marketing_Team__c = true;
             update cs;
             Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
                 cpdRec.Status__c = 'In Progress';
@@ -48,17 +47,12 @@ public without sharing class marketingTeamCaseController {
                 cpdRec.Case__c = cs.Id;
                 cpdRec.Current_Action__c = 'Moved to Marketing Team';
                 insert cpdRec;
-            System.debug('cs ==>'+cs);
         
             setOfOwnerId.add(caseList1[0].OwnerId);
-            System.debug('caseList=====>' + caseList1);
-
             List<CaseShare> existingShares = [SELECT Id FROM CaseShare WHERE CaseId = :cs.Id AND UserOrGroupId = :CSteamId];
-                System.debug('existingShares======>'+existingShares);
 
                 if(!existingShares.isEmpty()){
                     //delete existingShares;
-                    System.debug('existingShares delete records======>'+existingShares);
                 }else{
                     CaseShare newCaseShare = new CaseShare();
                     newCaseShare.CaseId =  cs.Id;    //caseRecord.Id;
@@ -68,7 +62,6 @@ public without sharing class marketingTeamCaseController {
                     newCaseShare.CaseAccessLevel = 'Edit';
                     //newCaseShare.RowCause = Schema.CaseShare.RowCause.Manual;
                     insert newCaseShare;
-                    System.debug('newCaseShare======>'+newCaseShare);
                 }
     
             Map<Id, Contact> mapOfContact = new Map<Id, Contact>();
@@ -78,9 +71,7 @@ public without sharing class marketingTeamCaseController {
                     setOfContactId.add(cse.ContactId);
                 }
             }
-            System.debug('setOfContactId ==>'+setOfContactId);
             List<Contact> conlist = [SELECT Id, Name, Phone, Email FROM Contact WHERE Id IN :setOfContactId];
-            System.debug('conlist=====>' + conlist);
             if (!conlist.isEmpty()) {
                 for (Contact Con : conlist) {
                     mapOfContact.put(Con.Id, Con);
@@ -88,22 +79,15 @@ public without sharing class marketingTeamCaseController {
             }
     
             List<User> useList = [SELECT Id, Name,Email FROM User WHERE Id IN :setOfOwnerId];
-            System.debug('useList=====>' + useList);
             Set<String> marketingTeamUsers = new Set<String>();
             List<Id> marketingTeamTaskUsers = new List<Id>();
             for (User usr : useList) {
                 marketingTeamUsers.add(usr.Id);
                 marketingTeamTaskUsers.add(usr.Id);
             }
-            System.debug('marketingTeamUsers=====>' + marketingTeamUsers);
-            System.debug('marketingTeamTaskUsers=====>' + marketingTeamTaskUsers);
     
-            EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'email_to_customer_on_marketing_team'];
-            System.debug('temp=====>' + temp);
-    
-            List<CustomNotificationType> TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName = 'custom_notification_to_refund_team_on_pincode_not_serviceable'];
-            System.debug('TemplateInfoDetail=====>' + TemplateInfoDetail);
-    
+            EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'email_to_customer_on_marketing_team'];    
+            List<CustomNotificationType> TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName = 'custom_notification_to_refund_team_on_pincode_not_serviceable'];    
             List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
             //List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
     
@@ -128,7 +112,6 @@ public without sharing class marketingTeamCaseController {
                 }
     
                 emailString.add(cse.Owner.Email);
-                System.debug('emailString===>' + emailString);
                 mail.setSubject(temp != null ? temp.Subject : '');
                 mail.setPlainTextBody(body);
                 mail.setTemplateId(temp != null ? temp.Id : null);
@@ -151,7 +134,6 @@ public without sharing class marketingTeamCaseController {
                 tsk.WhatId = cse.Id;
                 tsk.OwnerId = marketingTeamTaskUsers[0];
                 taskList.add(tsk);
-                System.debug('tsk ==>'+tsk);
             }
             Insert taskList;
             if (!mailList.isEmpty()) {

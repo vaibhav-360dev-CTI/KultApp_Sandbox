@@ -12,7 +12,7 @@ public without sharing class moveToWarehouseController {
                                        ContactFax, Comments, LastViewedDate, LastReferencedDate, MilestoneStatus, Sub_Type__c, Sub_Sub_Type__c, Payment_ID__c, 
                                        Amount_Paid__c,Refund_Back_Reason__c, Approval_Remarks__c, 
                                         Coupon_Code__c,Logging_Mobile_number__c, 
-                                       Brand__c, Actual_Price__c, 
+                                       Brand__c, Actual_Price__c, Movement_Date_Time__c,
                                        Brand_Name__c, User_Id__c, Contact_Number__c, 
                                        Instagram_ID__c, Address_With_Pin_Code__Street__s, Address_With_Pin_Code__City__s, Address_With_Pin_Code__PostalCode__s, 
                                        Address_With_Pin_Code__StateCode__s, Address_With_Pin_Code__CountryCode__s, Address_With_Pin_Code__Latitude__s, 
@@ -84,7 +84,9 @@ public without sharing class moveToWarehouseController {
                 caseRec.OwnerId = queueId;
                 caseRec.Status = 'In Progress';
                 caseRec.Case_Sub_Status__c = 'Assigned to Warehouse Team';
+                caseRec.Assigned_to_WH_Team__c = true;
                 caseRec.Number_of_Times_Sent_to_WH__c = caseRec.Number_of_Times_Sent_to_WH__c == null ? 1 : caseRec.Number_of_Times_Sent_to_WH__c + 1;
+                caseRec.Movement_Date_Time__c = System.Now();
                 update caseRec;
                 Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
                 cpdRec.Status__c = 'In Progress';
@@ -94,11 +96,9 @@ public without sharing class moveToWarehouseController {
                 insert cpdRec;
                 
                 List<CaseShare> existingShares = [SELECT Id FROM CaseShare WHERE CaseId = :caseRec.Id AND UserOrGroupId = :caseRec.CS_Team_Member__c AND RowCause != 'Owner'];
-                System.debug('existingShares======>'+existingShares);
                 
                 if(!existingShares.isEmpty()){
                     //delete existingShares;
-                    System.debug('existingShares delete records======>'+existingShares);
                 }else{
                     CaseShare newCaseShare = new CaseShare();
                     newCaseShare.CaseId =  caseRec.Id;    //caseRecord.Id;
@@ -106,7 +106,6 @@ public without sharing class moveToWarehouseController {
                     newCaseShare.CaseAccessLevel = 'Edit';
                     //newCaseShare.RowCause = Schema.CaseShare.RowCause.Manual;
                     insert newCaseShare;
-                    System.debug('newCaseShare======>'+newCaseShare);
                     //sendingCustomNotification(caseRec.Warehouse_Team_Member__c, caseRec.Id, 'Case has been assigned', 'A case has been moved to warehouse team bucket, please take relevant action');
                     return 'Successful';
                 }
@@ -120,9 +119,7 @@ public without sharing class moveToWarehouseController {
     
     @AuraEnabled
     public static void sendingCustomNotification(String refundTeamMemberId,String caseId,String notificationTitle, String notificationBody){
-        
-        System.debug('refundTeamMemberId====>'+refundTeamMemberId);
-        System.debug('caseId====>'+caseId);
+
         CustomNotificationType notificationType = [SELECT Id, DeveloperName FROM CustomNotificationType 
                                                    WHERE DeveloperName='Refund_Team_Member'];
         
@@ -214,7 +211,6 @@ public without sharing class moveToWarehouseController {
     
     @AuraEnabled
     public static string AssignToAdminQueue(string RecId, String reassignReason){
-        System.debug('recId===============>'+RecId + '   ' + 'reassignReason==========>'+reassignReason );
         try {
             if(RecId != null){
                 List<Group> queueList = [select Id from Group where Type = 'Queue' AND DeveloperNAME = 'Admin_Queue' ];
@@ -228,7 +224,9 @@ public without sharing class moveToWarehouseController {
                     if(reassignReason != null){
                         cse.MT_Assignment_Reason__c = reassignReason;
                         cse.OwnerId = queueId;
-                        System.debug('OwnerId===========>' + cse.OwnerId);
+                        cse.Movement_Date_Time__c = System.Now();
+                        cse.Case_Sub_Status__c = 'Assigned to Admin Queue';
+                        cse.Assigned_to_Admin__c = true;
                     }
                     Case_Progress_Detail__c cpd = new Case_Progress_Detail__c();
                     cpd.CS_Remarks__c = reassignReason;
@@ -236,10 +234,8 @@ public without sharing class moveToWarehouseController {
                     cpd.Case__c = cse.Id;
                     cpd.Current_Action__c = 'Move To Admin';
                     Insert cpd;
-                    System.debug('cpd' + cpd);
                 }
                 update csList;
-                System.debug('csList==========>' + csList);
                 
                 return 'SUCCESS';
             }
@@ -262,7 +258,8 @@ public without sharing class moveToWarehouseController {
                         cse.CS_Team_Member__c = usrId;
                         cse.Is_With_Refund_Team__c = false;
                         cse.Status = 'Re Assigned';
-
+                        cse.Case_Sub_Status__c = 'Assigned to CS Team';
+                        cse.Case_Reassigned_DateTime__c = System.Now();
                         Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
                         notification.setBody('A New Case Has Been Assigned To You'); 
                         notification.setTitle('New Case Assignment'); 
@@ -275,7 +272,94 @@ public without sharing class moveToWarehouseController {
                     cpd.CS_Remarks__c = reAssignmnetReason;
                     cpd.Status__c = 'In Progress';
                     cpd.Case__c = cse.Id;
-                    cpd.Current_Action__c = 'Move To CS Team';
+                    cpd.Current_Action__c = 'Reassigned To CS Team';
+                    cpd.OwnerId = usrId;
+                    Insert cpd;
+
+
+
+                }
+                
+                update csList;                
+                return 'SUCCESS';
+            }
+        } catch (Exception e) {
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            
+        }return null;
+    }
+
+    @AuraEnabled
+    public static string reAssignCaseToWHTeam(string recId, String reAssignmnetReason, Id usrId){
+        try {
+            if(recId != null){
+                
+                List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,CS_Team_Member__c,OwnerId,Is_With_Refund_Team__c, Warehouse_Team_Member__c, Case_Reassigned_DateTime__c, Status From Case Where Id =: recId Limit 1];
+                for(Case cse : csList){
+                    if(reAssignmnetReason != null){
+                        cse.MT_Assignment_Reason__c = reAssignmnetReason;
+                        cse.OwnerId = usrId;
+                        cse.Warehouse_Team_Member__c = usrId;
+                        cse.Is_With_Refund_Team__c = false;
+                        cse.Assigned_to_WH_Team__c = true;
+                        cse.Status = 'Re Assigned';
+                        cse.Case_Reassigned_DateTime__c = System.Now();
+                        Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                        notification.setBody('A New Case Has Been Assigned To You'); 
+                        notification.setTitle('New Case Assignment'); 
+                        CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];  
+                        notification.setNotificationTypeId(type.id); 
+                        notification.setTargetId(cse.Id);
+                        notification.send(new Set<String> { cse.OwnerId });
+                    }
+                    Case_Progress_Detail__c cpd = new Case_Progress_Detail__c();
+                    cpd.CS_Remarks__c = reAssignmnetReason;
+                    cpd.Status__c = 'In Progress';
+                    cpd.Case__c = cse.Id;
+                    cpd.Current_Action__c = 'Reassigned To WH Team';
+                    cpd.OwnerId = usrId;
+                    Insert cpd;
+
+
+
+                }
+                
+                update csList;                
+                return 'SUCCESS';
+            }
+        } catch (Exception e) {
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            
+        }return null;
+    }
+
+    @AuraEnabled
+    public static string reAssignCaseToDropshippingTeam(string recId, String reAssignmnetReason, Id usrId){
+        try {
+            if(recId != null){
+                
+                List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,CS_Team_Member__c,OwnerId,Is_With_Refund_Team__c, Warehouse_Team_Member__c, Case_Reassigned_DateTime__c, Status, Dropshipping_User__c From Case Where Id =: recId Limit 1];
+                for(Case cse : csList){
+                    if(reAssignmnetReason != null){
+                        cse.MT_Assignment_Reason__c = reAssignmnetReason;
+                        cse.OwnerId = usrId;
+                        cse.Dropshipping_User__c = usrId;
+                        cse.Assigned_to_Dropshipping__c = true;
+                        cse.Status = 'Re Assigned';
+                        cse.Case_Reassigned_DateTime__c = System.Now();
+                        Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                        notification.setBody('A New Case Has Been Assigned To You'); 
+                        notification.setTitle('New Case Assignment'); 
+                        CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'child_case_creation'];  
+                        notification.setNotificationTypeId(type.id); 
+                        notification.setTargetId(cse.Id);
+                        notification.send(new Set<String> { cse.OwnerId });
+                    }
+                    Case_Progress_Detail__c cpd = new Case_Progress_Detail__c();
+                    cpd.CS_Remarks__c = reAssignmnetReason;
+                    cpd.Status__c = 'In Progress';
+                    cpd.Case__c = cse.Id;
+                    cpd.Current_Action__c = 'Assigned To Dropshipping Team';
                     cpd.OwnerId = usrId;
                     Insert cpd;
 
@@ -298,11 +382,38 @@ public without sharing class moveToWarehouseController {
         try {
 
             List<User> userList = [SELECT Id, Name, Profile.Name FROM User WHERE Profile.Name = 'Customer Service Executive' AND IsActive = true];
-            System.debug('userList===========>' + userList);
-            return userList;
- 
+            return userList;            
+        } catch (Exception e) {
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            return null;
+        }
+    }
 
-            
+    @AuraEnabled
+    public static List<User> getAllWHUser(){
+        try {
+
+            List<User> userList = [SELECT Id, Name, Profile.Name FROM User WHERE Profile.Name = 'Warehouse Team' AND IsActive = true];
+            return userList;            
+        } catch (Exception e) {
+            System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
+            return null;
+        }
+    }
+
+    @AuraEnabled
+    public static List<User> getAllDropshippingUser(){
+        try {
+            List<Dropshipping_User__mdt> userListMDT = [SELECT Id, Username__c FROM Dropshipping_User__mdt];
+            Set<String> userNamesSet = new Set<String>();
+            List<User> userList = new List<User>();
+            if(!userListMDT.isEmpty()){
+                for(Dropshipping_User__mdt mdt : userListMDT){
+                    userNamesSet.add(mdt.Username__c);
+                }
+                userList = [SELECT Id, Name, Profile.Name FROM User WHERE Username IN :userNamesSet];
+            }
+            return userList;            
         } catch (Exception e) {
             System.debug('Error Message ' + e.getMessage() + ' at Line Number ' + e.getLineNumber());
             return null;

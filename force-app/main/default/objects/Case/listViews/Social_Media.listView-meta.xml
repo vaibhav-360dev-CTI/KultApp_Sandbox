@@ -13,5 +13,10 @@
         <operation>equals</operation>
         <value>Case.Social_Media</value>
     </filters>
+    <filters>
+        <field>Type_of_Post__c</field>
+        <operation>equals</operation>
+        <value>Post</value>
+    </filters>
     <label>Social Media</label>
 </ListView>

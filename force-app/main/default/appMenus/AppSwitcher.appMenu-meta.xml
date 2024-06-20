@@ -140,4 +140,8 @@
         <name>Kult_Admin_clone</name>
         <type>CustomApplication</type>
     </appMenuItems>
+    <appMenuItems>
+        <name>standard__FlowsApp</name>
+        <type>CustomApplication</type>
+    </appMenuItems>
 </AppMenu>

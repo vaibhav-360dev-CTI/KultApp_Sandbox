@@ -241,6 +241,18 @@
                 <identifier>RecordDisposition_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_WH_Team__c</fieldItem>
+                <identifier>RecordAssigned_to_WH_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Marketing_Team__c</fieldItem>
+                <identifier>RecordAssigned_to_Marketing_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-33c717c1-600c-40eb-9724-04c23910469e</name>
         <type>Facet</type>
     </flexiPageRegions>
