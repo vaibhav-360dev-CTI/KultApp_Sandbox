@@ -31,6 +31,9 @@
         if(tempName == 'CSoutbound'){
             hiddenElement.download = 'CS Outbound Case Upload Temp.csv'
         }
+        if(tempName == 'MiscCancellation'){
+            hiddenElement.download = 'Misc Cancellation Case Upload Temp.csv'
+        }
           
         document.body.appendChild(hiddenElement); // Required for FireFox browser
         hiddenElement.click(); // using click() js function to download csv file

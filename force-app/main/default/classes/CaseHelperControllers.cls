@@ -309,18 +309,30 @@ public class CaseHelperControllers {
     @AuraEnabled
     public static string reOpenCase(String RecId, String Reason){
         try {
+            List<Case> cseList = [SELECT Id,ContactId,Contact.Email,OwnerId,Owner.email From Case Where Id =: RecId];
             Case Cs = new Case();
-            Cs.Id = RecId;
-            Cs.OwnerId = userInfo.getUserId();
-            update Cs;
+
+            if(!cseList.isEmpty()){
+                Cs = cseList[0];
+                if(cs.OwnerId != userInfo.getUserId()){
+                    Cs.OwnerId = userInfo.getUserId();
+                    //update cs;
+                }
+            }else{
+                Cs.Id = RecId;
+                Cs.OwnerId = userInfo.getUserId();
+                //update cs;
+            }
             set<Id> setOfOwnerId = new set<Id>();
             if(Reason != null){                   
                 cs.Status = 'Re-Opened';
                 cs.Re_Opening_Reason__c = Reason;  
             }
-            update cs;
-            Case cseList = [SELECT Id,ContactId,Contact.Email,OwnerId,Owner.email From Case Where Id =: cs.Id];
-            String CaseOwnId = cseList.Owner.email;
+            Cs.Allow_Update__c = true; // Bypass validation rule
+            update Cs;
+            Cs.Allow_Update__c = false; // Reset the flag
+            update Cs;
+            String CaseOwnId = cseList[0].Owner.email;
             
             
             Messaging.CustomNotification notification = new Messaging.CustomNotification();
@@ -331,8 +343,8 @@ public class CaseHelperControllers {
             notification.setSenderId(UserInfo.getUserId());
             notification.setNotificationTypeId(customNotiList.Id); 
             notification.setTargetId(cs.Id);
-            if(cseList.OwnerId != null){
-                notification.send(new set<String>{cseList.OwnerId});
+            if(cseList[0].OwnerId != null){
+                notification.send(new set<String>{cseList[0].OwnerId});
             }
             
             
@@ -343,13 +355,13 @@ public class CaseHelperControllers {
             String body = temp.body;
             if(CaseOwnId != null){
                 Messaging.SingleEmailMessage mailTemp = new Messaging.SingleEmailMessage(); 
-                body = body.replace('{!Case.Id}',cseList.Id);
+                body = body.replace('{!Case.Id}',cseList[0].Id);
                 mailTemp.setPlainTextBody(body);
                 mailTemp.setTemplateId(temp.id);
-                mailTemp.setTargetObjectId(cseList.ContactId);
+                mailTemp.setTargetObjectId(cseList[0].ContactId);
                 mailTemp.setToAddresses(setToAdresses);
                 mailTemp.setSaveAsActivity(false);
-                mailTemp.setWhatId(cseList.Id);
+                mailTemp.setWhatId(cseList[0].Id);
                 mails.add(mailTemp);
             }
             
@@ -503,7 +515,7 @@ public class CaseHelperControllers {
     }
     @AuraEnabled
     public static List<Case>  mergeCaseBasedOnAccIdConIdEmailIdPhoneNumberInstagram(String recId) {
-        Case cse = [SELECT Id, CaseNumber, SuppliedEmail, SuppliedPhone, Subject, Order_Number__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE Id = :recId];
+        Case cse = [SELECT Id, CaseNumber, SuppliedEmail, SuppliedPhone, Subject, Order_Number__c,Shipping_Mobile_No__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE Id = :recId];
         Set<Id> caseAccountIds = new Set<Id>();
         Set<Id> caseContactIds = new Set<Id>();
         set<String> TypeString = new set<String>();
@@ -528,8 +540,7 @@ public class CaseHelperControllers {
         
         List<Case> caseList = [SELECT Id, Subject, Origin, Status,OrderId__r.Name, Order_Number__c,RecordType.Name,OrderId__r.OrderNumber,CaseNumber,Sub_Type__c,Sub_Sub_Type__c,ContactPhone,
                                Account.Name,AccountId,Contact.Name,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE 
-                               (AccountId IN :caseAccountIds OR ContactId IN :caseContactIds OR Email_Id__c IN :EmailString OR SuppliedEmail IN: emailString
-                                OR Contact_Number__c IN :contactNumberString OR SuppliedPhone IN :contactNumberString OR Instagram_ID__c IN :InstagramString) AND Status != 'Closed' Order By CreatedDate];
+                               ((OrderId__c =: cse.OrderId__c AND OrderId__c != null) OR (SuppliedEmail =: cse.SuppliedEmail AND SuppliedEmail != null) OR (Shipping_Mobile_No__c =:cse.Shipping_Mobile_No__c AND Shipping_Mobile_No__c != null) OR (Contact_Number__c=: cse.Contact_Number__c AND Contact_Number__c != null) OR (SuppliedPhone =: cse.SuppliedPhone AND SuppliedPhone != null)) AND Status != 'Closed' Order By CreatedDate];
         return caseList;
     }
      
@@ -542,12 +553,96 @@ public class CaseHelperControllers {
             caseId = cseList[0].Id;
             caseNo = cseList[0].caseNumber;
             List<Case> updatingCaseList = new List<Case>();
+            Set<Id> childCaseIds = new Set<Id>();
+            System.debug('caseId==> ' + caseId);
             for(Case cse : cseList){
                 if(cse.Id != caseId){
+                    childCaseIds.add(cse.Id);
                     cse.Status = 'Closed';
+                    cse.ParentId = caseId;
                     cse.Case_Reason_Description__c =  'Closed as Duplicate Case Under Case No.' + caseNo;
+                    cse.Case_Sub_Status__c = 'Closed as Duplicate Case';
+                    cse.OwnerId = userInfo.getUserId();
                     updatingCaseList.add(cse);
                 }
+            }
+            System.debug('updatingCaseList==> ' + updatingCaseList);
+            List<Case_Progress_Detail__c> cpdList = [SELECT Id, Name, CS_Remarks__c, WH_Team_Remarks__c, Status__c, Case__c, Case__r.CaseNumber, Current_Action__c, Response_Time__c, Responded_By__c, Tech_Issue_Type__c FROM Case_Progress_Detail__c WHERE Case__c IN: childCaseIds];
+            
+            List<Affected_SKU__c> skuList = [SELECT Id, Product_Name__c, Brand_Name__c, MRP__c, Case__c, Case__r.CaseNumber,Total_Quantity__c, Selling_Price__c, Affected_Quantity__c, Created_By__c, Refund_Amount__c, Order_Item__c FROM Affected_SKU__c WHERE Case__c IN: childCaseIds];
+            
+            List<EmailMessage> emailList = [SELECT Id, ParentId, TextBody, HtmlBody, Headers, Subject, Name, FromName, FromAddress, ToAddress, CcAddress, BccAddress, Incoming, HasAttachment, Status, MessageDate, IsDeleted, ReplyToEmailMessageId, 
+            IsExternallyVisible, MessageIdentifier, ThreadIdentifier, ClientThreadIdentifier, IsClientManaged, RelatedToId, IsTracked, IsOpened, FirstOpenedDate, LastOpenedDate, IsBounced, EmailTemplateId,Parent.CaseNumber FROM EmailMessage WHERE ParentId IN: childCaseIds];
+            
+            List<Task> taskList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate, Status, Priority, IsHighPriority, OwnerId, Description, IsDeleted, AccountId, IsClosed, IsArchived, CallDurationInSeconds, CallType, CallDisposition, CallObject, 
+            ReminderDateTime, IsReminderSet, RecurrenceActivityId, IsRecurrence, RecurrenceStartDateOnly, RecurrenceEndDateOnly, RecurrenceTimeZoneSidKey, RecurrenceType, RecurrenceInterval, RecurrenceDayOfWeekMask, RecurrenceDayOfMonth, RecurrenceInstance, RecurrenceMonthOfYear, 
+            RecurrenceRegeneratedType, TaskSubtype, CompletedDateTime, Exotel_CTI__Call_Direction__c, Exotel_CTI__Call_Duration__c, Exotel_CTI__Call_Sid__c, Exotel_CTI__Call_Status__c, Exotel_CTI__End_Time__c, Exotel_CTI__From__c, Exotel_CTI__Leg1_Status__c, Exotel_CTI__Leg2_Status__c, 
+            Exotel_CTI__Recording_URL__c, Exotel_CTI__Start_Time__c, Exotel_CTI__To__c, Exotel_CTI__Virtual_Number__c, No_Of_Missed_Calls__c, Case__c, Is_Case_Tagged__c FROM Task WHERE Case__c IN: childCaseIds OR whatId IN: childCaseIds];
+
+            List<ContentDocumentLink> cdlList = [SELECT Id, LinkedEntityId, ContentDocumentId, IsDeleted, SystemModstamp, ShareType, Visibility FROM ContentDocumentLink WHERE LinkedEntityId IN: childCaseIds];
+
+            List<Case_Progress_Detail__c> cpdListToInsert = new List<Case_Progress_Detail__c>();
+            List<Affected_SKU__c> affSKUtoInsert = new List<Affected_SKU__c>();
+            List<EmailMessage> emailListToInsert = new List<EmailMessage>();
+            List<Task> tasksToInsert = new List<Task>();
+            List<ContentDocumentLink> cdlListToInsert = new List<ContentDocumentLink>();
+
+            for(ContentDocumentLink tsk : cdlList){
+                ContentDocumentLink tskRec = new ContentDocumentLink();
+                tskRec = tsk;
+                tskRec.Id = null;
+                tskRec.LinkedEntityId = caseId;
+                cdlListToInsert.add(tskRec);
+            }
+            for(Task tsk : taskList){
+                Task tskRec = new Task();
+                tskRec = tsk;
+                tskRec.Id = null;
+                tskRec.Case__c = caseId;
+                if(tsk.WhatId == null){
+                    tskRec.WhatId = caseId;
+                }
+                if(tsk.Exotel_CTI__Call_Sid__c!= null)
+                tskRec.Exotel_CTI__Call_Sid__c = 'Duplicate Case ' + caseNo + '-' + tsk.Exotel_CTI__Call_Sid__c;
+                tasksToInsert.add(tskRec);
+            }
+            for(EmailMessage msg: emailList){
+                EmailMessage msgRec = new EmailMessage();
+                msgRec = msg;
+                msgRec.Id = null;
+                msgRec.ParentId = caseId;
+                emailListToInsert.add(msgRec);
+            }
+            for(Affected_SKU__c msg: skuList){
+                Affected_SKU__c msgRec = new Affected_SKU__c();
+                msgRec = msg;
+                msgRec.Id = null;
+                msgRec.Case__c = caseId;
+                affSKUtoInsert.add(msgRec);
+            }
+            for(Case_Progress_Detail__c msg: cpdList){
+                Case_Progress_Detail__c msgRec = new Case_Progress_Detail__c();
+                msgRec = msg;
+                msgRec.Id = null;
+                msgRec.Skip_Trigger__c = true;
+                msgRec.Case__c = caseId;
+                cpdListToInsert.add(msgRec);
+            }
+
+            if(!cpdListToInsert.isEmpty()){
+                insert cpdListToInsert;
+            }
+            if(!affSKUtoInsert.isEmpty()){
+                insert affSKUtoInsert;
+            }
+            if(!emailListToInsert.isEmpty()){
+                insert emailListToInsert;
+            }
+            if(!tasksToInsert.isEmpty()){
+                insert tasksToInsert;
+            }
+            if(!cdlListToInsert.isEmpty()){
+                insert cdlListToInsert;
             }
             update updatingCaseList;
             return 'SUCCESS';

@@ -26,6 +26,9 @@
         if(tempName == 'CSoutbound'){
             keys = ['Phone Number','Call Type'];
        }
+       if(tempName == 'MiscCancellation'){
+        keys = ['Order No','Reason'];
+    }
 
         csvStringResult = '';
         csvStringResult += keys.join(columnDivider);

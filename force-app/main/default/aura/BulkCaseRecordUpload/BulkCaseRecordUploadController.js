@@ -90,6 +90,15 @@
         component.set("v.showScondScreen",true);
         component.set("v.showFirstScreen",false);
     },
+
+    handleMiscCancellation: function(component,event,helper){
+        debugger;
+        var tempName = 'MiscCancellation';
+        component.set("v.tempNameToDownload",tempName);
+        component.set("v.showScondScreen",true);
+        component.set("v.showFirstScreen",false);
+    },
+
     handleClickRToOrders : function(component,event,helper){
         debugger;
         var tempName = 'RToOrders';

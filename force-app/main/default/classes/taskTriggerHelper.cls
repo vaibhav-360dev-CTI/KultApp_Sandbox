@@ -214,7 +214,7 @@ System.debug('caseToInsert==> ' + caseToInsert);
             }
             caseRec.Contact_Number__c = taskRec.Exotel_CTI__From__c;
             caseRec.Subject = 'Missed Call From ' + String.ValueOf(taskRec.Exotel_CTI__From__c);
-            caseRec.Priority = 'High';
+            caseRec.Priority = 'Medium';
             caseRec.OwnerId = missedCallGroup.Id;
             insert caseRec;
             
@@ -457,7 +457,6 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
     
     @AuraEnabled
     public static String taggedCase(String jsonData) {
-        System.debug('jsonData ============>' + jsonData);
         try {
             
             
@@ -479,38 +478,27 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     //TaskId = String.valueOf(jsonMap.get('TaskId'));
                     TaskId = String.valueOf(jsonMap.get('TaskId'));
                     CurrentstringList = TaskId.substring(1, TaskId.length() - 1).split(', ');
-                    System.debug('TaskId ============>' + TaskId);
-                    System.debug('CurrentstringList ============>' + CurrentstringList);
                 }
                 if(String.valueOf(jsonMap.get('CaseId')) !=null){
                     CaseId = String.valueOf(jsonMap.get('CaseId'));
-                    System.debug('CaseId ============>' + CaseId);
                 }
                 if(String.valueOf(jsonMap.get('relatedTaskId')) != null){
                     relatedTaskIdList = String.valueOf(jsonMap.get('relatedTaskId'));
                     stringList = relatedTaskIdList.substring(1, relatedTaskIdList.length() - 1).split(', ');
-                    System.debug('stringList ============>' + stringList);
                 }
                 
                 if(CaseId == null){
-                    System.debug('Case Id Null ============>' + CaseId);
-                    System.debug('TaskId 1 ============>' + TaskId);
                     // Set<Id> taskIdset = new Set<Id>();
                     // taskIdset.add(TaskId);
                     // TaskId = TaskId.replace('(', '').replace(')', '');
-                    System.debug('TaskId 2 ============>' + TaskId);
                     tskList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber FROM Task Where Id IN:CurrentstringList];
-                    System.debug('tskList ============>' + tskList);
                     if(tskList.Size()>0){
                         CurrentTaskCaseId = tskList[0].Case__c;
                     }
                     update tskList;
-                    System.debug('CurrentTaskCaseId ============>' + CurrentTaskCaseId);
                     // task With Cases
                     AllTaskRelatedToCurrentTask = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber FROM Task Where Id IN: stringList];
-                    
-                    System.debug('AllTaskRelatedToCurrentTask ============>' + AllTaskRelatedToCurrentTask);
-                    if(AllTaskRelatedToCurrentTask.Size()>0){
+                                        if(AllTaskRelatedToCurrentTask.Size()>0){
                         for(Task ts : AllTaskRelatedToCurrentTask){
                             if(CurrentTaskCaseId != null){
                                 ts.Case__c = CurrentTaskCaseId;
@@ -519,16 +507,11 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     }
                     
                     update AllTaskRelatedToCurrentTask;
-                    System.debug('AllTaskRelatedToCurrentTask ============>' + AllTaskRelatedToCurrentTask);
                 }else if(CaseId != null){
-                    System.debug('Case Id Not Null ============>' + CaseId);
                     // task With No Cases
                     TaskId = TaskId.replace('(', '').replace(')', '');
-                    System.debug('Task Id Not Null ============>' + TaskId);
                     CaseId = CaseId.replace('(', '').replace(')', '');
-                    System.debug('Case Id Not Null ============>' + CaseId);
                     tskList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,Case__c,Case__r.CaseNumber FROM Task Where Id IN: CurrentstringList];
-                    System.debug('tskList ============>' + tskList);
                     
                     if(tskList.Size()>0){
                         for(Task ts : tskList){
@@ -537,20 +520,15 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
                     }
                     
                     update tskList;
-                    System.debug('tskList ============>' + tskList);
-                    
                     AllTaskRelatedToCurrentTaskWithNoCase = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate,
                                                              Case__c,Case__r.CaseNumber FROM Task Where Id IN: stringList];
-                    
-                    System.debug('AllTaskRelatedToCurrentTaskWithNoCase ============>' + AllTaskRelatedToCurrentTaskWithNoCase);
-                    
+                                        
                     if(AllTaskRelatedToCurrentTaskWithNoCase.Size()>0){
                         for(Task ts : AllTaskRelatedToCurrentTaskWithNoCase){
                             ts.Case__c = CaseId;
                         }
                         update AllTaskRelatedToCurrentTaskWithNoCase;
                     }
-                    System.debug('AllTaskRelatedToCurrentTaskWithNoCase ============>' + AllTaskRelatedToCurrentTaskWithNoCase);
                 }
                 
                 
@@ -564,6 +542,36 @@ tasksToCompleteByAccountId.get(taskRec.WhatId).add(taskRec);
             System.debug('Problem processing JSON data: ' + e.getMessage() + ' at Line Number: ' + e.getLineNumber());
         }
         return null;
+    }
+
+    public static void tagAccountOnOBCalls(List<Task> taskList){
+        try{
+            Set<Id> caseIds = new Set<Id>();
+            Map<Id, Id> AccountIdByCaseId = new Map<Id, Id>();
+            for(Task taskRec : taskList){
+                if(String.valueOf(taskRec.WhatId).startsWithIgnoreCase('500')){
+                    caseIds.add(taskRec.WhatId);
+                }
+            }
+            List<Case> caseList = [SELECT Id, CaseNumber, AccountId FROM Case WHERE Id IN: caseIds];
+
+            for(Case caseRec : caseList){
+                if(caseRec.AccountId != null){
+                    AccountIdByCaseId.put(caseRec.Id, caseRec.AccountId);
+                }
+            }
+
+            for(Task taskRec : taskList){
+                if(String.valueOf(taskRec.WhatId).startsWithIgnoreCase('500') && AccountIdByCaseId.containsKey(taskRec.WhatId)){
+                    taskRec.Case__c = taskRec.WhatId;
+                    taskRec.WhatId = AccountIdByCaseId.get(taskRec.Case__c);
+                }else if (String.valueOf(taskRec.WhatId).startsWithIgnoreCase('500') && !AccountIdByCaseId.containsKey(taskRec.WhatId)){
+                    taskRec.Case__c = taskRec.WhatId;
+                }
+            }
+        }catch(exception e){
+            System.debug('Error message:: ' + e.getMessage() + ' at Line Number :: ' + e.getLineNumber());
+        }
     }
 
     // public static void changeWhatIdAndAccountId(List<Task> taskList, Map<Id, Task> oldMap){

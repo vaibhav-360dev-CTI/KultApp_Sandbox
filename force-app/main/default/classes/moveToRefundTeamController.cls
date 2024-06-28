@@ -109,6 +109,9 @@ public class moveToRefundTeamController {
                     if (orditm != null && !orditm.isEmpty()) {
                         Decimal refundAmountForEachItem = 0; 
                         for(OrderItem ori : orditm){
+                            if(ori.Refund_Price__c == null){
+                                ori.Refund_Price__c = 0;
+                            }
                             refundAmountForEachItem = refundAmountForEachItem + ori.Refund_Price__c;
 
                             if(ori.Is_Already_Utilized__c == true){
@@ -142,7 +145,7 @@ public class moveToRefundTeamController {
                             caseRecord.SKU_Details__c = skuString;
                             
                         }
-                        if(refundAmountForEachItem != 0){
+                        if(refundAmountForEachItem != null){
                             caseRecord.Refund_Amount__c = refundAmountForEachItem;
                         }
                         

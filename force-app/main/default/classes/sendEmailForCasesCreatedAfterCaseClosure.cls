@@ -6,7 +6,7 @@ public with sharing class sendEmailForCasesCreatedAfterCaseClosure {
         Id passedCaseId = Id.valueOf(inpVar[0].caseId);
         String passedEmailId = inpVar[0].emailId;
         EmailTemplate et = [SELECT Id,Subject, Body,HTMLvalue FROM EmailTemplate WHERE DeveloperName ='Email_To_Case_Response'];
-        OrgWideEmailAddress[] owea = [select Id from OrgWideEmailAddress where Address = 'appdevelopers@kult.app'];
+        OrgWideEmailAddress[] owea = [select Id from OrgWideEmailAddress where Address = 'cs@kult.app'];
         Case caseRec = [SELECT Id, CaseNumber FROM Case WHERE Id=:passedCaseId LIMIT 1];
         
         Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();

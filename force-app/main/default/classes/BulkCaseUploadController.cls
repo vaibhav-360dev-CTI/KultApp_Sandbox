@@ -30,6 +30,8 @@ public class BulkCaseUploadController {
             apiNameByLabelName.put(gsrm.Label,gsrm.Case_Field_API_Name__c);
         }       
         List<sObject> recordList = new List<sObject>();
+        Map<sObject, Map<String,String>> skuQtyMap = new Map<sObject, Map<String,String>>();
+        Map<sObject, Map<String,String>> skuIdMap = new Map<sObject, Map<String,String>>();
         Schema.SObjectType targetType = Schema.getGlobalDescribe().get(sobjectName);
         try{
             if(fileData!=null) { 
@@ -39,6 +41,8 @@ public class BulkCaseUploadController {
                     String[] inputvalues = new String[]{};
                         inputvalues = fileLines[i].split(',');
                     sObject obj = targetType.newSObject();
+                    Map<string,string> skuQtyBysrNo = new Map<string,string>();
+                    Map<string,string> skuCodeBysrNo = new Map<string,string>();
                     integer rowsize=inputvalues.size(); 
                     for(integer l=0;l<rowsize;l++){     
                         if(String.isNotBlank(inputvalues[l])) {
@@ -49,15 +53,73 @@ public class BulkCaseUploadController {
                                 }
                                else if(apiNameByLabelName.get(fields.get(l)) == 'Refund_Amount__c'){
                                     obj.put(apiNameByLabelName.get(fields.get(l)),Decimal.ValueOf(value));
+                                }else if(fields.get(l) == 'SKU 3 ID'){
+                                    skuCodeBysrNo.put('sku3id',value);
+                                }
+                                else if(fields.get(l) == 'SKU 4 ID'){
+                                    skuCodeBysrNo.put('sku4id',value);
+                                }
+                                else if(fields.get(l) == 'SKU 5 ID'){
+                                    skuCodeBysrNo.put('sku5id',value);
+                                }
+                                else if(fields.get(l) == 'SKU 6 ID'){
+                                    skuCodeBysrNo.put('sku6id',value);
+                                }
+                                else if(fields.get(l) == 'SKU 7 ID'){
+                                    skuCodeBysrNo.put('sku7id',value);
+                                }
+                                else if(fields.get(l) == 'SKU 8 ID'){
+                                    skuCodeBysrNo.put('sku8id',value);
+                                }
+                                else if(fields.get(l) == 'SKU 9 ID'){
+                                    skuCodeBysrNo.put('sku9id',value);
+                                }
+                                else if(fields.get(l) == 'SKU 10 ID'){
+                                    skuCodeBysrNo.put('sku10id',value);
+                                }
+                                else if(fields.get(l) == 'SKU 3 Cancelled Quantity'){
+                                    skuQtyBysrNo.put('sku3qty',value);
+                                }
+                                else if(fields.get(l) == 'SKU 4 Cancelled Quantity'){
+                                    skuQtyBysrNo.put('sku4qty',value);
+                                }
+                                else if(fields.get(l) == 'SKU 5 Cancelled Quantity'){
+                                    skuQtyBysrNo.put('sku5qty',value);
+                                }
+                                else if(fields.get(l) == 'SKU 6 Cancelled Quantity'){
+                                    skuQtyBysrNo.put('sku6qty',value);
+                                }
+                                else if(fields.get(l) == 'SKU 7 Cancelled Quantity'){
+                                    skuQtyBysrNo.put('sku7qty',value);
+                                }
+                                else if(fields.get(l) == 'SKU 8 Cancelled Quantity'){
+                                    skuQtyBysrNo.put('sku8qty',value);
+                                }
+                                else if(fields.get(l) == 'SKU 9 Cancelled Quantity'){
+                                    skuQtyBysrNo.put('sku9qty',value);
+                                }
+                                else if(fields.get(l) == 'SKU 10 Cancelled Quantity'){
+                                    skuQtyBysrNo.put('sku10qty',value);
                                 }
                                 else if (apiNameByLabelName.get(fields.get(l)) != null){
                                 obj.put(apiNameByLabelName.get(fields.get(l)),value);
                                 }
+                                if(!skuCodeBysrNo.isEmpty()){
+                                    skuIdMap.put(obj, skuCodeBysrNo);
+                                }
+                                if(!skuQtyBysrNo.isEmpty()){
+                                skuQtyMap.put(obj, skuQtyBysrNo);
+                                }
+                                // System.debug('skuQtyBysrNo==> ' + skuQtyBysrNo);
+                                // System.debug('skuCodeBysrNo==> ' + skuCodeBysrNo);
                             }
                         }
                     }
                     recordList.add(obj);
                 }
+                // System.debug('fields==> ' + fields[10] + ',' + fields[11] + ',' +fields[12] + ',' +fields[13] + ',' +fields[14] + ',' +fields[15] + ',' +fields[16] + ',');
+                // System.debug('skuIdMap==> ' + skuIdMap);
+                // System.debug('skuQtyMap==> ' + skuQtyMap);
             }
 
             Set<String> orderNumbersSet = new Set<String>();
@@ -70,6 +132,7 @@ public class BulkCaseUploadController {
             if(recordList.size()>0){
                 for(sObject record : recordList){
                     orderNumbersSet.add((String)record.get('Order__c'));
+                    orderNumbersSet.add((String)record.get('App_Order_Id__c'));
                     orderNumbersSet.add((String)record.get('OrderId__c'));
                     phoneNumbersSet.add((String)record.get('Contact_Number__c'));
                 }
@@ -86,7 +149,9 @@ public class BulkCaseUploadController {
                     }
                 }
                 for(sObject record : recordList){
-                    if(!orderIdSet.contains((String)record.get('Order__c'))){
+                    System.debug('(String)record.get(Order__c)==> ' + (String)record.get('Order__c'));
+                    System.debug('(String)record.get(OrderId__c)==> ' + (String)record.get('OrderId__c'));
+                    if(((String)record.get('App_Order_Id__c') != null && !orderIdSet.contains((String)record.get('App_Order_Id__c'))) || ((String)record.get('Order__c') != null && !orderIdSet.contains((String)record.get('Order__c'))) || ((String)record.get('OrderId__c') != null &&  !orderIdSet.contains((String)record.get('OrderId__c'))) || ((String)record.get('Order__c') == null && (String)record.get('OrderId__c') == null)){
                         Case caseRec = new case();   
                     if(record.get('Order__c') !=null){
                         caseRec.Order__c = (String)record.get('Order__c');
@@ -98,6 +163,28 @@ public class BulkCaseUploadController {
                             }
                         }
                         orderIdSet.add((String)record.get('Order__c'));
+                    }
+                    if(record.get('OrderId__c') !=null){
+                        caseRec.Order__c = (String)record.get('OrderId__c');
+                        if(orderByOrderNo.get((String)record.get('OrderId__c')) != null){
+                            Order orderRec = orderByOrderNo.get((String)record.get('OrderId__c'));
+                            caseRec.OrderId__c = orderRec.Id;
+                            if(orderRec.AccountId != null){
+                                caseRec.AccountId = orderRec.AccountId;
+                            }
+                        }
+                        orderIdSet.add((String)record.get('OrderId__c'));
+                    }
+                    if(record.get('App_Order_Id__c') !=null){
+                        caseRec.Order__c = (String)record.get('App_Order_Id__c');
+                        if(orderByOrderNo.get((String)record.get('App_Order_Id__c')) != null){
+                            Order orderRec = orderByOrderNo.get((String)record.get('App_Order_Id__c'));
+                            caseRec.OrderId__c = orderRec.Id;
+                            if(orderRec.AccountId != null){
+                                caseRec.AccountId = orderRec.AccountId;
+                            }
+                        }
+                        orderIdSet.add((String)record.get('App_Order_Id__c'));
                     }
                     if(record.get('Shipping_Mobile_No__c') !=null){
                         caseRec.Shipping_Mobile_No__c	 = (String)record.get('Shipping_Mobile_No__c');
@@ -188,20 +275,97 @@ public class BulkCaseUploadController {
                     }
                     if(record.get('HashTag__c') != null){
                         String sku2ID = String.valueOf(record.get('HashTag__c'));   
-                        appenValue = appenValue + sku2ID; 
+                        appenValue = appenValue + sku2ID + ';'; 
+                    }
+                    if(skuIdMap.containsKey(record)){
+                        Map<String,String> idMap = new Map<String,String>();
+                        idMap = skuIdMap.get(record);
+                        if(idMap.get('sku3id') != null){
+                            String sku2ID = String.valueOf(idMap.get('sku3id'));   
+                            appenValue = appenValue + sku2ID + ';'; 
+                        }
+                        if(idMap.get('sku4id') != null){
+                            String sku2ID = String.valueOf(idMap.get('sku4id'));   
+                            appenValue = appenValue + sku2ID + ';'; 
+                        }
+                        if(idMap.get('sku5id') != null){
+                            String sku2ID = String.valueOf(idMap.get('sku5id'));   
+                            appenValue = appenValue + sku2ID + ';'; 
+                        }
+                        if(idMap.get('sku6id') != null){
+                            String sku2ID = String.valueOf(idMap.get('sku6id'));   
+                            appenValue = appenValue + sku2ID + ';'; 
+                        }
+                        if(idMap.get('sku7id') != null){
+                            String sku2ID = String.valueOf(idMap.get('sku7id'));   
+                            appenValue = appenValue + sku2ID + ';'; 
+                        }
+                        if(idMap.get('sku8id') != null){
+                            String sku2ID = String.valueOf(idMap.get('sku8id'));   
+                            appenValue = appenValue + sku2ID + ';'; 
+                        }
+                        if(idMap.get('sku9id') != null){
+                            String sku2ID = String.valueOf(idMap.get('sku9id'));   
+                            appenValue = appenValue + sku2ID + ';'; 
+                        }
+                        if(idMap.get('sku10id') != null){
+                            String sku2ID = String.valueOf(idMap.get('sku10id'));   
+                            appenValue = appenValue + sku2ID + ';'; 
+                        }
                     }
                     if(appenValue != ''){
+                        appenValue = appenValue.substring(0, appenValue.length()-1);
                         caseRec.SKU_Details__c = appenValue;
                     }
+
+                    
                     if(record.get('Item__c') != null){
                         String skucancelQty1 = String.valueOf(record.get('Item__c'));
                         appenValueQty = appenValueQty + skucancelQty1 + ';';
                     }
-                    if(record.get('Item__c') != null){
+                    if(record.get('Landmark__c') != null){
                         String skucancelQty2 = String.valueOf(record.get('Landmark__c'));
-                        appenValueQty = appenValueQty + skucancelQty2;
+                        appenValueQty = appenValueQty + skucancelQty2 + ';';
+                    }
+
+                    if(skuQtyMap.containsKey(record)){
+                        Map<String,String> qtyMap = new Map<String,String>();
+                        qtyMap = skuQtyMap.get(record);
+                        if(qtyMap.get('sku3qty') != null){
+                            String skucancelQty2 = String.valueOf(qtyMap.get('sku3qty'));
+                            appenValueQty = appenValueQty + skucancelQty2 + ';';
+                        }
+                        if(qtyMap.get('sku4qty') != null){
+                            String skucancelQty2 = String.valueOf(qtyMap.get('sku4qty'));
+                            appenValueQty = appenValueQty + skucancelQty2 + ';';
+                        }
+                        if(qtyMap.get('sku5qty') != null){
+                            String skucancelQty2 = String.valueOf(qtyMap.get('sku5qty'));
+                            appenValueQty = appenValueQty + skucancelQty2 + ';';
+                        }
+                        if(qtyMap.get('sku6qty') != null){
+                            String skucancelQty2 = String.valueOf(qtyMap.get('sku6qty'));
+                            appenValueQty = appenValueQty + skucancelQty2 + ';';
+                        }
+                        if(qtyMap.get('sku7qty') != null){
+                            String skucancelQty2 = String.valueOf(qtyMap.get('sku7qty'));
+                            appenValueQty = appenValueQty + skucancelQty2 + ';';
+                        }
+                        if(qtyMap.get('sku8qty') != null){
+                            String skucancelQty2 = String.valueOf(qtyMap.get('sku8qty'));
+                            appenValueQty = appenValueQty + skucancelQty2 + ';';
+                        }
+                        if(qtyMap.get('sku9qty') != null){
+                            String skucancelQty2 = String.valueOf(qtyMap.get('sku9qty'));
+                            appenValueQty = appenValueQty + skucancelQty2 + ';';
+                        }
+                        if(qtyMap.get('sku10qty') != null){
+                            String skucancelQty2 = String.valueOf(qtyMap.get('sku10qty'));
+                            appenValueQty = appenValueQty + skucancelQty2 + ';';
+                        }
                     }
                     if(appenValueQty != ''){
+                        appenValueQty = appenValueQty.substring(0, appenValueQty.length()-1);
                         caseRec.OOS_Quantity__c = appenValueQty;
                     }
                     caseRec.OwnerId = bulkUploadQueue.Id;
@@ -218,6 +382,8 @@ public class BulkCaseUploadController {
                         caseRec.Subject = 'Delay in Delivery';
                     }else if(typeOfCase == 'RToOrders'){
                         caseRec.Subject = 'RTO Orders';
+                    }else if(typeOfCase == 'MiscCancellation'){
+                        caseRec.Subject = 'Miscellaneous Order Cancellation';
                     }else if(typeOfCase == 'RefundCases'){
                         caseRec.Subject = 'Monitoring Report - Refund Case';
                         caseRec.OwnerId = refundQueue.Id;
@@ -439,9 +605,42 @@ public class BulkCaseUploadController {
                 }
                 if(caseMap.get('sku2id') != null){
                     String sku2ID = String.valueOf(caseMap.get('sku2id'));
-                    appenValue = appenValue + sku2ID;
+                    appenValue = appenValue + sku2ID + ';';
+                }
+                if(caseMap.get('sku3id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku3id'));
+                    appenValue = appenValue + sku2ID + ';';
+                }
+                if(caseMap.get('sku4id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku4id'));
+                    appenValue = appenValue + sku2ID + ';';
+                }
+                if(caseMap.get('sku5id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku5id'));
+                    appenValue = appenValue + sku2ID + ';';
+                }
+                if(caseMap.get('sku6id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku6id'));
+                    appenValue = appenValue + sku2ID + ';';
+                }
+                if(caseMap.get('sku7id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku7id'));
+                    appenValue = appenValue + sku2ID + ';';
+                }
+                if(caseMap.get('sku8id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku8id'));
+                    appenValue = appenValue + sku2ID + ';';
+                }
+                if(caseMap.get('sku9id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku9id'));
+                    appenValue = appenValue + sku2ID + ';';
+                }
+                if(caseMap.get('sku10id') != null){
+                    String sku2ID = String.valueOf(caseMap.get('sku10id'));
+                    appenValue = appenValue + sku2ID + ';';
                 }
                 if(appenValue != ''){
+                    appenValue = appenValue.substring(0, appenValue.length()-1);
                     caseRec.SKU_Details__c = appenValue;
                 }
 
@@ -450,11 +649,44 @@ public class BulkCaseUploadController {
                     String skucancelQty1 = String.valueOf(caseMap.get('sku1cancelledquantity'));
                     appenValueQty = appenValueQty + skucancelQty1 + ';';
                 }
-                if(caseMap.get('sku1cancelledquantity') != null){
+                if(caseMap.get('sku2cancelledquantity') != null){
                     String skucancelQty2 = String.valueOf(caseMap.get('sku2cancelledquantity'));
-                    appenValueQty = appenValueQty + skucancelQty2;
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
+                }
+                if(caseMap.get('sku3cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku3cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
+                }
+                if(caseMap.get('sku4cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku4cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
+                }
+                if(caseMap.get('sku5cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku5cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
+                }
+                if(caseMap.get('sku6cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku6cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
+                }
+                if(caseMap.get('sku7cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku7cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
+                }
+                if(caseMap.get('sku8cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku8cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
+                }
+                if(caseMap.get('sku9cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku9cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
+                }
+                if(caseMap.get('sku10cancelledquantity') != null){
+                    String skucancelQty2 = String.valueOf(caseMap.get('sku10cancelledquantity'));
+                    appenValueQty = appenValueQty + skucancelQty2 + ';';
                 }
                 if(appenValueQty != ''){
+                    appenValueQty = appenValueQty.substring(0, appenValueQty.length()-1);
                     caseRec.OOS_Quantity__c = appenValueQty;
                 }
 
@@ -473,6 +705,8 @@ public class BulkCaseUploadController {
                     caseRec.Subject = 'Delay in Delivery';
                 }else if(docTempName == 'RToOrders'){
                     caseRec.Subject = 'RTO Orders';
+                }else if(docTempName == 'MiscCancellation'){
+                    caseRec.Subject = 'Miscellaneous Order Cancellation';
                 }else if(docTempName == 'RefundCases'){
                     caseRec.Subject = 'Monitoring Report - Refund Case';
                         caseRec.OwnerId = refundQueue.Id;

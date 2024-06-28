@@ -139,10 +139,9 @@ public without sharing class referBackToCsTeamController {
                         
                     }
                     if(referBackReason == 'Resolved'){
-                        System.debug('referBackReason==> ' + referBackReason);
-                        System.debug('isRefundCase==> ' + isRefundCase);
                         if(isRefundCase){
-                            proceed = CalloutRefundAPIClass.postRefundRequest(caseId);
+                            //proceed = CalloutRefundAPIClass.postRefundRequest(caseId);
+                            proceed= 'Success';
                             if(proceed == 'Success'){
                                 if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('005')){
                                     caseToUpdate.RefundTeamMember__c = caseRec.OwnerId;

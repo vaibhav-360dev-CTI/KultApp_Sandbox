@@ -18,6 +18,8 @@ public class csOutboundCallController {
         if(caseRec != null){
             if(close){
                 caseRec.Status = 'Closed';
+            }else{
+                caseRec.Status = 'In Progress';
             }
             update caseRec;
         }

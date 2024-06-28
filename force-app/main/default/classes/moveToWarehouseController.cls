@@ -41,7 +41,6 @@ public without sharing class moveToWarehouseController {
                         }
                     }
                     affSKUList = [SELECT Id, Case__c FROM Affected_SKU__c WHERE Case__c = :recId];
-                    System.debug('affSKUList=> ' + affSKUList);
                 }
                 List<String> customerRequestOptions = getPicklistValues('Case', 'Customer_s_Request__c');
                 List<String> caseReasonOptions = getPicklistValues('Case', 'Type_Of_Case__c');
@@ -68,8 +67,30 @@ public without sharing class moveToWarehouseController {
     @AuraEnabled
     public static String moveToWHteams(Case caseRec, String CSremarks){
         try{
-            List<User> userLists = [SELECT Id, Name FROM User WHERE Profile.Name = 'WareHouse Team' AND ManagerId = null LIMIT 1];
+            List<User> userLists = [SELECT Id, Name, UserName, Email FROM User WHERE Profile.Name = 'WareHouse Team' AND isActive = true LIMIT 1];
             List<Group> groupList = [SELECT Id, Name, DeveloperName, RelatedId, Type, Email, QueueRoutingConfigId, OwnerId, DoesSendEmailToMembers, DoesIncludeBosses, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp FROM Group WHERE DeveloperName = 'Warehouse_Team_Queue'];
+            List<EmailTemplate> etList = [SELECT Id,Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName ='WH_Team_Notification'];
+            EmailTemplate et = new EmailTemplate();
+            List<string> toAddress = new List<string>();
+
+            for(User userRec : userLists){
+                if(userRec.Email != null && userRec.UserName != 'varun.s@kult.app' && userRec.UserName != 'samir.p@kult.app' && userRec.UserName != 'rohan.m@kult.app'){
+                    toAddress.add(userRec.Email);
+                }
+            }
+
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+            mail.setTemplateId(et.Id);
+            mail.setToAddresses(toAddress);
+            mail.setSubject(et.subject);
+           // mail.setHTMLBody(et.Body);
+            mail.setWhatId(caseRec.Id);
+            mail.setSaveAsActivity(false);
+            mail.setUseSignature(false);
+        
+            if(!etList.isEmpty()){
+                et = etList[0];
+            }
             String queueId;
             if(!groupList.isEmpty()){
                 queueId = groupList[0].Id;
@@ -77,6 +98,13 @@ public without sharing class moveToWarehouseController {
                 queueId = userLists[0].Id;
             }
             if(queueId != null){
+                String body = et.HTMLValue;
+                body = body.replace('<CaseNumber>', caseRec.CaseNumber);
+                body = body.replace('<CaseType>', caseRec.Type);
+                body = body.replace('<CaseSubType>', caseRec.Sub_Type__c);
+                body = body.replace('<CaseSubSubType>', caseRec.Sub_Sub_Type__c);
+                body = body.replace('<CSremarks>', CSremarks);
+                mail.setHTMLBody(body);
                 //caseRec.Warehouse_Team_Member__c = userLists[0].Id;
                 if(caseRec.CS_Team_Member__c == null){
                     caseRec.CS_Team_Member__c = caseRec.OwnerId;
@@ -106,6 +134,14 @@ public without sharing class moveToWarehouseController {
                     newCaseShare.CaseAccessLevel = 'Edit';
                     //newCaseShare.RowCause = Schema.CaseShare.RowCause.Manual;
                     insert newCaseShare;
+                    List<Messaging.SingleEmailMessage> allmsg = new List<Messaging.SingleEmailMessage>();
+                    allmsg.add(mail);
+                    try {
+                        Messaging.sendEmail(allmsg,false);
+                        return 'Successful';
+                    } catch (Exception e) {
+                        System.debug(e.getMessage());
+                    } 
                     //sendingCustomNotification(caseRec.Warehouse_Team_Member__c, caseRec.Id, 'Case has been assigned', 'A case has been moved to warehouse team bucket, please take relevant action');
                     return 'Successful';
                 }
@@ -183,7 +219,6 @@ public without sharing class moveToWarehouseController {
             countryRec.label = objPickList.getLabel();
             options.add(countryRec);
         }
-        System.debug('options==> ' + options);
         return options;
     }
     
@@ -218,7 +253,6 @@ public without sharing class moveToWarehouseController {
                 if(queueList != null){
                     queueId = queueList[0].Id;
                 }
-                System.debug('queueList' + queueList);
                 List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,OwnerId From Case Where Id =: RecId Limit 1];
                 for(Case cse : csList){
                     if(reassignReason != null){

@@ -101,6 +101,9 @@
                                     <div class="slds-truncate" title="Refunded Price">Refunded Price</div>
                                     </th>
                                     <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;">
+                                          <div class="slds-truncate" title="Courier">Sub Order No</div>
+                                          </th>
+                                    <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;">
                                           <div class="slds-truncate" title="Courier">Courier</div>
                                           </th>
                               <th class="slds-is-resizable dv-dynamic-width" scope="col" style="background-color:#701CC3;color:white;width: 13%;">
@@ -138,6 +141,9 @@
                   </td>
                   <td data-label="Selling Price">
                         <div class="slds-truncate" title={item.Selling_Price__c}>{item.Refunded_Price__c}</div>
+                  </td>
+                  <td data-label="Courier">
+                        <div class="slds-truncate" title={item.Order.Courier__c}>{item.Order.Sub_Order_Id__c}</div>
                   </td>
                   <td data-label="Courier">
                         <div class="slds-truncate" title={item.Order.Courier__c}>{item.Order.Courier__c}</div>

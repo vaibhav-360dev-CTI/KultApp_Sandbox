@@ -1,20 +1,20 @@
-@RestResource(urlMapping='/OrderUpdation')
-global class WS_OrderUpdateV1 {
-    @Httppost
-    global static List<ResponseBody> updateOrders(){
-        RestRequest req = RestContext.request;
-        RestResponse response = RestContext.response;
-        List<ResponseBody> respBodyList = new List<ResponseBody>();
+global with sharing class batchToUpdateOrders implements Database.Batchable<sObject>{
+    global database.querylocator start(Database.BatchableContext BC)
+{
+    String queryString = 'SELECT Id, Start_Date_And_Time__c, Request_Body__c, Response_Status_Code__c, EndPoint__c FROM Integration_Log__c WHERE EndPoint__c =\'/OrderUpdation\'';
+    return Database.getQueryLocator(queryString);
+}
 
+public void execute(Database.BatchableContext BC, List<Integration_Log__c> scope){
+      for(Integration_Log__c s : scope){
         DateTime processingStartTime = System.now();
-        Blob body = req.requestBody;
-        String requestString = body.toString();
+        String requestString = s.Request_Body__c;
         System.debug('--- requestString' + requestString);
         String responseBody;
         Id integrationLogId;
         integrationLogId = HttpUtility.getInstance().createServiceLogger(null, requestString, null, '/OrderUpdation', 'POST', null, processingStartTime, System.now(), null,'SERVICE');
         try{
-            List<WS_OrderUpdate> orderRecords = (List<WS_OrderUpdate>) JSON.deserialize(req.requestBody.toString(), List<WS_OrderUpdate>.class);
+            List<WS_OrderUpdate> orderRecords = (List<WS_OrderUpdate>) JSON.deserialize(requestString, List<WS_OrderUpdate>.class);
             Set<String> order_idSet = new Set<String>();
             Map<String, WS_OrderUpdate> orderDetailsByOrderId = new Map<String, WS_OrderUpdate>();
             Map<String,Order> orderRecByName = new Map<String,Order>();
@@ -53,6 +53,7 @@ global class WS_OrderUpdateV1 {
                                 subOrderNameBysubOrderItemName.put(ordRec.order_id + '-' + subOrderRec.sub_order_id + '-' + itemRec.sku + '-'+ i, ordRec.order_id + '-' + subOrderRec.sub_order_id);
                                 itemQuantityBySKU.put(name, itemQuantityBySKU.get(name)-1); 
                             }
+                            System.debug('subOrderItemBySubOrderItemName===> ' + subOrderItemBySubOrderItemName);
                         }
                     }
                 }
@@ -64,16 +65,8 @@ global class WS_OrderUpdateV1 {
                             orderRecByName.put(ordRec.Name, ordRec);
                         }
                     }else{
-                        ResponseBody res = new ResponseBody();
-                                    res.status = 'Error';
-                                res.message = 'No existing order found: ';
-                                res.order_id = null;
-                                   res.sub_order_id = null;
-                                //res.new_status = upsertedSubOrder.Status;
-                                respBodyList.add(res);
-                                RestContext.response.statusCode = 404;
-                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
-                                return respBodyList;
+                                String res = 'No existing order found: ';
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
                     }
                 }
                 
@@ -110,16 +103,8 @@ global class WS_OrderUpdateV1 {
                     }
                 }
                 else{
-                    ResponseBody res = new ResponseBody();
-                                res.status = 'Error';
-                            res.message = 'No existing sub-order found: ';
-                            res.order_id = null;
-                               res.sub_order_id = null;
-                            //res.new_status = upsertedSubOrder.Status;
-                            respBodyList.add(res);
-                            RestContext.response.statusCode = 404;
-                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
-                            return respBodyList;
+                            String res = 'No existing sub-order found: ';
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
                 }
                 if(!subOrderDetailsBySubOrderId.isEmpty()){
                     for(String mapKey : subOrderDetailsBySubOrderId.keySet()){
@@ -161,28 +146,13 @@ global class WS_OrderUpdateV1 {
                                 subOrderAndOrderIds = upsertedSubOrder.Name.split('-');
                                 String orderId = subOrderAndOrderIds[0];
                                 String subOrderId = subOrderAndOrderIds[1];
-								ResponseBody res = new ResponseBody();
-                            res.status = 'Success';
-                            res.message = 'Orders Successfully Updated';
-                            res.order_id = orderId;
-                               res.sub_order_id = subOrderId;
-                            res.new_status = upsertedSubOrder.Status;
-                            respBodyList.add(res);
-                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 200, processingStartTime, System.now(), null, 'SERVICE');
+                            String res = 'Orders Successfully Updated';
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderUpdation', 'POST', 200, processingStartTime, System.now(), null, 'SERVICE');
                         } else {
                             for(Database.Error error : result.getErrors()) {
-                                System.debug('Error message: ' + error.getMessage());
-                                ResponseBody res = new ResponseBody();
-                                res.status = 'Error';
-                            res.message = 'Error Updating Order: ' + error.getMessage();
-                            res.order_id = null;
-                               res.sub_order_id = null;
-                            res.new_status = upsertedSubOrder.Status;
-                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
-                            respBodyList.add(res);
+                            String res = 'Error Updating Order: ' + error.getMessage();
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
                             }
-                            RestContext.response.statusCode = 400;
-                            return respBodyList;
                         }
                     }
                     
@@ -194,16 +164,8 @@ global class WS_OrderUpdateV1 {
                             orderItemIdByOrderItemName.put(ordItemRec.Name__c, ordItemRec);
                         }
                     }else{
-                        ResponseBody res = new ResponseBody();
-                                    res.status = 'Error';
-                                res.message = 'No existing order item found: ';
-                                res.order_id = null;
-                                   res.sub_order_id = null;
-                                //res.new_status = upsertedSubOrder.Status;
-                                respBodyList.add(res);
-                                RestContext.response.statusCode = 404;
-                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
-                                return respBodyList;
+                                String res = 'No existing order item found: ';
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderUpdation', 'POST', 404, processingStartTime, System.now(), null, 'SERVICE');
                     }
                     if(!subOrderItemBySubOrderItemName.isEmpty()){
                         for(String mapKey : subOrderItemBySubOrderItemName.keySet()){
@@ -225,41 +187,21 @@ global class WS_OrderUpdateV1 {
                                 
                             } else {
                                 for(Database.Error error : result.getErrors()) {
-                                    System.debug('Error message: ' + error.getMessage());
-                                    ResponseBody res = new ResponseBody();
-                            res.status = 'Error';
-                            res.message = 'Failed to update status. ' + error.getMessage();
-                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
-                            respBodyList.add(res);
+                            String res = 'Failed to update status. ' + error.getMessage();
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
                                 }
-                                RestContext.response.statusCode = 400;
-                                return respBodyList;
                             }
                         }
                     }
                 }
-                return respBodyList;
             }
-            return respBodyList;
         }catch(exception e){
-            ResponseBody res = new ResponseBody();
-            res.status = 'Error';
-            res.message = e.getMessage() + ' at Line number ' + e.getLineNumber();
-            //res.orderId = upsertedOrder.Id;
-            respBodyList.add(res);
-            RestContext.response.statusCode = 400;
-            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
-            return respBodyList;
+            String res = e.getMessage() + ' at Line number ' + e.getLineNumber();
+            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderUpdation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
         }
-    }
-    
-    
-    
-    global class ResponseBody {
-        public String status;
-        public String message;
-        public String order_id;
-        public String sub_order_id;
-        public String new_status;
-    }
+      }
+   }
+   public void finish(Database.BatchableContext BC){
+}
+
 }

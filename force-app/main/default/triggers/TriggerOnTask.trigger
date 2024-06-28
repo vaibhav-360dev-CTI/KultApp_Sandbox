@@ -5,8 +5,9 @@ trigger TriggerOnTask on Task (before insert, after insert, before update) {
         taskTriggerHelper.resetMissedCallCounter(trigger.new);
        // taskTriggerHelper.createFeedItemAfterInsertOrUpdate(trigger.new);
     }
-    if((trigger.isUpdate || trigger.isInsert) && trigger.isBefore){
+    if(trigger.isInsert && trigger.isBefore){
        // taskTriggerHelper.changeWhatIdAndAccountId(trigger.new, trigger.oldMap);
+       taskTriggerHelper.tagAccountOnOBCalls(trigger.new);
     }
     if((trigger.isUpdate || trigger.isInsert) && trigger.isAfter){
         taskTriggerHelper.tagCaseOnWhatIdIfAccountIsNotTagged(trigger.new);

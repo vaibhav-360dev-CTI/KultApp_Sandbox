@@ -59,6 +59,9 @@ global class WS_CustomerCreation {
                             accRecord.Id = AccIdByUUID.get(mapKey);
                         }
                         accRecord.Name = cxDetailsByUUID.get(mapKey).name != null ? cxDetailsByUUID.get(mapKey).name : 'New - ' + cxDetailsByUUID.get(mapKey).phone_number;
+                        if(String.isBlank(accRecord.Name)){
+                            accRecord.Name =  'New - ' + cxDetailsByUUID.get(mapKey).phone_number;
+                        }
                         accRecord.Phone = cxDetailsByUUID.get(mapKey).phone_number != null ? cxDetailsByUUID.get(mapKey).phone_number : '';
                         accRecord.Email__c = cxDetailsByUUID.get(mapKey).email_id != null ? cxDetailsByUUID.get(mapKey).email_id: '';
                         accRecord.Is_Deleted__c = cxDetailsByUUID.get(mapKey).is_deleted != null ? cxDetailsByUUID.get(mapKey).is_deleted : false;

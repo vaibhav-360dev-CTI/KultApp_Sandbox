@@ -58,7 +58,7 @@
         </aura:if>
 
         <aura:if isTrue="{!v.showFirstScreen}">
-            <aura:if isTrue="{!or(v.currentUser.Profile.Name == 'System Administrator', v.currentUser.Profile.Name == 'WareHouse Team')}">
+            <aura:if isTrue="{!or(v.currentUser.Profile.Name == 'System Administrator', v.currentUser.Profile.Name == 'Warehouse Team')}">
             <div class="slds-grid slds-gutters">
                 <div class="slds-col slds-size_1-of-3" style="padding-left: 3%;">
                     <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Out of Stock"
@@ -93,9 +93,13 @@
                     <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="CS Outbound"
                     onclick="{!c.handleClickCSOutbound}" />  
                 </div>
+                <div class="slds-col slds-size_1-of-3" style="">
+                    <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Misc. Cancellation"
+                    onclick="{!c.handleMiscCancellation}" />  
+                </div>
                 <div class="slds-col slds-size_1-of-3">
                     <lightning:radioGroup name="radioGroup"
-                          label="Radio Group"
+                          label="Refund Type"
                           options="{! v.options }"
                           value="{! v.value }"
                           type="radio"/>
@@ -118,9 +122,13 @@
                         <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="CS Outbound"
                         onclick="{!c.handleClickCSOutbound}" />  
                     </div>
+                    <div class="slds-col slds-size_1-of-3" style="">
+                        <lightning:button variant="brand" class="slds-p-around_small colorBtn" label="Misc. Cancellation"
+                        onclick="{!c.handleMiscCancellation}" />  
+                    </div>
                     <div class="slds-col slds-size_1-of-3">
                         <lightning:radioGroup name="radioGroup"
-                              label="Radio Group"
+                              label="Refund Type"
                               options="{! v.options }"
                               value="{! v.value }"
                               type="radio"/>

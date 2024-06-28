@@ -52,14 +52,14 @@ public class caseProgressDetailTriggerHelper {
      */
     
     public static void UpdateRefundWHStatusHelper(List<Case_Progress_Detail__c> cpdList) {
-        List<Case_Progress_Detail__c> createdByProfileDetails = [SELECT Id, WH_Team_Remarks__c, Case__c,Status__c , CreatedBy.Profile.Name 
+        List<Case_Progress_Detail__c> createdByProfileDetails = [SELECT Id, WH_Team_Remarks__c, Case__c,Status__c , CreatedBy.Profile.Name, Skip_Trigger__c
                                                                  FROM Case_Progress_Detail__c 
                                                                  WHERE Id IN :cpdList];
         List<Case> caseListToUpdate = new List<Case>();
         
         for (Case_Progress_Detail__c cp : createdByProfileDetails) {
-
-            Case cs = new Case(Id = cp.Case__c);
+            if(!cp.Skip_Trigger__c){
+                Case cs = new Case(Id = cp.Case__c);
             if (cp.WH_Team_Remarks__c != null && (cp.CreatedBy.Profile.Name == 'WareHouse Team' || cp.CreatedBy.Profile.Name == 'Customer Service Executive' || cp.CreatedBy.Profile.Name == 'System Administrator' ||cp.CreatedBy.Profile.Name == 'Marketing')) {
                 if (cp.CreatedBy.Profile.Name == 'WareHouse Team') {
                     cs.Refund_WH_Team_Status__c = 'WH Team - ' + cp.Status__c;
@@ -76,7 +76,9 @@ public class caseProgressDetailTriggerHelper {
             // }
             cs.Last_Response__c = System.Now();
             caseListToUpdate.add(cs);
+            }
         }
+        if(!caseListToUpdate.isEmpty())
         update caseListToUpdate;
     }
     

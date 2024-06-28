@@ -1,21 +1,22 @@
-@RestResource(urlMapping='/OrderCreation')
-global class WS_OrderCreationv1 {
-    @HttpPost
-    global static List<ResponseBody> doPost() {
+global with sharing class batchToCreateOrders implements Database.Batchable<sObject>{
+    global database.querylocator start(Database.BatchableContext BC)
+{
+    String queryString = 'SELECT Id, Start_Date_And_Time__c, Request_Body__c, Response_Status_Code__c, EndPoint__c FROM Integration_Log__c WHERE EndPoint__c =\'/OrderCreation\'';
+    return Database.getQueryLocator(queryString);
+}
 
+public void execute(Database.BatchableContext BC, List<Integration_Log__c> scope){
+      for(Integration_Log__c s : scope){
         DateTime processingStartTime = System.now();
-        RestRequest req = RestContext.request;
-        RestResponse response = RestContext.response;
-        Blob body = req.requestBody;
-        String requestString = body.toString();
+        //Blob body = s.Request_Body__c;
+        String requestString = s.Request_Body__c;
         System.debug('--- requestString' + requestString);
         String responseBody;
         Id integrationLogId;
         integrationLogId = HttpUtility.getInstance().createServiceLogger(null, requestString, null, '/OrderCreation', 'POST', null, processingStartTime, System.now(), null,'SERVICE');
-
-        List<ResponseBody> respBodyList = new List<ResponseBody>();
         try {
-            List<WS_OrderCreation> orderRecords = (List<WS_OrderCreation>) JSON.deserialize(req.requestBody.toString(), List<WS_OrderCreation>.class);
+            List<WS_OrderCreation> orderRecords = (List<WS_OrderCreation>) JSON.deserialize(requestString, List<WS_OrderCreation>.class);
+            System.debug('orderRecords==> ' + orderRecords);
             Set<String> phone_numberSet = new Set<String>();
             Map<String,WS_OrderCreation.CustomerDetails> mapOfPhoneNumberByRecDetails = new Map<String,WS_OrderCreation.CustomerDetails>();//Phone number by customer details
             Map<String,List<WS_OrderCreation.Data>> mapOfPhoneNumberByOrderDetails = new Map<String,List<WS_OrderCreation.Data>>();
@@ -83,16 +84,8 @@ global class WS_OrderCreationv1 {
                                 }
                             }
                         }else if(ws_orderInput.data.customer_details != null && ws_orderInput.data.customer_details.uuid == null){
-                            ResponseBody res = new ResponseBody();
-                                res.status = 'Error';
-                                res.message = 'Order Creation Failed: Customer Data found without UUID';
-                                //res.orderId = upsertedOrder.Id;
-                                respBodyList.add(res);
-                                RestContext.response.statusCode = 400;
-
-                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
-
-                                return respBodyList;
+                                String res = 'Order Creation Failed: Customer Data found without UUID';
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
                         }
 
                     }
@@ -154,17 +147,10 @@ global class WS_OrderCreationv1 {
 
                             } else {
                                 for(Database.Error error : result.getErrors()) {
-                                    ResponseBody res = new ResponseBody();
-                                res.status = 'Error';
-                                res.message = 'Order Creation Failed: ' + error.getMessage();
-                                //res.orderId = upsertedOrder.Id;
-                                respBodyList.add(res);
-
-                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
+                                String res = 'Order Creation Failed: ' + error.getMessage();
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
 
                                 }
-                                RestContext.response.statusCode = 400;
-                                return respBodyList;
                             }
                         }
 
@@ -234,28 +220,13 @@ global class WS_OrderCreationv1 {
                                 orderRecIdByOrderName.put(upsertedOrder.Name, result.getId());
                                 setOfOrderIds.add(result.getId());
                                 accIdByOrderName.put(upsertedOrder.Name, upsertedOrder.AccountId);
-                                ResponseBody res = new ResponseBody();
-                                res.status = 'Success';
-                                res.message = 'Orders Successfully Upserted';
-                                res.orderId = upsertedOrder.Id;
-                                respBodyList.add(res);
-
-                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 200, processingStartTime, System.now(), null, 'SERVICE');
+                                String res = 'Orders Successfully Upserted';
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderCreation', 'POST', 200, processingStartTime, System.now(), null, 'SERVICE');
 
                             } else {
                                 for(Database.Error error : result.getErrors()) {
-                                    System.debug('Error message: ' + error.getMessage());
-                                    ResponseBody res = new ResponseBody();
-                                res.status = 'Error';
-                                res.message = 'Orders Creation Failed: ' + error.getMessage();
-                                res.orderId = upsertedOrder.Id;
-                                respBodyList.add(res);
-
-                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, error.getMessage(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
                                 }
-                                RestContext.response.statusCode = 400;
-
-                                return respBodyList;
                             }
                             }
 
@@ -310,18 +281,11 @@ global class WS_OrderCreationv1 {
                                 subOrderIdBySubOrderName.put(upsertedSubOrder.Name, result.getId());
                             } else {
                                 for(Database.Error error : result.getErrors()) {
-                                    System.debug('Error message: ' + error.getMessage());
-                                    ResponseBody res = new ResponseBody();
-                                res.status = 'Error';
-                                res.message = 'Sub Order Creation Failed: ' + error.getMessage();
+                                String res = 'Sub Order Creation Failed: ' + error.getMessage();
                                 //res.orderId = upsertedOrder.Id;
-                                respBodyList.add(res);
-
-                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
 
                                 }
-                                RestContext.response.statusCode = 400;
-                                return respBodyList;
                             }
                         }
 
@@ -371,18 +335,11 @@ global class WS_OrderCreationv1 {
                                 System.debug('SubOrder Id: ' + upsertedSubOrder.Name__c);
                             } else {
                                 for(Database.Error error : result.getErrors()) {
-                                    System.debug('Error message: ' + error.getMessage());
-                                    ResponseBody res = new ResponseBody();
-                                res.status = 'Error';
-                                res.message = 'Order Items Failed: ' + error.getMessage();
+                                String res = 'Order Items Failed: ' + error.getMessage();
                                 //res.orderId = upsertedOrder.Id;
-                                respBodyList.add(res);
-
-                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
+                                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
 
                                 }
-                                RestContext.response.statusCode = 400;
-                                return respBodyList;
                             }
                         }
                                 }
@@ -391,38 +348,21 @@ global class WS_OrderCreationv1 {
                     }
                 }
             }
-        return respBodyList;
-                }
-                ResponseBody res = new ResponseBody();
-                res.status = 'Error';
-                res.message = 'Unknown error occurred.';
+                }else{
+                    String res = 'Unknown error occurred.';
                 //res.orderId = upsertedOrder.Id;
-                respBodyList.add(res);
-
-                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
+                integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
+                }
                 
-                return respBodyList;
 
             }catch(exception e){
-                System.debug('Error Message==>' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
-                ResponseBody res = new ResponseBody();
-                            res.status = 'Error';
-                            res.message = e.getMessage();
-                            //res.orderId = upsertedOrder.Id;
-                            respBodyList.add(res);
-                            RestContext.response.statusCode = 400;
+                            String res = e.getMessage();
+                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res, '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
 
-                            integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
-
-                return respBodyList;
             }
-        }
+      }
+   }
+   public void finish(Database.BatchableContext BC){
+}
 
-            global class ResponseBody {
-                public String status;
-                public String message;
-                public String orderId;
-            }
-        }
-
-            //////////////////OrderAPICodeEnd///////////////////////
+}

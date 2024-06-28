@@ -9,106 +9,20 @@ public class showAllRelatedCasesController {
                     caseId = caseList1[0].CaseId;
                 }
                 if(caseId != null){
-                    //Case caseRec = [SELECT Id, CaseNumber, OrderId__c, OrderId__r.AccountId, ContactId, AccountId FROM Case WHERE Id=: caseId LIMIT 1];
-                    Case cse = [SELECT Id, CaseNumber, Subject, Type, Order_Number__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE Id = :caseId];
-                    Set<Id> caseAccountIds = new Set<Id>();
-                    Set<Id> caseContactIds = new Set<Id>();
-                    set<String> TypeString = new set<String>();
-                    set<String> EmailString = new set<String>();
-                    set<String> PhoneString = new set<String>();
-                    set<String> MobileString = new set<String>();
-                    set<String> InstagramString = new set<String>();
-                    set<String> contactNumberString = new set<String>();
-                    if (cse.AccountId != null || cse.ContactId != null || cse.Email_Id__c != null || cse.ContactPhone != null || 
-                    cse.Instagram_ID__c != null || cse.ContactMobile != null || cse.Contact_Number__c != null){
-                    caseAccountIds.add(cse.AccountId);
-                    caseContactIds.add(cse.ContactId);
-                    EmailString.add(cse.Email_Id__c);
-                    // PhoneString.add(cse.ContactPhone);
-                    InstagramString.add(cse.Instagram_ID__c);
-                    // MobileString.add(cse.ContactMobile);
-                    contactNumberString.add(cse.Contact_Number__c);
-                    }
-                    // String orderId;
-                    // String accountId;
-                    // String caseContactId;
-                    // String caseAccountId;
-                    // if(caseRec.OrderId__c != null){
-                    //     orderId = caseRec.OrderId__c;
-                    // }
-                    // if(caseRec.OrderId__r.AccountId != null){
-                    //     accountId = caseRec.OrderId__r.AccountId;
-                    // }
-                    // if(caseRec.ContactId != null){
-                    //     caseContactId = caseRec.ContactId;
-                    // }
-                    // if(caseRec.AccountId != null){
-                    //     caseAccountId = caseRec.AccountId;
-                    // }
-                //List<Case> caseList =[SELECT Id, CaseNumber, OrderId__c, OrderId__r.AccountId, Status, Origin, Subject, Priority,Sub_Sub_Type__c, Sub_Type__c FROM Case WHERE (OrderId__c =: orderId OR AccountId =: accountId OR ContactId =: caseContactId OR AccountId =: caseAccountId) AND Status != 'Closed' ORDER BY CreatedDate DESC];
+                    Case cse = [SELECT Id, CaseNumber, Subject, Type,Shipping_Mobile_No__c, Contact_Number__c, SuppliedPhone, Order_Number__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,ContactMobile,Instagram_ID__c,SuppliedEmail FROM Case WHERE Id = :caseId];
                 List<Case> caseList = [SELECT Id, Subject, Origin, Status,OrderId__r.Name, Order_Number__c,RecordType.Name,OrderId__r.OrderNumber,CaseNumber,Sub_Type__c,Sub_Sub_Type__c,ContactPhone,
         Account.Name,AccountId,Contact.Name,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE 
-        (AccountId IN :caseAccountIds OR ContactId IN :caseContactIds OR Email_Id__c IN :EmailString 
-        OR Contact_Number__c IN :contactNumberString OR Instagram_ID__c IN :InstagramString) AND Status != 'Closed' Order By CreatedDate];
-        System.debug('caseList:::::::::::>' + caseList);
+        ((OrderId__c =: cse.OrderId__c AND OrderId__c != null) OR (SuppliedEmail =: cse.SuppliedEmail AND SuppliedEmail != null) OR (Shipping_Mobile_No__c =:cse.Shipping_Mobile_No__c AND Shipping_Mobile_No__c != null) OR (Contact_Number__c=: cse.Contact_Number__c AND Contact_Number__c != null) OR (SuppliedPhone =: cse.SuppliedPhone AND SuppliedPhone != null)) 
+        AND Status != 'Closed' Order By CreatedDate];
         return caseList;
                 }
                 return null;
             }else if(chatTranscripId != null && string.valueOf(chatTranscripId).startsWith('500')){
-            // Case caseRec = [SELECT Id, CaseNumber, OrderId__c, OrderId__r.AccountId, ContactId, AccountId FROM Case WHERE Id=: chatTranscripId LIMIT 1];
-
-            Case cse = [SELECT Id, CaseNumber, Subject, Order_Number__c,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE Id = :chatTranscripId];
-            Set<Id> caseAccountIds = new Set<Id>();
-            Set<Id> caseContactIds = new Set<Id>();
-            set<String> TypeString = new set<String>();
-            set<String> EmailString = new set<String>();
-            set<String> PhoneString = new set<String>();
-            set<String> MobileString = new set<String>();
-            set<String> InstagramString = new set<String>();
-            set<String> contactNumberString = new set<String>();
-            Set<String> orderIdSet = new Set<String>();
-            if (cse.AccountId != null || cse.ContactId != null || cse.Email_Id__c != null || cse.ContactPhone != null || 
-            cse.Instagram_ID__c != null || cse.ContactMobile != null || cse.Contact_Number__c != null){
-            caseAccountIds.add(cse.AccountId);
-            caseContactIds.add(cse.ContactId);
-            EmailString.add(cse.Email_Id__c);
-            // PhoneString.add(cse.ContactPhone);
-            InstagramString.add(cse.Instagram_ID__c);
-            // MobileString.add(cse.ContactMobile);
-            contactNumberString.add(cse.Contact_Number__c);
-            orderIdSet.add(cse.OrderId__c);
-            }
-
-            // String orderId;
-            // String accountId;
-            // String caseContactId;
-            // String caseAccountId;
-            // if(caseRec.OrderId__c != null){
-            //     orderId = caseRec.OrderId__c;
-            // }else{
-            //     orderId = '0';
-            // }
-            // if(caseRec.OrderId__r.AccountId != null){
-            //     accountId = caseRec.OrderId__r.AccountId;
-            // }else{
-            //     accountId = '0';
-            // }
-            // if(caseRec.ContactId != null){
-            //     caseContactId = caseRec.ContactId;
-            // }else{
-            //     caseContactId = '0';
-            // }
-            // if(caseRec.AccountId != null){
-            //     caseAccountId = caseRec.AccountId;
-            // }else{
-            //     caseAccountId = '0';
-            // }
-            //List<Case> caseList =[SELECT Id, CaseNumber, OrderId__c, OrderId__r.AccountId, Status, Origin, Subject, Priority,Sub_Sub_Type__c, Sub_Type__c FROM Case WHERE (OrderId__c =: orderId OR AccountId =: accountId OR ContactId =: caseContactId OR AccountId =: caseAccountId) AND Status != 'Closed' ORDER BY CreatedDate DESC];
+            Case cse = [SELECT Id, CaseNumber, Subject, Order_Number__c,Shipping_Mobile_No__c, Contact_Number__c, SuppliedPhone,RecordType.Name,OrderId__r.Name ,OrderId__r.OrderNumber,OrderId__c,ContactPhone,AccountId,ContactId,Email_Id__c,ContactMobile,Instagram_ID__c, SuppliedEmail FROM Case WHERE Id = :chatTranscripId];
             List<Case> caseList = [SELECT Id, Type, Subject, Origin, Status,OrderId__r.Name, Order_Number__c,RecordType.Name,OrderId__r.OrderNumber,CaseNumber,Sub_Type__c,Sub_Sub_Type__c,ContactPhone,
             Account.Name,AccountId,Contact.Name,ContactId,Email_Id__c,Contact_Number__c,ContactMobile,Instagram_ID__c FROM Case WHERE 
-            (AccountId IN :caseAccountIds OR ContactId IN :caseContactIds OR Email_Id__c IN :EmailString 
-            OR Contact_Number__c IN :contactNumberString OR Instagram_ID__c IN :InstagramString OR OrderId__c IN: orderIdSet) AND Status != 'Closed' Order By CreatedDate DESC];
-            System.debug('caseList:::::::::::>' + caseList);
+            ((OrderId__c =: cse.OrderId__c AND OrderId__c != null) OR (SuppliedEmail =: cse.SuppliedEmail AND SuppliedEmail != null) OR (Shipping_Mobile_No__c =:cse.Shipping_Mobile_No__c AND Shipping_Mobile_No__c != null) OR (Contact_Number__c=: cse.Contact_Number__c AND Contact_Number__c != null) OR (SuppliedPhone =: cse.SuppliedPhone AND SuppliedPhone != null))
+             AND Status != 'Closed' Order By CreatedDate DESC];
             return caseList;
         }else if(chatTranscripId != null && string.valueOf(chatTranscripId).startsWith('00T')){
             // Case caseRec = [SELECT Id, CaseNumber, OrderId__c, OrderId__r.AccountId, ContactId, AccountId FROM Case WHERE Id=: chatTranscripId LIMIT 1];

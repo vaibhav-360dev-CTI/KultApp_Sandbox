@@ -12,6 +12,8 @@ import Tech_Issue from '@salesforce/schema/Case.Tech_Issue_Type__c';
 import { getRecordNotifyChange } from "lightning/uiRecordApi";
 import Id from '@salesforce/user/Id'
 import ProfileName from '@salesforce/schema/User.Profile.Name'; 
+const MAX_FILE_SIZE = 4718592;
+const CHUNK_SIZE = 750000;
 export default class ReferBackToCSTeam extends LightningElement {
 
 
@@ -157,6 +159,7 @@ export default class ReferBackToCSTeam extends LightningElement {
     }
     
     openfileUpload(event) {
+        debugger;
         const file = event.target.files[0]
         var reader = new FileReader()
         reader.onload = () => {
@@ -315,6 +318,7 @@ export default class ReferBackToCSTeam extends LightningElement {
             }
         }
         this.isLoading = true;
+        debugger;
         const {base64, filename, recordId} = this.fileData;
         getCaseAndOrderDetails({
             caseId: this.recordId,

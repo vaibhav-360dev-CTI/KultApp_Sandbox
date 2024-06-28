@@ -86,6 +86,12 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
             for(Case caseRec : caseList){
                 if(caseRec.Sub_Type__c == 'Cancellation Before Shipping'){
                     caseRec.Priority = 'High';
+                }else if(caseRec.Type == 'Order Cancellation Before Shipping'){
+                    caseRec.Priority = 'High';
+                }else if(caseRec.Sub_Sub_Type__c == 'Mobile Number Change Before Shipping'){
+                    caseRec.Priority = 'High';
+                }else{
+                    caseRec.Priority = 'Medium';
                 }
             }
         }catch(exception e){
@@ -95,7 +101,6 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
     
     public static void createdAffectedSKUs(List<Case> caseList){
         try{
-              System.debug('caseList New ==> ' + caseList);            
             List<Affected_SKU__c> affectedSKUsToInsert = new List<Affected_SKU__c>();
             Map<Id, Id> caseIdByOrderId = new Map<Id, Id>(); 
             List<String> skuListToIterate = new List<String>();
@@ -108,7 +113,6 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
             
             Map<Id, Map<String,OrderItem>> oliBySKUByCaseId = new Map<Id, Map<String,OrderItem>>();
             for(Case caseRec : caseList){
-                System.debug('caseRec 1 == >'+caseRec);
                     if(caseRec.OrderId__c != null){
                         orderIds.add(caseRec.OrderId__c);
                         if(!caseIdByOrderId.containsKey(caseRec.OrderId__c)){
@@ -149,11 +153,8 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
                     }
                 }
             }
-             System.debug('orderIds New 1.1 ==> ' + orderIds);
-            System.debug('orderIds New 2.1 ==> ' + skuListToIterate);
             List<OrderItem> oliList = [SELECT Id, OrderId, UnitPrice, ListPrice, TotalPrice, Selling_Price__c, SKU__c, Refunded_Price__c, 
                                        Brand__c, Product_Name__c, Total_Selling_Price__c, Is_Already_Utilized__c, Quantity, Order.ParentOrder__c FROM OrderItem WHERE Order.ParentOrder__c IN: orderIds AND OrderId != null AND SKU__c IN: skuListToIterate];
-             System.debug('oliBySKUByCaseId New 1 ==> ' + oliList.size());
             for(OrderItem oliRec : oliList){
                 if(caseIdByOrderId.containsKey(oliRec.Order.ParentOrder__c)){
                     String caseId = caseIdByOrderId.get(oliRec.Order.ParentOrder__c);
@@ -164,7 +165,6 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
                     }
                 }
             }            
-             System.debug('oliBySKUByCaseId New ==> ' + oliBySKUByCaseId);
             // for(Id caseId : oliBySKUByCaseId.keySet()){
             //     for(String sku : oliBySKUByCaseId.get(caseId).keySet()){
             //         Affected_SKU__c affRec = new Affected_SKU__c();
@@ -366,13 +366,9 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
         String body2;
         List<Messaging.SingleEmailMessage> allmsg = new List<Messaging.SingleEmailMessage>();
         et1 = [SELECT Id,Subject, Body, HtmlValue FROM EmailTemplate WHERE DeveloperName ='Case_Re_Assignment_Email' Limit 1];
-        System.debug('et1========>'+et1);
         body1 = et1.HtmlValue;
-        System.debug('body1========>'+body1);
         et2 = [SELECT Id,Subject, Body, HtmlValue FROM EmailTemplate WHERE DeveloperName ='Case_Assignment_Email' Limit 1];
-        System.debug('et2========>'+et2);
         body2 = et2.HtmlValue;
-        System.debug('body2========>'+body2);
         if(caseList != null){
         for(Case caseRec : caseList){
             List<string> toAddress = new List<string>();
@@ -440,7 +436,6 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
                 }
             }
                 else{
-                    System.debug('Inside Assigned Email Block');
                     mail.setTemplateId(et2.Id);
                     mail.setSubject(et2.subject);
                     
@@ -478,7 +473,6 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
                 }
             }
         }
-        System.debug('allmsg==> ' + allmsg);     
         try {
             if(allmsg.size()>0){
                 Messaging.sendEmail(allmsg);
@@ -497,22 +491,18 @@ private static string socialRecordTypeId = Schema.SObjectType.case.getRecordType
                 setOfOrderId.add(cs.OrderId__c);
             }
         }
-        System.debug('setOfOrderId==> ' + setOfOrderId); 
         
         Map<Id, String> orderIdToCouponMap = new Map<Id, String>();       
         List<Order> orderList = [SELECT Id, Coupon__c FROM Order WHERE Id IN :setOfOrderId];
-        System.debug('orderList==> ' + orderList);
         String coupon;
         
         for(Order ord : orderList) {
             orderIdToCouponMap.put(ord.Id, ord.Coupon__c);
         }
-        System.debug('coupon==> ' + coupon);
         for (Case cs : newCases) {
             if (cs.OrderId__c != null) {
                 coupon = orderIdToCouponMap.get(cs.OrderId__c);
                     cs.Coupon__c = coupon;
-                    System.debug('cs.Coupon__c==> ' + cs.Coupon__c);
                 }else {
                     System.debug('No coupon found for case with OrderId ' + cs.OrderId__c);
                 }

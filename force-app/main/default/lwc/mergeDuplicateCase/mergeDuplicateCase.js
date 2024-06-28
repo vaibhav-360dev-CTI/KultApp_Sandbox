@@ -23,6 +23,7 @@ export default class MergeDuplicateCase extends LightningElement {
     errors;
     @track selectedCase;
     @track recordIds;
+    @track preSelectedRows = [];
     columns = Casecolumns;
     CaseList = [];
     selectedCaseId = [];
@@ -95,6 +96,8 @@ export default class MergeDuplicateCase extends LightningElement {
     
     handleRowSelection(event){
         var selectedRows = event.detail.selectedRows;
+        //var previouslySelected = JSON.parse(JSON.stringify(selectedRows));
+       // this.preSelectedRows.push(previouslySelected);
         this.CaseList = selectedRows;
         var CaseListToIterate = this.CaseList;
         var CaseIdList = [];
