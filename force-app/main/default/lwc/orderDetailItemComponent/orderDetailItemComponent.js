@@ -38,7 +38,7 @@ export default class OrderDetailItems extends LightningElement {
             .then(result => {
                 this.orderLineItems = result;
                 this.orderValue = result[0].Order.ParentOrder__r.Paid_Amount__c;
-                this.accountName = result[0].Order.Account.Name;
+                this.accountName = result[0].Order.ParentOrder__r.Shipping_Name__c;
                 this.orderNumber = result[0].Order.ParentOrder__r.Name;
                 this.orderDate = result[0].Order.ParentOrder__r.EffectiveDate;
                 this.shippingNumber = result[0].Order.ParentOrder__r.Delivery_Mobile_Number__c;

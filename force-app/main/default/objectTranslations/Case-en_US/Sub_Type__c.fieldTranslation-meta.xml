@@ -1,273 +1,281 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Sub Type --></label>
     <name>Sub_Type__c</name>
     <picklistValues>
         <masterLabel>Address Change After Shipping</masterLabel>
-        <translation></translation>
+        <translation><!-- Address Change After Shipping --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Address Change Before Shipping</masterLabel>
-        <translation></translation>
+        <translation><!-- Address Change Before Shipping --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Address not found</masterLabel>
-        <translation></translation>
+        <translation><!-- Address not found --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>App Related</masterLabel>
-        <translation></translation>
+        <translation><!-- App Related --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>CX not available/out of town</masterLabel>
-        <translation></translation>
+        <translation><!-- CX not available/out of town --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Cancellation After Shipping</masterLabel>
-        <translation></translation>
+        <translation><!-- Cancellation After Shipping --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Cancellation Before Shipping</masterLabel>
-        <translation></translation>
+        <translation><!-- Cancellation Before Shipping --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Collaboration Request</masterLabel>
-        <translation></translation>
+        <translation><!-- Collaboration Request --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Collaboration Request/Influencer queries</masterLabel>
-        <translation></translation>
+        <translation><!-- Collaboration Request/Influencer queries --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Collaboration service issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Collaboration service issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Comparison with Competitor</masterLabel>
-        <translation></translation>
+        <translation><!-- Comparison with Competitor --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Complaint About Rider or CSE</masterLabel>
-        <translation></translation>
+        <translation><!-- Complaint About Rider or CSE --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Content Issues - Cx</masterLabel>
-        <translation></translation>
+        <translation><!-- Content Issues - Cx --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Content Issues - Partners</masterLabel>
-        <translation></translation>
+        <translation><!-- Content Issues - Partners --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Cx Refuse to accept</masterLabel>
-        <translation></translation>
+        <translation><!-- Cx Refuse to accept --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Cx not Responding</masterLabel>
-        <translation></translation>
+        <translation><!-- Cx not Responding --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Delayed Tech/Climatic/Others</masterLabel>
-        <translation></translation>
+        <translation><!-- Delayed Tech/Climatic/Others --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Delayed due to STN</masterLabel>
-        <translation></translation>
+        <translation><!-- Delayed due to STN --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Expected Delivery TAT / Preferred Delivery window</masterLabel>
-        <translation></translation>
+        <translation><!-- Expected Delivery TAT / Preferred Delivery window --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>FAQs</masterLabel>
-        <translation></translation>
+        <translation><!-- FAQs --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Full</masterLabel>
-        <translation></translation>
+        <translation><!-- Full --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>General Queries</masterLabel>
-        <translation></translation>
+        <translation><!-- General Queries --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Gift / Pre-book</masterLabel>
-        <translation></translation>
+        <translation><!-- Gift / Pre-book --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Gift After Shipping</masterLabel>
-        <translation></translation>
+        <translation><!-- Gift After Shipping --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Gift Before Shipping</masterLabel>
-        <translation></translation>
+        <translation><!-- Gift Before Shipping --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Happy Customer</masterLabel>
-        <translation></translation>
+        <translation><!-- Happy Customer --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Home Visit</masterLabel>
-        <translation></translation>
+        <translation><!-- Home Visit --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Incomplete Address/Landmark issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Incomplete Address/Landmark issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Incomplete Address/Pin code</masterLabel>
-        <translation></translation>
+        <translation><!-- Incomplete Address/Pin code --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Incorrect  Number</masterLabel>
-        <translation></translation>
+        <translation><!-- Incorrect  Number --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Incorrect address</masterLabel>
-        <translation></translation>
+        <translation><!-- Incorrect address --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Know more about products</masterLabel>
-        <translation></translation>
+        <translation><!-- Know more about products --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Looking for a Job</masterLabel>
-        <translation></translation>
+        <translation><!-- Looking for a Job --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Missed / Incomplete Conversation</masterLabel>
-        <translation></translation>
+        <translation><!-- Missed / Incomplete Conversation --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Missed campaign Req. for Benefit/code</masterLabel>
-        <translation></translation>
+        <translation><!-- Missed campaign Req. for Benefit/code --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Mobile number change</masterLabel>
-        <translation></translation>
+        <translation><!-- Mobile number change --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Monitoring Report - Full</masterLabel>
-        <translation></translation>
+        <translation><!-- Monitoring Report - Full --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Monitoring Report - Partial</masterLabel>
-        <translation></translation>
+        <translation><!-- Monitoring Report - Partial --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Non Perfume queries</masterLabel>
-        <translation></translation>
+        <translation><!-- Non Perfume queries --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>OTP / ID issues</masterLabel>
-        <translation></translation>
+        <translation><!-- OTP / ID issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Offers and Promotions</masterLabel>
-        <translation></translation>
+        <translation><!-- Offers and Promotions --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Order Related</masterLabel>
-        <translation></translation>
+        <translation><!-- Order Related --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Order Status</masterLabel>
-        <translation></translation>
+        <translation><!-- Order Status --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Others</masterLabel>
-        <translation></translation>
+        <translation><!-- Others --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>PIN Code not Serviceable</masterLabel>
-        <translation></translation>
+        <translation><!-- PIN Code not Serviceable --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Partial</masterLabel>
-        <translation></translation>
+        <translation><!-- Partial --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Porduct /process enquiry only</masterLabel>
-        <translation></translation>
+        <translation><!-- Porduct /process enquiry only --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Previous order OOS Req for benefit/code</masterLabel>
-        <translation></translation>
+        <translation><!-- Previous order OOS Req for benefit/code --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Process to Purchase / Delivery Charges</masterLabel>
-        <translation></translation>
+        <translation><!-- Process to Purchase / Delivery Charges --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Process to add or update more addresses</masterLabel>
-        <translation></translation>
+        <translation><!-- Process to add or update more addresses --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Product Price</masterLabel>
-        <translation></translation>
+        <translation><!-- Product Price --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Product Quantity or Ingredients or Description</masterLabel>
-        <translation></translation>
+        <translation><!-- Product Quantity or Ingredients or Description --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Product Suitability</masterLabel>
-        <translation></translation>
+        <translation><!-- Product Suitability --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Product life /Expiry/Authencity /Others</masterLabel>
-        <translation></translation>
+        <translation><!-- Product life /Expiry/Authencity /Others --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>RTO Orders</masterLabel>
-        <translation></translation>
+        <translation><!-- RTO Orders --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Refund Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Refund Issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Restricted Entry area</masterLabel>
-        <translation></translation>
+        <translation><!-- Restricted Entry area --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Return &amp; Replacement</masterLabel>
-        <translation></translation>
+        <translation><!-- Return &amp; Replacement --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Return and Refund</masterLabel>
-        <translation></translation>
+        <translation><!-- Return and Refund --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Return/Cancellation/ Privacy /Terms of use</masterLabel>
-        <translation></translation>
+        <translation><!-- Return/Cancellation/ Privacy /Terms of use --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Reverse Pick Up</masterLabel>
-        <translation></translation>
+        <translation><!-- Reverse Pick Up --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Service feedback</masterLabel>
-        <translation></translation>
+        <translation><!-- Service feedback --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Serviceable Area or PIN Code</masterLabel>
-        <translation></translation>
+        <translation><!-- Serviceable Area or PIN Code --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Stock / Restock</masterLabel>
-        <translation></translation>
+        <translation><!-- Stock / Restock --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Update Email id</masterLabel>
-        <translation></translation>
+        <translation><!-- Update Email id --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Value 1-1</masterLabel>
+        <translation><!-- Value 1-1 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Value 2-1</masterLabel>
+        <translation><!-- Value 2-1 --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Word of Mouth on Order Cancellation</masterLabel>
-        <translation></translation>
+        <translation><!-- Word of Mouth on Order Cancellation --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Wrong Address/Pin Code</masterLabel>
-        <translation></translation>
+        <translation><!-- Wrong Address/Pin Code --></translation>
     </picklistValues>
 </CustomFieldTranslation>

@@ -15,7 +15,6 @@ public class InstaDmUtilityClass {
     private static String pageaccessToken               = fap.pageAccessToken__c;
     private static String basicUrl                      = fap.basicUrl__c;
     private static String pageId                        = fap.Page_Id__c;
-    //private static String userId                        = fap.user_Id__c;
     private static Id caseRecordTypeId                  = Schema.SObjectType.case.getRecordTypeInfosByName().get('Social Media').getRecordTypeId();
     private static final String FB_GRAPH_API_BASE_URL   = 'callout:meta';
     private static final String ACCESS_TOKEN;
@@ -35,7 +34,7 @@ public class InstaDmUtilityClass {
         List<String> casePostIds                                             = new List<String>();
         Map<String, String> queryParams                                      = new Map<String, String>();
         Map<String, String> headers                                          = new Map<String, String>{'Content-Type' => 'application/json','Authorization' => 'Bearer '+pageaccessToken};
-            String jsonResponse                                                  = '';
+        String jsonResponse                                                  = '';
         InstaDMWrapper messageInfo                                           = new InstaDMWrapper(); 
         List<String> senderIds                                               = new List<String>();
         
@@ -47,7 +46,7 @@ public class InstaDmUtilityClass {
             map<String,List<String>> existingDmRecordsBySenderIds = new map<String,List<String>>();                
             
             if(test.isRunningTest()){
-                jsonResponse = '{"id": "17841405793087218", "media_url": "https://www.example.com/image.jpg", "comments": { "data": [{"id": "17851087209098192", "text": "Awesome!", "username": "user1", "timestamp": "2023-07-29T12:40:00+0000"}] } }';
+                jsonResponse = '"data": [ { "message_count": 3, "messages": { "data": [ { "message": "", "id": "m_m1j1__9_M3wb1ulxEd4yZtK7NuA_u-dG1x4d-aD9nLbIbfYjRWKeFBr58kx_gCDbXEmscQ0MlOAvqw8A_xrw4w", "thread_id": "t_2738437992987631", "created_time": "2024-06-25T10:33:13+0000", "from": { "name": "Ecb Balaji", "email": "7786606848120882@facebook.com", "id": "7786606848120882" } }, { "message": "Hi, thanks for contacting us. Please share your contact details or call us at 18001231442.", "id": "m_5-chPY2fd-qOt1mIGg7SF9K7NuA_u-dG1x4d-aD9nLaW-rPCUQb1R2NouRqJ92GXKdABu1kk43V07EnAjo7R_g", "thread_id": "t_2738437992987631", "created_time": "2024-06-25T10:33:08+0000", "from": { "name": "BeepKart", "email": "109605230767380@facebook.com", "id": "109605230767380" } }, { "message": "Dear Sir/Madam,Greetings from Elite EventsElite Events", "id": "m_6qNJEZAYtbJ0a-ZIGFfkK9K7NuA_u-dG1x4d-aD9nLa2VH9kZ6YCC5UJSp72rJcts-86eChiAT_TcvwuwKcjTg", "thread_id": "t_2738437992987631", "created_time": "2024-06-25T10:33:07+0000", "from": { "name": "Ecb Balaji", "email": "7786606848120882@facebook.com", "id": "7786606848120882" } } ], "paging": { "cursors": { "before": "QVFIUlg2MUtnU3VLSkMyeVhlVnhvNTJJdzgwYU1xeE9BWkFHUmdUQ3hmMUlXcFN6eTlld0ExWXowLTJqbUl1bzFEdEtHWEpkd09NTUZAHTUo3ZAldQTHdvRjdnU09pRUJMVTZAMUnhpenVTbjFyWUhNeE14N29tRXMzeHR5MTBUVmdLeXNH", "after": "QVFIUktqYkNvSmllX045SHY2NDJJdjc1dF82Wk5GOVdWbE1nbkxEVklWYUhXYXJDYnh4NWhFem10QmxHMzloR0lUaWctMHI2c0NROGhmdHk5b2RPV0gxMG9QS2VpVnNzbk5HMUZAFUUliVV9MblpiaHItX1ZACckEyZA1BWZAEktVmMyLUJm" } } }, "id": "t_2738437992987631", "can_reply": true, "senders": { "data": [ { "name": "Ecb Balaji", "email": "7786606848120882@facebook.com", "id": "7786606848120882" }, { "name": "BeepKart", "email": "109605230767380@facebook.com", "id": "109605230767380" } ] } } ]';
                 messageInfo = (InstaDMWrapper) JSON.deserialize(jsonResponse, InstaDMWrapper.class);
             }else{
                 HttpResponse response = DynamicHttpCallout.makeHttpGetCallout(endpointUrl, queryParams, headers);

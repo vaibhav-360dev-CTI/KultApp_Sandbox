@@ -2,6 +2,7 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { getRecord } from 'lightning/uiRecordApi';
 import getCaseById from '@salesforce/apex/referBackToCsTeamController.getCaseById';
 import getCaseAndOrderDetails from '@salesforce/apex/referBackToCsTeamController.getCaseAndOrderDetails';
+import getCaseAndOrderDetailsNew from '@salesforce/apex/referBackToCsTeamController.getCaseAndOrderDetailsNew';
 import getCaseTeamAndType from '@salesforce/apex/referBackToCsTeamController.getCaseTeamAndType';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CloseActionScreenEvent } from 'lightning/actions';
@@ -24,6 +25,7 @@ export default class ReferBackToCSTeam extends LightningElement {
     @track refundResolved = false;
     @track result;
     @track referBack;
+    @track wronglySent;
     @track awbNumber;
     @track focOrderId;
     @track RequestApprove = false;
@@ -45,6 +47,7 @@ export default class ReferBackToCSTeam extends LightningElement {
     @track techIssue;
     @track techIssueList=[];
     @track isLoading=false;
+    @track isMonitoring = false;
     returnValue;
     RefrebackOption=[];
     userProfileName;
@@ -147,6 +150,9 @@ export default class ReferBackToCSTeam extends LightningElement {
                     if(result.Refund_Type__c != 'Special Case Refund'){
                             this.disableRefundAmt = true;
                         }
+                        if(result.Type == 'Monitoring Report - Full' || result.Type == 'Monitoring Report - Partial'){
+                            this.isMonitoring = true;
+                        }
 
 
                     console.log('Cases retrieved successfully');
@@ -193,6 +199,7 @@ export default class ReferBackToCSTeam extends LightningElement {
             this.resolved = true;
             this.NeedMoreInfo = false;
             this.SendUpdate = false;
+            this.wronglySent = false;
         }
         else if (this.referBack === 'Need More Info') {
             this.RequestApprove = false;
@@ -200,9 +207,16 @@ export default class ReferBackToCSTeam extends LightningElement {
             this.NeedMoreInfo = true;
             this.resolved = false;
             this.SendUpdate = false;
+            this.wronglySent = false;
         }
         else if (this.referBack === 'Send Update') {
             this.SendUpdate = true;
+            this.resolved = false;
+            this.NeedMoreInfo = false;
+            this.wronglySent = false;
+        }else if(this.referBack == 'Wrongly Sent'){
+            this.wronglySent = true;
+            this.SendUpdate = false;
             this.resolved = false;
             this.NeedMoreInfo = false;
         }
@@ -357,6 +371,84 @@ export default class ReferBackToCSTeam extends LightningElement {
                 this.isLoading = false;
             });
 
+    }
+
+    handleSaveAndClose(){
+        debugger;
+        if (this.referBack == undefined || this.referBack == null || this.referBack == '') {
+            alert("Enter Refer Back Reason");
+            return null;
+        }
+        if (this.referBack == 'Refund Processed' || this.referBack === 'Cancellation Processed') {
+            if (this.approvalRemarks == undefined || this.approvalRemarks == null || this.approvalRemarks == '') {
+                alert("Enter Approval Remarks");
+                return null;
+            }
+        }
+        if (this.referBack == 'Refund Rejected' || this.referBack === 'Cancellation Rejected') {
+            if (this.rejectionReason == undefined || this.rejectionReason == null || this.rejectionReason == '') {
+                alert("Enter Rejection Reason");
+                return null;
+            }
+        }
+        if (this.referBack == 'Need More Info') {
+            if (this.describeInformationNeeded == undefined || this.describeInformationNeeded == null || this.describeInformationNeeded == '') {
+                alert("Enter Describe Info Needed");
+                return null;
+            }
+        }
+
+        if (this.referBack == 'Resolved') {
+            if (this.resolutionRemarks == undefined || this.resolutionRemarks == null || this.resolutionRemarks == '') {
+                alert("Enter Resolution Remarks");
+                return null;
+            }
+        }
+
+        if (this.referBack == 'Send Update') {
+            if (this.updateDesc == undefined || this.updateDesc == null || this.updateDesc == '') {
+                alert("Enter Send Update Details");
+                return null;
+            }
+        }
+        this.isLoading = true;
+        debugger;
+        const {base64, filename, recordId} = this.fileData;
+        getCaseAndOrderDetailsNew({
+            caseId: this.recordId,
+            referBackReason: this.referBackReason,
+            refundAmount: this.refundAmount,
+            approvalRemarks: this.approvalRemarks,
+            //rejectionRemarks: this.rejectionRemarks,
+            rejectionReason: this.rejectionReason,
+            describeInformationNeeded: this.describeInformationNeeded,
+            //orderId:this.orderId,
+            orderRefundAmount: this.orderRefundAmount,
+            resolutionRemarks: this.resolutionRemarks,
+            updateDesc : this.updateDesc,
+            base64: base64,
+            filename: filename,
+            awbNumber: this.awbNumber,
+            focOrderId: this.focOrderId,
+            techIssueType: this.techIssue,
+            isRefundCase: this.refundResolved,
+            isMonitoringCase: this.isMonitoring
+            })
+            .then((result) => {
+                this.returnValue = result;
+                if(this.returnValue == 'Success'){
+                this.showToast('Success', 'Records saved successfully', 'success');
+                this.handleClose();
+                getRecordNotifyChange([{ recordId: this.recordId }]);
+                }else{
+                    this.showToast('Error', this.returnValue, 'error');
+                }
+                this.isLoading = false;
+            }).catch((err) => {
+                this.error = err;
+                this.showToast('Error', 'Error occurred while saving records', 'error');
+                this.isLoading = false;
+            });
     }
 
     handleCancel() {

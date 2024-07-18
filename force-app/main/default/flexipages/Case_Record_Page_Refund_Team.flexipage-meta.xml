@@ -135,6 +135,24 @@
                 <identifier>RecordAssigned_to_Marketing_Team__cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Dropshipping_User__c</fieldItem>
+                <identifier>RecordDropshipping_User__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Assigned_to_Dropshipping__c</fieldItem>
+                <identifier>RecordAssigned_to_Dropshipping__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.App_Order_Id__c</fieldItem>
+                <identifier>RecordApp_Order_Id__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-18fe451a-49da-460b-9de5-6ec9089ac90e</name>
         <type>Facet</type>
     </flexiPageRegions>

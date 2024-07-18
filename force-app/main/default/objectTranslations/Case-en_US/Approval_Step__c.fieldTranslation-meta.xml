@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Approval Step --></label>
     <name>Approval_Step__c</name>
     <picklistValues>
         <masterLabel>Approved</masterLabel>
-        <translation></translation>
+        <translation><!-- Approved --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Closed</masterLabel>
-        <translation></translation>
+        <translation><!-- Closed --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>InProgress</masterLabel>
-        <translation></translation>
+        <translation><!-- InProgress --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Open</masterLabel>
-        <translation></translation>
+        <translation><!-- Open --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Rejected</masterLabel>
-        <translation></translation>
+        <translation><!-- Rejected --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Under Approval</masterLabel>
-        <translation></translation>
+        <translation><!-- Under Approval --></translation>
     </picklistValues>
 </CustomFieldTranslation>

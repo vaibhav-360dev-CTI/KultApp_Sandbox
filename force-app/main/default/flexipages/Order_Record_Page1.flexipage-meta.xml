@@ -194,6 +194,12 @@
                 <identifier>RecordTracking_Link_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Billing_Name__c</fieldItem>
+                <identifier>RecordBilling_Name__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-91a2a5ff-9b77-4cce-996f-a1b186c8c5ed</name>
         <type>Facet</type>
     </flexiPageRegions>

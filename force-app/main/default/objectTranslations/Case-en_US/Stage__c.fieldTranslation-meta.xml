@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Stage --></label>
     <name>Stage__c</name>
     <picklistValues>
         <masterLabel>Closed</masterLabel>
-        <translation></translation>
+        <translation><!-- Closed --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Open</masterLabel>
-        <translation></translation>
+        <translation><!-- Open --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Re-Open</masterLabel>
-        <translation></translation>
+        <translation><!-- Re-Open --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Reassigned</masterLabel>
-        <translation></translation>
+        <translation><!-- Reassigned --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Unassigned</masterLabel>
-        <translation></translation>
+        <translation><!-- Unassigned --></translation>
     </picklistValues>
 </CustomFieldTranslation>

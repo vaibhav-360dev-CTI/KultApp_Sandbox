@@ -605,6 +605,14 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>batchToCreateOrders</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>batchToUpdateOrders</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>bulkCloseCasesController</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -1089,12 +1097,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Case.Allow_Update__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Case.Amount_Paid__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Case.App_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Case.App_Order_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1130,6 +1148,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.Assigned_to_Different_Team__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Case.Assigned_to_Dropshipping__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1225,6 +1248,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Case.Case_Reason_Description__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Case.Case_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1375,6 +1403,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Case.Disposition__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Case.Dropshipping_User__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2164,6 +2197,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Case_Progress_Detail__c.AWB_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Case_Progress_Detail__c.CS_Remarks__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -2179,12 +2217,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Case_Progress_Detail__c.FOC_Order_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Case_Progress_Detail__c.Responded_By__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Case_Progress_Detail__c.Response_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Case_Progress_Detail__c.Skip_Trigger__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2211,6 +2259,16 @@
         <editable>true</editable>
         <field>Contact.customLogId__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Dropshipping_User__mdt.Email_Id__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Dropshipping_User__mdt.Username__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
@@ -2479,6 +2537,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>LiveChatTranscript.Chat_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>LiveChatTranscript.Order_Number__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -2535,6 +2598,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Order.Billing_Mobile_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Order.Billing_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -3061,6 +3129,9 @@
         <layout>Contact-Contact Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>ContentAsset-Asset File Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>ContentVersion-Content Version</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -3068,6 +3139,12 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>ContractLineItem-Contract Line Item Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>CspTrustedSite-Trusted URL Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>Dropshipping_User__mdt-Dropshipping User Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>DuplicateRecordSet-Duplicate Record Set Layout</layout>
@@ -3167,7 +3244,13 @@
         <layout>Message_Attachment__c-Message Attachment Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>MessagingChannel-Messaging Channel Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>MessagingEndUser-Messaging User Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
+        <layout>MessagingSession-Messaging Session Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Opportunity-Opportunity Layout</layout>

@@ -1,186 +1,190 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
     <fieldSets>
-        <label></label>
+        <label><!-- Field Set For Case Child Creation --></label>
         <name>Field_Set_For_Case_Child_Creation</name>
     </fieldSets>
     <fieldSets>
-        <label></label>
+        <label><!-- Field set For Order Related --></label>
         <name>Field_set_For_Order_Related</name>
     </fieldSets>
     <fieldSets>
-        <label></label>
+        <label><!-- courierIssue --></label>
         <name>courierIssue</name>
     </fieldSets>
     <layouts>
         <layout>Case Layout</layout>
         <sections>
-            <label></label>
+            <label><!-- Milestone --></label>
             <section>Milestone</section>
         </sections>
     </layouts>
     <quickActions>
-        <label></label>
+        <label><!-- Assign To CS Team --></label>
         <name>Assign_To_CS_Team</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Assign to Dropshipping --></label>
+        <name>Assign_to_Dropshipping</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- Assign to MT --></label>
         <name>Assign_to_MT</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Bulk Close Cases --></label>
         <name>Bulk_Close_Cases</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- CS Outbound Calls --></label>
         <name>CS_Outbound_Calls</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Case Closure --></label>
         <name>Case_Closure</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Case Details --></label>
         <name>Case_Details</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Case Re-Open --></label>
         <name>Case_Re_Open</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Close Quick Action --></label>
         <name>Close_Quick_Action</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Close Refund Bulk Upload Case --></label>
         <name>Close_Refund_Bulk_Upload_Case</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Courier Issue --></label>
         <name>Courier_Issue</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Create Child Case --></label>
         <name>Create_Child_Case</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Create Duplicate Order --></label>
         <name>Create_Duplicate_Order</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Enter Case Details --></label>
         <name>Enter_Case_Details</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Follow Up --></label>
         <name>Follow_Up</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Merge Cases --></label>
         <name>Merge_Cases</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Merge Duplicate Case --></label>
         <name>Merge_Duplicate_Case</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Move To Admin --></label>
         <name>Move_To_Admin</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Move to Warehouse Team --></label>
         <name>Move_to_Warehouse_Team</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- NewChildCase --></label>
         <name>NewChildCase</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Re-Assign Case To CS Team --></label>
         <name>Re_Assign_Case_To_CS_Team</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Refer Back To CS Team --></label>
         <name>Refer_Back_To_CS_Team</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Move To Refund Team --></label>
         <name>RefundTeam</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Respond To Follow Up --></label>
         <name>Respond_To_Follow_Up</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Return To Origin --></label>
         <name>Return_To_Origin</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Send Email --></label>
         <name>SendEmail</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Email --></label>
         <name>Send_Email</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Email --></label>
         <name>Send_Email_Action</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Send Request Info --></label>
         <name>Send_Request_Info</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Send an Email --></label>
         <name>Send_an_Email</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- 📤Share Record --></label>
         <name>Share_Record</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Show Task --></label>
         <name>Show_Task</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Tag A Call Log --></label>
         <name>Tag_A_Call_Log</name>
     </quickActions>
     <quickActions>
-        <label></label>
+        <label><!-- Update Affected SKU --></label>
         <name>Update_Affected_SKU</name>
     </quickActions>
     <recordTypes>
-        <label></label>
+        <label><!-- Inbound Case --></label>
         <name>Inbound_Case</name>
     </recordTypes>
     <recordTypes>
-        <label></label>
+        <label><!-- Outbound Case --></label>
         <name>Outbound_Case</name>
     </recordTypes>
     <recordTypes>
-        <label></label>
+        <label><!-- Social Media --></label>
         <name>Social_Media</name>
     </recordTypes>
     <validationRules>
-        <errorMessage></errorMessage>
+        <errorMessage><!-- Can&apos;t edit a closed case. Re-open to edit --></errorMessage>
         <name>Case_Close_Validation</name>
     </validationRules>
     <validationRules>
-        <errorMessage></errorMessage>
+        <errorMessage><!-- Can&apos;t edit a closed case. Re-Open to edit --></errorMessage>
         <name>Disable_editing_when_closed</name>
     </validationRules>
     <validationRules>
-        <errorMessage></errorMessage>
+        <errorMessage><!-- Please select a Communication Mode (Email, Call, or Chat) before closing the case. --></errorMessage>
         <name>Validation_For_Communcation_Mode</name>
     </validationRules>
     <validationRules>
-        <errorMessage></errorMessage>
+        <errorMessage><!-- Please mark the &apos;Email Replied&apos; checkbox before closing the ticket. --></errorMessage>
         <name>Validation_For_Email_Replied_CheckBox</name>
     </validationRules>
     <webLinks>
-        <label></label>
+        <label><!-- Bulk_Close_Cases --></label>
         <name>Bulk_Close_Cases</name>
     </webLinks>
 </CustomObjectTranslation>

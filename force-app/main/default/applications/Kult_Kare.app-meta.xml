@@ -122,7 +122,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>record_Page_For_Admin</content>
+        <content>Case_Record_SocialMedia1</content>
         <formFactor>Small</formFactor>
         <pageOrSobjectType>Case</pageOrSobjectType>
         <type>Flexipage</type>
@@ -130,7 +130,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>record_Page_For_Admin</content>
+        <content>Case_Record_SocialMedia1</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Case</pageOrSobjectType>
         <type>Flexipage</type>

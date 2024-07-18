@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Case Sub-Status --></label>
     <name>Case_Sub_Status__c</name>
     <picklistValues>
         <masterLabel>Assigned to CS Team</masterLabel>
-        <translation></translation>
+        <translation><!-- Assigned to CS Team --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Assigned to Marketing Team</masterLabel>
-        <translation></translation>
+        <translation><!-- Assigned to Marketing Team --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Assigned to Refund Team</masterLabel>
-        <translation></translation>
+        <translation><!-- Assigned to Refund Team --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Assigned to Warehouse Team</masterLabel>
-        <translation></translation>
+        <translation><!-- Assigned to Warehouse Team --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Closed as Duplicate Case</masterLabel>
+        <translation><!-- Closed as Duplicate Case --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Referred Back to CS Team</masterLabel>
-        <translation></translation>
+        <translation><!-- Referred Back to CS Team --></translation>
     </picklistValues>
 </CustomFieldTranslation>

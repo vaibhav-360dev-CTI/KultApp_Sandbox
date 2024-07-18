@@ -567,19 +567,27 @@ public class CaseHelperControllers {
                 }
             }
             System.debug('updatingCaseList==> ' + updatingCaseList);
-            List<Case_Progress_Detail__c> cpdList = [SELECT Id, Name, CS_Remarks__c, WH_Team_Remarks__c, Status__c, Case__c, Case__r.CaseNumber, Current_Action__c, Response_Time__c, Responded_By__c, Tech_Issue_Type__c FROM Case_Progress_Detail__c WHERE Case__c IN: childCaseIds];
+            List<Case_Progress_Detail__c> cpdList = [SELECT Id, Name, CS_Remarks__c, WH_Team_Remarks__c, Status__c, Case__c, Case__r.CaseNumber, Current_Action__c, Response_Time__c, Responded_By__c, Tech_Issue_Type__c FROM Case_Progress_Detail__c WHERE Case__c IN: childCaseIds AND Case__c != null];
             
-            List<Affected_SKU__c> skuList = [SELECT Id, Product_Name__c, Brand_Name__c, MRP__c, Case__c, Case__r.CaseNumber,Total_Quantity__c, Selling_Price__c, Affected_Quantity__c, Created_By__c, Refund_Amount__c, Order_Item__c FROM Affected_SKU__c WHERE Case__c IN: childCaseIds];
+            List<Affected_SKU__c> skuList = [SELECT Id, Product_Name__c, Brand_Name__c, MRP__c, Case__c, Case__r.CaseNumber,Total_Quantity__c, Selling_Price__c, Affected_Quantity__c, Created_By__c, Refund_Amount__c, Order_Item__c FROM Affected_SKU__c WHERE Case__c IN: childCaseIds AND Case__c != null];
             
             List<EmailMessage> emailList = [SELECT Id, ParentId, TextBody, HtmlBody, Headers, Subject, Name, FromName, FromAddress, ToAddress, CcAddress, BccAddress, Incoming, HasAttachment, Status, MessageDate, IsDeleted, ReplyToEmailMessageId, 
-            IsExternallyVisible, MessageIdentifier, ThreadIdentifier, ClientThreadIdentifier, IsClientManaged, RelatedToId, IsTracked, IsOpened, FirstOpenedDate, LastOpenedDate, IsBounced, EmailTemplateId,Parent.CaseNumber FROM EmailMessage WHERE ParentId IN: childCaseIds];
+            IsExternallyVisible, MessageIdentifier, ThreadIdentifier, ClientThreadIdentifier, IsClientManaged, RelatedToId, IsTracked, IsOpened, FirstOpenedDate, LastOpenedDate, IsBounced, EmailTemplateId,Parent.CaseNumber FROM EmailMessage WHERE ParentId IN: childCaseIds AND ParentId != null];
             
+
+            Set<Id> emailMessageIds = new Set<Id>();
+            if(!emailList.isEmpty()){
+                for(EmailMessage eMessage : emailList){
+                    emailMessageIds.add(eMessage.Id);
+                }
+            }
+
             List<Task> taskList = [SELECT Id, WhoId, WhatId, WhoCount, WhatCount, Subject, ActivityDate, Status, Priority, IsHighPriority, OwnerId, Description, IsDeleted, AccountId, IsClosed, IsArchived, CallDurationInSeconds, CallType, CallDisposition, CallObject, 
             ReminderDateTime, IsReminderSet, RecurrenceActivityId, IsRecurrence, RecurrenceStartDateOnly, RecurrenceEndDateOnly, RecurrenceTimeZoneSidKey, RecurrenceType, RecurrenceInterval, RecurrenceDayOfWeekMask, RecurrenceDayOfMonth, RecurrenceInstance, RecurrenceMonthOfYear, 
             RecurrenceRegeneratedType, TaskSubtype, CompletedDateTime, Exotel_CTI__Call_Direction__c, Exotel_CTI__Call_Duration__c, Exotel_CTI__Call_Sid__c, Exotel_CTI__Call_Status__c, Exotel_CTI__End_Time__c, Exotel_CTI__From__c, Exotel_CTI__Leg1_Status__c, Exotel_CTI__Leg2_Status__c, 
-            Exotel_CTI__Recording_URL__c, Exotel_CTI__Start_Time__c, Exotel_CTI__To__c, Exotel_CTI__Virtual_Number__c, No_Of_Missed_Calls__c, Case__c, Is_Case_Tagged__c FROM Task WHERE Case__c IN: childCaseIds OR whatId IN: childCaseIds];
+            Exotel_CTI__Recording_URL__c, Exotel_CTI__Start_Time__c, Exotel_CTI__To__c, Exotel_CTI__Virtual_Number__c, No_Of_Missed_Calls__c, Case__c, Is_Case_Tagged__c FROM Task WHERE (Case__c IN: childCaseIds AND Case__c != null) OR (whatId IN: childCaseIds AND whatId != null)];
 
-            List<ContentDocumentLink> cdlList = [SELECT Id, LinkedEntityId, ContentDocumentId, IsDeleted, SystemModstamp, ShareType, Visibility FROM ContentDocumentLink WHERE LinkedEntityId IN: childCaseIds];
+            List<ContentDocumentLink> cdlList = [SELECT Id, LinkedEntityId, ContentDocumentId, IsDeleted, SystemModstamp, ShareType, Visibility FROM ContentDocumentLink WHERE (LinkedEntityId IN: childCaseIds OR LinkedEntityId IN: emailMessageIds) AND LinkedEntityId != null];
 
             List<Case_Progress_Detail__c> cpdListToInsert = new List<Case_Progress_Detail__c>();
             List<Affected_SKU__c> affSKUtoInsert = new List<Affected_SKU__c>();

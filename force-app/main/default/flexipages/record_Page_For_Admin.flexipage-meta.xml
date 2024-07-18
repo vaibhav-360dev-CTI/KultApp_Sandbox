@@ -31,6 +31,9 @@
                             <value>Case.RefundTeam</value>
                         </valueListItems>
                         <valueListItems>
+                            <value>Case.Assign_to_Dropshipping</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Case.Move_to_Warehouse_Team</value>
                         </valueListItems>
                         <valueListItems>
@@ -77,6 +80,9 @@
                         </valueListItems>
                         <valueListItems>
                             <value>FeedItem.ContentPost</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Case.Bulk_Close_Cases</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -508,20 +514,42 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Assigned_to_Refund_Team__c</fieldItem>
                 <identifier>RecordAssigned_to_Refund_Team__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Assigned_to_WH_Team__c</fieldItem>
                 <identifier>RecordAssigned_to_WH_Team__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Assigned_to_Marketing_Team__c</fieldItem>
                 <identifier>RecordAssigned_to_Marketing_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Case_Reason__c</fieldItem>
+                <identifier>RecordCase_Reason__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-c4ec26ee-dbee-43d5-b6c4-9c463fa45608</name>

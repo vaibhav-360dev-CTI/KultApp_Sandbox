@@ -347,6 +347,16 @@
                 <default>false</default>
                 <label>Non Perfume queries</label>
             </value>
+            <value>
+                <fullName>Value 1-1</fullName>
+                <default>false</default>
+                <label>Value 1-1</label>
+            </value>
+            <value>
+                <fullName>Value 2-1</fullName>
+                <default>false</default>
+                <label>Value 2-1</label>
+            </value>
         </valueSetDefinition>
         <valueSettings>
             <controllingFieldValue>Pricing</controllingFieldValue>
@@ -413,12 +423,20 @@
             <valueName>Product life /Expiry/Authencity /Others</valueName>
         </valueSettings>
         <valueSettings>
+            <controllingFieldValue>Value 1</controllingFieldValue>
+            <valueName>Value 1-1</valueName>
+        </valueSettings>
+        <valueSettings>
             <controllingFieldValue>Marketing</controllingFieldValue>
             <valueName>Collaboration Request/Influencer queries</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Marketing</controllingFieldValue>
             <valueName>Collaboration service issues</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Value 2</controllingFieldValue>
+            <valueName>Value 2-1</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Brand</controllingFieldValue>

@@ -29,7 +29,7 @@ public class csOutboundCallControllerTest {
     static void testUpdateCaseDetails() {
         Case caseRec = [SELECT Id, CSE_Remarks__c FROM Case LIMIT 1];
         caseRec.CSE_Remarks__c = 'Updated remarks';
-        csOutboundCallController.updateCaseDetails(caseRec);
+        csOutboundCallController.updateCaseDetails(caseRec, true);
         Case updatedCase = [SELECT CSE_Remarks__c FROM Case WHERE Id = :caseRec.Id];
         System.assertEquals('Updated remarks', updatedCase.CSE_Remarks__c, 'Expected CSE_Remarks__c to be updated');
     }

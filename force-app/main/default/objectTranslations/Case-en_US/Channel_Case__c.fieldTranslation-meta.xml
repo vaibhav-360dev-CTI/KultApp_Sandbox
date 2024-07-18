@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Case Channel --></label>
     <name>Channel_Case__c</name>
     <picklistValues>
         <masterLabel>CHAT</masterLabel>
-        <translation></translation>
+        <translation><!-- CHAT --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Email</masterLabel>
-        <translation></translation>
+        <translation><!-- Email --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Inbound</masterLabel>
-        <translation></translation>
+        <translation><!-- Inbound --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Instagram</masterLabel>
-        <translation></translation>
+        <translation><!-- Instagram --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>OutBound</masterLabel>
-        <translation></translation>
+        <translation><!-- OutBound --></translation>
     </picklistValues>
 </CustomFieldTranslation>

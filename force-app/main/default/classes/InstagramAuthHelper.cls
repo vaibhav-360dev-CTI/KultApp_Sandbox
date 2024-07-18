@@ -241,101 +241,109 @@ public class InstagramAuthHelper {
             }
         }
         
-        String endpointUrl = 'https://graph.facebook.com/v17.0/'+businessUserId+'/tags';
-        String fieldsParam = 'fields=media_url,comments_count,permalink,caption,media_type,timestamp,username,comments.limit(50){id,like_count,user,media,timestamp,username,replies{text,username,timestamp},text}&limit=50';
-        String fullUrl = endpointUrl + '?' + fieldsParam + '&access_token=' + accessToken;
-        system.debug('fullUrl-->'+fullUrl);
-        Http http = new Http();
-        HttpRequest request = new HttpRequest();
-        request.setEndpoint(fullUrl);
-        request.setMethod('GET');
-        request.setTimeout(20000);
-        
-        HttpResponse response = http.send(request);
-        FacebookApiResponse responseWrapper = (FacebookApiResponse) JSON.deserialize(response.getBody(), FacebookApiResponse.class);
-        system.debug('The size of the response is---------->'+responseWrapper.data.size());
-        if( responseWrapper.data.size() == 50){
-            Instagram_Api_Details__c instaSetting = Instagram_Api_Details__c.getOrgDefaults();
-            instaSetting.Id = instaSetting.Id;
-            instaSetting.next_Pagination_Mention_Token__c = responseWrapper.paging.cursors.after;
-            update instaSetting;
-        }
-        
-        for(FacebookApiResponse.DataWrapper postInfo : responseWrapper.data){
-            if(!commentsOnPostByPostId.keyset().contains(postInfo.Id)){
-                Case newCase = new case();
-                newCase.User_Name__c = postInfo.username;
-                newCase.Brand__c      = 'Hyphen';
-                newCase.Origin        = 'Instagram';
-                newCase.Post_Id__c = postInfo.id;
-                newcase.Created_Time__c = String.valueOf(postInfo.timestamp).removeEnd('+0000');
-                newcase.POST_URL__c = postInfo.permalink;
-                newcase.User_Name__c = postInfo.username;
-                if((postInfo.comments != null)){
-                    newcase.Comments_JSON__c = string.valueOf(postInfo.comments.data);
-                }
-                newcase.recordtypeId = caseRecordTypeId;
-                newcase.Priority = 'High';
-                newcase.Type_of_Post__c = 'Mentions';
-                newcase.Subject = 'Mention Post from instagram.Related to '+postInfo.username+'. Created Date-Time : '+newcase.Created_Time__c;
-                newcase.Description = postInfo.caption;
-                if(!commentsOnPostByPostId.keyset().contains(newCase.Post_Id__c)){
-                    upsert newcase Post_Id__c;
-                }
-                if((postInfo.comments != null)){
-                    if(newcase.Id != null){
-                        for(FacebookApiResponse.CommentData postInfoRec : postInfo.comments.data){
-                            Case_Communication__c commentRec = new Case_Communication__c();
-                            commentRec.Case__c = newcase.Id;
-                            commentRec.Activity_Content__c = postInfoRec.text;
-                            commentRec.Activity_ID__c = postInfoRec.Id;
-                            commentRec.Activity_Author__c = postInfoRec.username;
-                            commentRec.Activity_Created_DateTime__c = getDateTime(postInfoRec.timestamp);
-                            commentRec.Replied_Activities__c = string.valueOf(postInfoRec.replies);
-                            commentRec.Platform_URL__c	 = postInfo.permalink;
-                            postCommentList.add(commentRec);
-                        }    
+        try{
+            
+            String endpointUrl = 'https://graph.facebook.com/v17.0/'+businessUserId+'/tags';
+            String fieldsParam = 'fields=media_url,comments_count,permalink,caption,media_type,timestamp,username,comments.limit(50){id,like_count,user,media,timestamp,username,replies{text,username,timestamp},text}&limit=50';
+            String fullUrl = endpointUrl + '?' + fieldsParam + '&access_token=' + accessToken;
+            system.debug('fullUrl-->'+fullUrl);
+            Http http = new Http();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint(fullUrl);
+            request.setMethod('GET');
+            request.setTimeout(20000);
+            
+            HttpResponse response = http.send(request);
+            FacebookApiResponse responseWrapper = (FacebookApiResponse) JSON.deserialize(response.getBody(), FacebookApiResponse.class);
+            system.debug('The size of the response is---------->'+responseWrapper.data.size());
+            if( responseWrapper.data.size() == 50){
+                Instagram_Api_Details__c instaSetting = Instagram_Api_Details__c.getOrgDefaults();
+                instaSetting.Id = instaSetting.Id;
+                instaSetting.next_Pagination_Mention_Token__c = responseWrapper.paging.cursors.after;
+                update instaSetting;
+            }
+            
+            for(FacebookApiResponse.DataWrapper postInfo : responseWrapper.data){
+                if(!commentsOnPostByPostId.keyset().contains(postInfo.Id)){
+                    Case newCase = new case();
+                    newCase.User_Name__c = postInfo.username;
+                    newCase.Brand__c      = 'Hyphen';
+                    newCase.Origin        = 'Instagram';
+                    newCase.Post_Id__c = postInfo.id;
+                    newcase.Created_Time__c = String.valueOf(postInfo.timestamp).removeEnd('+0000');
+                    newcase.POST_URL__c = postInfo.permalink;
+                    newcase.User_Name__c = postInfo.username;
+                    if((postInfo.comments != null)){
+                        newcase.Comments_JSON__c = string.valueOf(postInfo.comments.data);
                     }
-                }
-            }else{
-                if(postInfo.comments != null){
-                    for(FacebookApiResponse.CommentData postInfoRec : postInfo.comments.data){
-                        if(commentsOnPostByPostId.containsKey(postInfo.Id)){
-                            List<String> postCommentIds = new List<String>();
-                            if(commentsOnPostByPostId.get(postInfo.Id).size() > 0){
-                                for(Case_Communication__c poCom :  commentsOnPostByPostId.get(postInfo.Id)){
-                                    postCommentIds.add(poCom.Activity_ID__c);
-                                }
-                            }
-                            if(!postCommentIds.contains(postInfoRec.Id)){
+                    newcase.recordtypeId = caseRecordTypeId;
+                    newcase.Priority = 'High';
+                    newcase.Type_of_Post__c = 'Mentions';
+                    newcase.Subject = 'Mention Post from instagram.Related to '+postInfo.username+'. Created Date-Time : '+newcase.Created_Time__c;
+                    newcase.Description = postInfo.caption;
+                    if(!commentsOnPostByPostId.keyset().contains(newCase.Post_Id__c)){
+                        upsert newcase Post_Id__c;
+                    }
+                    if((postInfo.comments != null)){
+                        if(newcase.Id != null){
+                            for(FacebookApiResponse.CommentData postInfoRec : postInfo.comments.data){
                                 Case_Communication__c commentRec = new Case_Communication__c();
-                                commentRec.Case__c = caseIdByPostId.get(postInfo.Id);
+                                commentRec.Case__c = newcase.Id;
                                 commentRec.Activity_Content__c = postInfoRec.text;
                                 commentRec.Activity_ID__c = postInfoRec.Id;
                                 commentRec.Activity_Author__c = postInfoRec.username;
                                 commentRec.Activity_Created_DateTime__c = getDateTime(postInfoRec.timestamp);
+                                commentRec.Replied_Activities__c = string.valueOf(postInfoRec.replies);
                                 commentRec.Platform_URL__c	 = postInfo.permalink;
-                                commentRec.Replied_Activities__c = string.valueOf(postInfoRec.replies);
                                 postCommentList.add(commentRec);
-                            }else{
-                                Case_Communication__c commentRec = new Case_Communication__c();
-                                commentRec.Id = postCommentIdByPostId.get(postInfoRec.Id);
-                                commentRec.Replied_Activities__c = string.valueOf(postInfoRec.replies);
-                                postCommentListToBeUpdated.add(commentRec);
-                            }
+                            }    
                         }
                     }
                 }else{
+                    if(postInfo.comments != null){
+                        for(FacebookApiResponse.CommentData postInfoRec : postInfo.comments.data){
+                            if(commentsOnPostByPostId.containsKey(postInfo.Id)){
+                                List<String> postCommentIds = new List<String>();
+                                if(commentsOnPostByPostId.get(postInfo.Id).size() > 0){
+                                    for(Case_Communication__c poCom :  commentsOnPostByPostId.get(postInfo.Id)){
+                                        postCommentIds.add(poCom.Activity_ID__c);
+                                    }
+                                }
+                                if(!postCommentIds.contains(postInfoRec.Id)){
+                                    Case_Communication__c commentRec = new Case_Communication__c();
+                                    commentRec.Case__c = caseIdByPostId.get(postInfo.Id);
+                                    commentRec.Activity_Content__c = postInfoRec.text;
+                                    commentRec.Activity_ID__c = postInfoRec.Id;
+                                    commentRec.Activity_Author__c = postInfoRec.username;
+                                    commentRec.Activity_Created_DateTime__c = getDateTime(postInfoRec.timestamp);
+                                    commentRec.Platform_URL__c	 = postInfo.permalink;
+                                    commentRec.Replied_Activities__c = string.valueOf(postInfoRec.replies);
+                                    postCommentList.add(commentRec);
+                                }else{
+                                    Case_Communication__c commentRec = new Case_Communication__c();
+                                    commentRec.Id = postCommentIdByPostId.get(postInfoRec.Id);
+                                    commentRec.Replied_Activities__c = string.valueOf(postInfoRec.replies);
+                                    postCommentListToBeUpdated.add(commentRec);
+                                }
+                            }
+                        }
+                    }else{
+                    }
                 }
             }
+            system.debug('insertedCaseList'+insertedCaseList.size());
+            if(postCommentList.size() > 0){
+                upsert postCommentList Activity_ID__c;
+            }
+            if(postCommentListToBeUpdated.size() > 0){
+                Database.update(postCommentListToBeUpdated,false);
+            }
+            
+        }catch(Exception e){
+            system.debug('Here is the exception'+e.getMessage() + '---@@@---' + e.getLineNumber());
         }
-        system.debug('insertedCaseList'+insertedCaseList.size());
-        if(postCommentList.size() > 0){
-            upsert postCommentList Activity_ID__c;
-        }
-        if(postCommentListToBeUpdated.size() > 0){
-            Database.update(postCommentListToBeUpdated,false);
-        }
+        
+        
         
     }   
     

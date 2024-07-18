@@ -29,9 +29,10 @@
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
-    <isOmniPinnedViewEnabled>true</isOmniPinnedViewEnabled>
+    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Kult Admin_clone</label>
     <navType>Standard</navType>
+    <setupExperience>all</setupExperience>
     <tabs>standard-Account</tabs>
     <tabs>standard-Contact</tabs>
     <tabs>standard-Case</tabs>

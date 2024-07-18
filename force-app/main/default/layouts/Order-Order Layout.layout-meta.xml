@@ -152,6 +152,10 @@
                 <behavior>Readonly</behavior>
                 <field>Account_Email__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Billing_Name__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Type Of Case --></label>
     <name>Type_Of_Case__c</name>
     <picklistValues>
         <masterLabel>Courier Issue</masterLabel>
-        <translation></translation>
+        <translation><!-- Courier Issue --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Delay In Delivery (DID)</masterLabel>
-        <translation></translation>
+        <translation><!-- Delay In Delivery (DID) --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Lost In Transit</masterLabel>
-        <translation></translation>
+        <translation><!-- Lost In Transit --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Out Of Stock (OOS)</masterLabel>
-        <translation></translation>
+        <translation><!-- Out Of Stock (OOS) --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Pincode Not Serviceable</masterLabel>
-        <translation></translation>
+        <translation><!-- Pincode Not Serviceable --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Return to Origin (RTO)</masterLabel>
-        <translation></translation>
+        <translation><!-- Return to Origin (RTO) --></translation>
     </picklistValues>
 </CustomFieldTranslation>

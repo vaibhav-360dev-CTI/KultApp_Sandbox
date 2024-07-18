@@ -34,17 +34,13 @@ public class kultBotApex {
                 Time startTime = Time.newInstance(Integer.valueOf(startTimeSplit[0]), Integer.valueOf(startTimeSplit[1]), 0, 0);
                 Time endTime = Time.newInstance(Integer.valueOf(endTimeSplit[0]), Integer.valueOf(endTimeSplit[1]), 0, 0);
                 Time currentTime = System.Now().time();
-                
-                System.debug('startTime==> ' + startTime);
-                System.debug('endTime==> ' + endTime);
-                System.debug('currentTime==> ' + currentTime); 
                 System.debug(currentTime>= startTime && currentTime <= endTime);
                 if(currentTime>= startTime && currentTime <= endTime){
-                    to.isInWorkingHour = true;
+                    to.isInWorkingHour = false;
                     toList.add(to);
                     return toList;   
                 }else{
-                    to.isInWorkingHour = false;
+                    to.isInWorkingHour = true;
                     toList.add(to);
                     return toList;
                 }

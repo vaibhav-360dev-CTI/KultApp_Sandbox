@@ -37,6 +37,11 @@
                 <default>false</default>
                 <label>Referred Back to CS Team</label>
             </value>
+            <value>
+                <fullName>Closed as Duplicate Case</fullName>
+                <default>false</default>
+                <label>Closed as Duplicate Case</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

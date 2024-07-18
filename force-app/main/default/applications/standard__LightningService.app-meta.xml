@@ -137,7 +137,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>Case_Record_CS_Team</content>
+        <content>Case_Record_SocialMedia1</content>
         <formFactor>Small</formFactor>
         <pageOrSobjectType>Case</pageOrSobjectType>
         <type>Flexipage</type>
@@ -145,7 +145,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>Case_Record_CS_Team</content>
+        <content>Case_Record_SocialMedia1</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Case</pageOrSobjectType>
         <type>Flexipage</type>
@@ -338,7 +338,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>Case_Record_CS_Team</content>
+        <content>Case_Record_SocialMedia1</content>
         <formFactor>Small</formFactor>
         <pageOrSobjectType>Case</pageOrSobjectType>
         <recordType>Case.Social_Media</recordType>
@@ -347,7 +347,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>Case_Record_CS_Team</content>
+        <content>Case_Record_SocialMedia1</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Case</pageOrSobjectType>
         <recordType>Case.Social_Media</recordType>

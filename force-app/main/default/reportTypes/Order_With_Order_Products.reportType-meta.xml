@@ -414,6 +414,11 @@
             <field>Account_Email__c</field>
             <table>Order</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Billing_Name__c</field>
+            <table>Order</table>
+        </columns>
         <masterLabel>Orders</masterLabel>
     </sections>
     <sections>

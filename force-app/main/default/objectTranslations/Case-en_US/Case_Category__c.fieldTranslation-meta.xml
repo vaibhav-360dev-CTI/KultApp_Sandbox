@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Case Category --></label>
     <name>Case_Category__c</name>
     <picklistValues>
         <masterLabel>FCR</masterLabel>
-        <translation></translation>
+        <translation><!-- FCR --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>NFCR</masterLabel>
-        <translation></translation>
+        <translation><!-- NFCR --></translation>
     </picklistValues>
 </CustomFieldTranslation>

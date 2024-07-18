@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Reason For Dealy --></label>
     <name>Reason_For_Dealy__c</name>
     <picklistValues>
         <masterLabel>Customer Unreachable</masterLabel>
-        <translation></translation>
+        <translation><!-- Customer Unreachable --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Incorrect Addresses</masterLabel>
-        <translation></translation>
+        <translation><!-- Incorrect Addresses --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Lost in Transit</masterLabel>
-        <translation></translation>
+        <translation><!-- Lost in Transit --></translation>
     </picklistValues>
 </CustomFieldTranslation>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Refund/WH Team Remarks --></label>
     <name>WH_Team_Remarks__c</name>
 </CustomFieldTranslation>

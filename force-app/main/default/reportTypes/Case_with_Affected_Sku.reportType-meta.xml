@@ -1185,6 +1185,31 @@
             <field>Assigned_to_Marketing_Team__c</field>
             <table>Case</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Dropshipping_User__c</field>
+            <table>Case</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Assigned_to_Dropshipping__c</field>
+            <table>Case</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Allow_Update__c</field>
+            <table>Case</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Case_Reason__c</field>
+            <table>Case</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>App_Order_Id__c</field>
+            <table>Case</table>
+        </columns>
         <masterLabel>Cases</masterLabel>
     </sections>
     <sections>

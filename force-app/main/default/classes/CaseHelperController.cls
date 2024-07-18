@@ -142,12 +142,10 @@ public class CaseHelperController {
                     }
                 }
                 if(!subOrderIds.isEmpty()){
-                    itmList = [SELECT Id,Refunded_Price__c,Order.Name, Order.AWB_Number__c, Order.Sub_Order_Id__c, Order.Tracking_Link__c,Order.Status,Order.ParentOrder__r.ShippingStreet, Order.ParentOrder__r.ShippingCity, Order.ParentOrder__r.ShippingState, Order.ParentOrder__r.ShippingCountry,Order.ParentOrder__r.ShippingPostalCode, Status__c,Order.ParentOrder__r.Status,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c, Order.Account.Phone, Order.ParentOrder__r.Delivery_Mobile_Number__c, Order.ParentOrder__r.EffectiveDate, Order.ParentOrder__r.Coupon_Code__c, Order.ParentOrder__r.Coupon_Discount__c, Order.ParentOrder__r.Payment_Id__c,Order.ParentOrder__r.Payment_Status__c, Order.Courier__c  FROM OrderItem  Where OrderId IN: subOrderIds];
-                    System.debug('itmList==========>'+itmList);
+                    itmList = [SELECT Id,Refunded_Price__c,Order.Name, Order.AWB_Number__c, Order.ParentOrder__r.Shipping_Name__c, Order.Sub_Order_Id__c, Order.Tracking_Link__c,Order.Status,Order.ParentOrder__r.ShippingStreet, Order.ParentOrder__r.ShippingCity, Order.ParentOrder__r.ShippingState, Order.ParentOrder__r.ShippingCountry,Order.ParentOrder__r.ShippingPostalCode, Status__c,Order.ParentOrder__r.Status,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c, Order.Account.Phone, Order.ParentOrder__r.Delivery_Mobile_Number__c, Order.ParentOrder__r.EffectiveDate, Order.ParentOrder__r.Coupon_Code__c, Order.ParentOrder__r.Coupon_Discount__c, Order.ParentOrder__r.Payment_Id__c,Order.ParentOrder__r.Payment_Status__c, Order.Courier__c  FROM OrderItem  Where OrderId IN: subOrderIds];
                 }
             }else{
-                itmList = [SELECT Id,Refunded_Price__c,Order.Name, Order.AWB_Number__c, Order.Sub_Order_Id__c, Order.Tracking_Link__c,Order.Status,Order.ParentOrder__r.ShippingStreet, Order.ParentOrder__r.ShippingCity, Order.ParentOrder__r.ShippingState, Order.ParentOrder__r.ShippingCountry,Order.ParentOrder__r.ShippingPostalCode,Status__c,Order.ParentOrder__r.Status,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c, Order.Account.Phone, Order.ParentOrder__r.Delivery_Mobile_Number__c, Order.ParentOrder__r.EffectiveDate, Order.ParentOrder__r.Coupon_Code__c, Order.ParentOrder__r.Coupon_Discount__c, Order.ParentOrder__r.Payment_Id__c,Order.ParentOrder__r.Payment_Status__c, Order.Courier__c FROM OrderItem  Where OrderId =: orderId];
-                System.debug('itmList==========>'+itmList);
+                itmList = [SELECT Id,Refunded_Price__c,Order.Name, Order.AWB_Number__c, Order.ParentOrder__r.Shipping_Name__c, Order.Sub_Order_Id__c, Order.Tracking_Link__c,Order.Status,Order.ParentOrder__r.ShippingStreet, Order.ParentOrder__r.ShippingCity, Order.ParentOrder__r.ShippingState, Order.ParentOrder__r.ShippingCountry,Order.ParentOrder__r.ShippingPostalCode,Status__c,Order.ParentOrder__r.Status,Product2.Name,Product_Name__c,Quantity,TotalPrice,UnitPrice,SKU__C,Order.ParentOrder__r.Paid_Amount__c, Order.Account.Name, Order.ParentOrder__r.Name, Brand__c, Selling_Price__c, Order.Account.Phone, Order.ParentOrder__r.Delivery_Mobile_Number__c, Order.ParentOrder__r.EffectiveDate, Order.ParentOrder__r.Coupon_Code__c, Order.ParentOrder__r.Coupon_Discount__c, Order.ParentOrder__r.Payment_Id__c,Order.ParentOrder__r.Payment_Status__c, Order.Courier__c FROM OrderItem  Where OrderId =: orderId];
             }
             if(itmList.size()>0){
                 return itmList;
@@ -257,101 +255,101 @@ public class CaseHelperController {
     
     //EmailTemplate Code - Tushar
     
-    public static List<Case> getCasesByOrder(Id caseId) {
-        system.debug('caseId=====>'+caseId);
-        List<Case> relatedCases = [SELECT Id,Contact.Name,Contact.Email,Subject,OrderId__r.OrderNumber,OrderId__r.UTR_Number__c,Inital_Commented_Date__c,OrderId__c, Description, Status,Product.Name,Owner.Name FROM Case WHERE Id =:caseId];
-        system.debug('relatedCases::::'+relatedCases);
-        List<OrderItem> orderItems = new List<OrderItem>();
-        if (!relatedCases.isEmpty()) {
-            // Id relorderId = relatedCases[0].OrderId__c;
-            orderItems = [SELECT Id,OrderId, Product2.Name FROM OrderItem WHERE OrderId = :relatedCases[0].OrderId__c];
-            system.debug('orderItems::::'+orderItems);
-        }
+    // public static List<Case> getCasesByOrder(Id caseId) {
+    //     system.debug('caseId=====>'+caseId);
+    //     List<Case> relatedCases = [SELECT Id,Contact.Name,Contact.Email,Subject,OrderId__r.OrderNumber,OrderId__r.UTR_Number__c,Inital_Commented_Date__c,OrderId__c, Description, Status,Product.Name,Owner.Name FROM Case WHERE Id =:caseId];
+    //     system.debug('relatedCases::::'+relatedCases);
+    //     List<OrderItem> orderItems = new List<OrderItem>();
+    //     if (!relatedCases.isEmpty()) {
+    //         // Id relorderId = relatedCases[0].OrderId__c;
+    //         orderItems = [SELECT Id,OrderId, Product2.Name FROM OrderItem WHERE OrderId = :relatedCases[0].OrderId__c];
+    //         system.debug('orderItems::::'+orderItems);
+    //     }
         
-        sendEmailWithTemplate(relatedCases,orderItems);
-        // sendEmailWithTemplate(relatedCases,orderItems,'Wrong Missing Order or Product');
-        return relatedCases;
-    }
+    //     sendEmailWithTemplate(relatedCases,orderItems);
+    //     // sendEmailWithTemplate(relatedCases,orderItems,'Wrong Missing Order or Product');
+    //     return relatedCases;
+    // }
     
-    @AuraEnabled
-    public static string sendEmailWithTemplate(List<Case> caseList, List<OrderItem> orderItemsList) {
-        List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-        EmailTemplate temp = [SELECT Id,Subject,Body,HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Notification_About_Refund_Processing'];
-        system.debug('temp:::'+temp);
+    // @AuraEnabled
+    // public static string sendEmailWithTemplate(List<Case> caseList, List<OrderItem> orderItemsList) {
+    //     List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
+    //     EmailTemplate temp = [SELECT Id,Subject,Body,HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Notification_About_Refund_Processing'];
+    //     system.debug('temp:::'+temp);
         
         
-        try{
-            if(!orderItemsList.isEmpty() && !caseList.isEmpty()){
-                String htmlBody = temp.HTMLValue;
-                String plainTextBody = temp.body;
-                String CaseURL = System.label.CaseURL;                
+    //     try{
+    //         if(!orderItemsList.isEmpty() && !caseList.isEmpty()){
+    //             String htmlBody = temp.HTMLValue;
+    //             String plainTextBody = temp.body;
+    //             String CaseURL = System.label.CaseURL;                
                 
                 
-                for (Case caseRec : caseList) {
+    //             for (Case caseRec : caseList) {
                     
-                    Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+    //                 Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
                     
-                    String subject = temp.Subject + ' - Order Number: ' + caseRec.OrderId__r.OrderNumber;
-                    system.debug('subject::::'+subject);
+    //                 String subject = temp.Subject + ' - Order Number: ' + caseRec.OrderId__r.OrderNumber;
+    //                 system.debug('subject::::'+subject);
                     
                     
-                    if (caseRec.Contact.Name != null && caseRec.OrderId__r.OrderNumber !=null && caseRec.Inital_Commented_Date__c != null && caseRec.Subject != null && caseRec.OrderId__r.UTR_Number__c != null && caseRec.Owner.Name !=null ) {
-                        List<String> commDateSplit = String.valueOf(caseRec.Inital_Commented_Date__c).split('-');
-                        String commDate = commDateSplit[2] + '-' + commDateSplit[1] + '-' + commDateSplit[0];
+    //                 if (caseRec.Contact.Name != null && caseRec.OrderId__r.OrderNumber !=null && caseRec.Inital_Commented_Date__c != null && caseRec.Subject != null && caseRec.OrderId__r.UTR_Number__c != null && caseRec.Owner.Name !=null ) {
+    //                     List<String> commDateSplit = String.valueOf(caseRec.Inital_Commented_Date__c).split('-');
+    //                     String commDate = commDateSplit[2] + '-' + commDateSplit[1] + '-' + commDateSplit[0];
                         
-                        htmlBody = htmlBody.replace('{!Case.Contact}', caseRec.Contact.Name);
-                        htmlBody = htmlBody.replace('{!Case.OrderId__c}', caseRec.OrderId__r.OrderNumber);
-                        htmlBody = htmlBody.replace('{!Case.Inital_Commented_Date__c}', commDate);
-                        htmlBody = htmlBody.replace('{!Case.Subject}', caseRec.Subject);
-                        //htmlBody = htmlBody.replace('{!Case.ProductId.Name}', caseRec.ProductId.Name);
-                        htmlBody = htmlBody.replace('{!Case.UTRNo__c}', caseRec.OrderId__r.UTR_Number__c); 
-                        htmlBody = htmlBody.replace('{!Case.OwnerFullName}', caseRec.Owner.Name);
-                        //htmlBody = htmlBody.replace('{!RecordURL}', CaseURL+CaseRec.Id+'/view');
+    //                     htmlBody = htmlBody.replace('{!Case.Contact}', caseRec.Contact.Name);
+    //                     htmlBody = htmlBody.replace('{!Case.OrderId__c}', caseRec.OrderId__r.OrderNumber);
+    //                     htmlBody = htmlBody.replace('{!Case.Inital_Commented_Date__c}', commDate);
+    //                     htmlBody = htmlBody.replace('{!Case.Subject}', caseRec.Subject);
+    //                     //htmlBody = htmlBody.replace('{!Case.ProductId.Name}', caseRec.ProductId.Name);
+    //                     htmlBody = htmlBody.replace('{!Case.UTRNo__c}', caseRec.OrderId__r.UTR_Number__c); 
+    //                     htmlBody = htmlBody.replace('{!Case.OwnerFullName}', caseRec.Owner.Name);
+    //                     //htmlBody = htmlBody.replace('{!RecordURL}', CaseURL+CaseRec.Id+'/view');
                         
-                        plainTextBody = plainTextBody.replace('{!Case.Inital_Commented_Date__c}', commDate);
-                        plainTextBody = plainTextBody.replace('{!Case.Subject}', caseRec.Subject);
-                        plainTextBody = plainTextBody.replace('{!Case.Contact}', caseRec.Contact.Name);
-                        plainTextBody = plainTextBody.replace('{!Case.OrderId__c}', caseRec.OrderId__r.OrderNumber);
-                        //plainTextBody = plainTextBody.replace('{!Case.ProductId.Name}', caseRec.ProductId.Name);
-                        plainTextBody = plainTextBody.replace('{!Case.UTRNo__c}', caseRec.OrderId__r.UTR_Number__c);
-                        plainTextBody = plainTextBody.replace('{!Case.OwnerFullName}', caseRec.Owner.Name);
-                        //plainTextBody = plainTextBody.replace('{!RecordURL}', CaseURL+CaseRec.Id+'/view');
-                    }else{
-                        System.debug('Contact is null for Case: ' + caseRec.Id);
-                        System.debug('Order is null for Case: ' + caseRec.Id);
-                        System.debug('Unexpected date format for Case: ' + caseRec.Id);
-                        System.debug('Subject is null for Case: ' + caseRec.Id);
-                        System.debug('UTR No is null for Case: ' + caseRec.Id);
-                        System.debug('Owner is null for Case: ' + caseRec.Id);
-                    }
+    //                     plainTextBody = plainTextBody.replace('{!Case.Inital_Commented_Date__c}', commDate);
+    //                     plainTextBody = plainTextBody.replace('{!Case.Subject}', caseRec.Subject);
+    //                     plainTextBody = plainTextBody.replace('{!Case.Contact}', caseRec.Contact.Name);
+    //                     plainTextBody = plainTextBody.replace('{!Case.OrderId__c}', caseRec.OrderId__r.OrderNumber);
+    //                     //plainTextBody = plainTextBody.replace('{!Case.ProductId.Name}', caseRec.ProductId.Name);
+    //                     plainTextBody = plainTextBody.replace('{!Case.UTRNo__c}', caseRec.OrderId__r.UTR_Number__c);
+    //                     plainTextBody = plainTextBody.replace('{!Case.OwnerFullName}', caseRec.Owner.Name);
+    //                     //plainTextBody = plainTextBody.replace('{!RecordURL}', CaseURL+CaseRec.Id+'/view');
+    //                 }else{
+    //                     System.debug('Contact is null for Case: ' + caseRec.Id);
+    //                     System.debug('Order is null for Case: ' + caseRec.Id);
+    //                     System.debug('Unexpected date format for Case: ' + caseRec.Id);
+    //                     System.debug('Subject is null for Case: ' + caseRec.Id);
+    //                     System.debug('UTR No is null for Case: ' + caseRec.Id);
+    //                     System.debug('Owner is null for Case: ' + caseRec.Id);
+    //                 }
                     
-                    String prodNames ='';
+    //                 String prodNames ='';
                     
-                    for (OrderItem orderItem : orderItemsList) {
-                        if (orderItem.OrderId == caseRec.OrderId__c) {
-                            prodNames += orderItem.Product2.Name + ',';
-                        }
-                    }
+    //                 for (OrderItem orderItem : orderItemsList) {
+    //                     if (orderItem.OrderId == caseRec.OrderId__c) {
+    //                         prodNames += orderItem.Product2.Name + ',';
+    //                     }
+    //                 }
                     
-                    htmlBody = htmlBody.replace('{!Case.Product}', prodNames);
-                    plainTextBody = plainTextBody.replace('{!Case.Product}', prodNames);
+    //                 htmlBody = htmlBody.replace('{!Case.Product}', prodNames);
+    //                 plainTextBody = plainTextBody.replace('{!Case.Product}', prodNames);
                     
-                    mail.setHtmlBody(htmlBody);
-                    mail.setSubject(subject);
-                    mail.setPlainTextBody(plainTextBody);
-                    mail.toAddresses = new String[] {caseRec.Contact.Email};
-                        mailList.add(mail);                  
-                }
+    //                 mail.setHtmlBody(htmlBody);
+    //                 mail.setSubject(subject);
+    //                 mail.setPlainTextBody(plainTextBody);
+    //                 mail.toAddresses = new String[] {caseRec.Contact.Email};
+    //                     mailList.add(mail);                  
+    //             }
                 
-                if(!mailList.isEmpty()){
-                    Messaging.sendEmail(mailList);
-                    return 'SUCCESS';
-                }  
-            }
-        }catch(Exception e){
-            System.debug('The Error ::'+e.getMessage() +' AND Error Line No :'+e.getLineNumber());
-        }
-        return null;        
-    }
+    //             if(!mailList.isEmpty()){
+    //                 Messaging.sendEmail(mailList);
+    //                 return 'SUCCESS';
+    //             }  
+    //         }
+    //     }catch(Exception e){
+    //         System.debug('The Error ::'+e.getMessage() +' AND Error Line No :'+e.getLineNumber());
+    //     }
+    //     return null;        
+    // }
     
 }

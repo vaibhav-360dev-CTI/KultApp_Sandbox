@@ -221,6 +221,7 @@ public class referBackToCsTeamControllerTest {
         referBackToCsTeamController.deletecaseShares(cse.Id);
         referBackToCsTeamController.sendingCustomNotification(userInstant.Id, cse.Id, 'Test Class Title', 'Test Class Body', new List<String>{'anwarchikle2000@gmail.com'});
         referBackToCsTeamController.AccountCreatedConCreated(lsacc);
+        referBackToCsTeamController.dumMethod();
         Test.stopTest();
     } 
     

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Category Type --></label>
     <name>Category_Type__c</name>
     <picklistValues>
         <masterLabel>Camapign /Reviews</masterLabel>
-        <translation></translation>
+        <translation><!-- Camapign /Reviews --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Customer Profile</masterLabel>
-        <translation></translation>
+        <translation><!-- Customer Profile --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Pre Order</masterLabel>
-        <translation></translation>
+        <translation><!-- Pre Order --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Pricing</masterLabel>
-        <translation></translation>
+        <translation><!-- Pricing --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Tech</masterLabel>
-        <translation></translation>
+        <translation><!-- Tech --></translation>
     </picklistValues>
 </CustomFieldTranslation>

@@ -95,6 +95,24 @@
                 <identifier>RecordStatus_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Skip_Trigger__c</fieldItem>
+                <identifier>RecordSkip_Trigger__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.FOC_Order_Id__c</fieldItem>
+                <identifier>RecordFOC_Order_Id__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.AWB_Number__c</fieldItem>
+                <identifier>RecordAWB_Number__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-7cbbbb5e-3ed3-424c-81fa-43c4923089ce</name>
         <type>Facet</type>
     </flexiPageRegions>

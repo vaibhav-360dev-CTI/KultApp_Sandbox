@@ -28,6 +28,11 @@
                 <label>Send Update</label>
             </value>
             <value>
+                <fullName>Wrongly Sent</fullName>
+                <default>false</default>
+                <label>Wrongly Sent</label>
+            </value>
+            <value>
                 <fullName>Address Changed</fullName>
                 <default>false</default>
                 <isActive>false</isActive>

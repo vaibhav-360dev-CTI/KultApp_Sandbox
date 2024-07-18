@@ -5,6 +5,7 @@
     <queueMembers>
         <users>
             <user>aisha.k@kult.app</user>
+            <user>bhagyashree.n@kult.app</user>
             <user>isha.raj-qxmz@force.com</user>
             <user>marketingqueries@kult.app</user>
             <user>renu.g@kult.app</user>
@@ -13,5 +14,8 @@
     <queueRoutingConfig>Post_Sales_Service</queueRoutingConfig>
     <queueSobject>
         <sobjectType>LiveChatTranscript</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>MessagingSession</sobjectType>
     </queueSobject>
 </Queue>

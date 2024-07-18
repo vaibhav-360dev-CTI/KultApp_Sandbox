@@ -136,7 +136,6 @@ public without sharing class HttpUtility {
                 logger.End_Date_And_Time__c = endDateTime;
                 logger.Reference_Id__c = refferenceId;
                 upsert logger;
-                System.debug('logger.Id -- ' + logger.Id + logger);
                 return logger.Id;
             }
             return null;

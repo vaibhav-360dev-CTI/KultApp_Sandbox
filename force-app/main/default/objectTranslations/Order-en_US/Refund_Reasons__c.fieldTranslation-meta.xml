@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Refund Reasons --></label>
     <name>Refund_Reasons__c</name>
     <picklistValues>
         <masterLabel>Billing Error</masterLabel>
-        <translation></translation>
+        <translation><!-- Billing Error --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Cancelled Order</masterLabel>
-        <translation></translation>
+        <translation><!-- Cancelled Order --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Customer Changed Mind</masterLabel>
-        <translation></translation>
+        <translation><!-- Customer Changed Mind --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Duplicate Order</masterLabel>
-        <translation></translation>
+        <translation><!-- Duplicate Order --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Item Not as Described</masterLabel>
-        <translation></translation>
+        <translation><!-- Item Not as Described --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Late Delivery</masterLabel>
-        <translation></translation>
+        <translation><!-- Late Delivery --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Other (Specify)</masterLabel>
-        <translation></translation>
+        <translation><!-- Other (Specify) --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Product Defect</masterLabel>
-        <translation></translation>
+        <translation><!-- Product Defect --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Unwanted Gift</masterLabel>
-        <translation></translation>
+        <translation><!-- Unwanted Gift --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Wrong Item Shipped</masterLabel>
-        <translation></translation>
+        <translation><!-- Wrong Item Shipped --></translation>
     </picklistValues>
 </CustomFieldTranslation>

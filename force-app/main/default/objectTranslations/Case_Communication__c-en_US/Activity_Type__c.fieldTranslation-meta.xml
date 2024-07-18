@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Activity Type --></label>
     <name>Activity_Type__c</name>
     <picklistValues>
         <masterLabel>Comment</masterLabel>
-        <translation></translation>
+        <translation><!-- Comment --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>DM</masterLabel>
-        <translation></translation>
+        <translation><!-- DM --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Post</masterLabel>
-        <translation></translation>
+        <translation><!-- Post --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Reels</masterLabel>
-        <translation></translation>
+        <translation><!-- Reels --></translation>
     </picklistValues>
 </CustomFieldTranslation>

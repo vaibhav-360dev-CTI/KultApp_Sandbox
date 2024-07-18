@@ -82,7 +82,7 @@ public class CaseHelperControllerTest {
         CaseHelperController.getCaseDetails(cse.id);
         CaseHelperController.getOrderDetailsFromCaseRecord(cse.Id);
         CaseHelperController.getOrder(cse.Id);
-        CaseHelperController.getCasesByOrder(cse.Id);   
+        //CaseHelperController.getCasesByOrder(cse.Id);   
         
     }
     

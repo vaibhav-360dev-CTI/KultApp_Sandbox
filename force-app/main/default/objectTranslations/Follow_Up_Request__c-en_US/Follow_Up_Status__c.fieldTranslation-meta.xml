@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Follow Up Status --></label>
     <name>Follow_Up_Status__c</name>
     <picklistValues>
         <masterLabel>Open</masterLabel>
-        <translation></translation>
+        <translation><!-- Open --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Responded</masterLabel>
-        <translation></translation>
+        <translation><!-- Responded --></translation>
     </picklistValues>
 </CustomFieldTranslation>

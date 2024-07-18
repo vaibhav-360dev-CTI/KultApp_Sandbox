@@ -55,8 +55,48 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Assigned_to_Refund_Team__c</fieldItem>
                 <identifier>RecordAssigned_to_Refund_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Dropshipping_User__c</fieldItem>
+                <identifier>RecordDropshipping_User__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Assigned_to_Dropshipping__c</fieldItem>
+                <identifier>RecordAssigned_to_Dropshipping__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Allow_Update__c</fieldItem>
+                <identifier>RecordAllow_Update__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.App_Order_Id__c</fieldItem>
+                <identifier>RecordApp_Order_Id__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-267ea9dc-3fdf-4e88-9933-09f3821a4c6d</name>
@@ -125,6 +165,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Subject</fieldItem>
                 <identifier>RecordSubjectField2</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Reason</fieldItem>
+                <identifier>RecordReasonField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>

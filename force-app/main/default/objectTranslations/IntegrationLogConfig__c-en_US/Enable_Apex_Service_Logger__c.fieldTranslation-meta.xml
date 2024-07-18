@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Enable Apex Service Logger --></label>
     <name>Enable_Apex_Service_Logger__c</name>
 </CustomFieldTranslation>

@@ -31,6 +31,7 @@ public class WS_OrderCreation {
     
     public class ShippingAddress {
         public String street;
+        public String name;
         public String city;
         public String state;
         public String country_code;
@@ -40,6 +41,7 @@ public class WS_OrderCreation {
     
     public class DeliveryAddress {
         public String street;
+        public String name;
         public String city;
         public String state;
         public String country_code;

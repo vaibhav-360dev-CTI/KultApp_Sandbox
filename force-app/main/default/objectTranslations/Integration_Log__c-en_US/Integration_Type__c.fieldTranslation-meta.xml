@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Integration Type --></label>
     <name>Integration_Type__c</name>
     <picklistValues>
         <masterLabel>CALLOUT</masterLabel>
-        <translation></translation>
+        <translation><!-- CALLOUT --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>SERVICE</masterLabel>
-        <translation></translation>
+        <translation><!-- SERVICE --></translation>
     </picklistValues>
 </CustomFieldTranslation>

@@ -9,8 +9,8 @@ export default class CustomLookupToTagCase extends LightningElement {
 @api objectAPIName = 'Case';
 displayLabelField = 'OrderId__r.Name';
 @api iconName = 'standard:Order';
-@api labelForComponent = 'Search Case by Order Number';
-@api placeHolder = 'Search Case by Order Number';
+@api labelForComponent = 'Search Case by Order/Case Number';
+@api placeHolder = 'Search Case by Order/Case Number';
 @api recordLimit = 10;
 @api labelHidden = false;
 searchKeyWord = '';

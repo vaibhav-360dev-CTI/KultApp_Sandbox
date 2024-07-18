@@ -243,14 +243,58 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Assigned_to_WH_Team__c</fieldItem>
                 <identifier>RecordAssigned_to_WH_Team__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Assigned_to_Marketing_Team__c</fieldItem>
                 <identifier>RecordAssigned_to_Marketing_Team__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Dropshipping_User__c</fieldItem>
+                <identifier>RecordDropshipping_User__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Assigned_to_Dropshipping__c</fieldItem>
+                <identifier>RecordAssigned_to_Dropshipping__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Case_Reason__c</fieldItem>
+                <identifier>RecordCase_Reason__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.App_Order_Id__c</fieldItem>
+                <identifier>RecordApp_Order_Id__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-33c717c1-600c-40eb-9724-04c23910469e</name>

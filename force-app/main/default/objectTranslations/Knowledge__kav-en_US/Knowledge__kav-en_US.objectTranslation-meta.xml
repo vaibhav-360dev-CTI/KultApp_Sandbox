@@ -11,84 +11,84 @@
     <layouts>
         <layout>Knowledge Layout</layout>
         <sections>
-            <label></label>
+            <label><!-- Custom Links --></label>
             <section>Custom Links</section>
         </sections>
     </layouts>
     <layouts>
         <layout>Lightning Knowledge FAQ Layout</layout>
         <sections>
-            <label></label>
+            <label><!-- Article Details --></label>
             <section>Article Details</section>
         </sections>
         <sections>
-            <label></label>
+            <label><!-- Custom Links --></label>
             <section>Custom Links</section>
         </sections>
         <sections>
-            <label></label>
+            <label><!-- Properties --></label>
             <section>Properties</section>
         </sections>
     </layouts>
     <layouts>
         <layout>Lightning Knowledge Manual Layout</layout>
         <sections>
-            <label></label>
+            <label><!-- Article Details --></label>
             <section>Article Details</section>
         </sections>
         <sections>
-            <label></label>
+            <label><!-- Custom Links --></label>
             <section>Custom Links</section>
         </sections>
         <sections>
-            <label></label>
+            <label><!-- Properties --></label>
             <section>Properties</section>
         </sections>
     </layouts>
     <layouts>
         <layout>Lightning Knowledge Offers Layout</layout>
         <sections>
-            <label></label>
+            <label><!-- Custom Links --></label>
             <section>Custom Links</section>
         </sections>
         <sections>
-            <label></label>
+            <label><!-- Information --></label>
             <section>Information</section>
         </sections>
         <sections>
-            <label></label>
+            <label><!-- Offer Reach Steps --></label>
             <section>Offer Reach Steps</section>
         </sections>
     </layouts>
     <layouts>
         <layout>Lightning Knowledge e-mail Scripts Layout</layout>
         <sections>
-            <label></label>
+            <label><!-- Article Details --></label>
             <section>Article Details</section>
         </sections>
         <sections>
-            <label></label>
+            <label><!-- Custom Links --></label>
             <section>Custom Links</section>
         </sections>
         <sections>
-            <label></label>
+            <label><!-- Properties --></label>
             <section>Properties</section>
         </sections>
     </layouts>
     <recordTypes>
-        <label></label>
+        <label><!-- E-mail Scripts Layout --></label>
         <name>E_mail_Scripts_Layout</name>
     </recordTypes>
     <recordTypes>
-        <label></label>
+        <label><!-- FAQ Layout --></label>
         <name>FAQ_Layout</name>
     </recordTypes>
     <recordTypes>
-        <label></label>
+        <label><!-- Manual Record Type --></label>
         <name>Manual_Record_Type</name>
     </recordTypes>
     <recordTypes>
-        <label></label>
+        <label><!-- Offer Layout --></label>
         <name>Offer_Layout</name>
     </recordTypes>
     <startsWith>Consonant</startsWith>

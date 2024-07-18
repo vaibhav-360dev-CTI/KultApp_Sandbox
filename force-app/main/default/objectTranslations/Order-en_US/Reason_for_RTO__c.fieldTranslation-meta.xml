@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Reason for:RTO --></label>
     <name>Reason_for_RTO__c</name>
     <picklistValues>
         <masterLabel>Code verified cancellation</masterLabel>
-        <translation></translation>
+        <translation><!-- Code verified cancellation --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Maximum attempts reached</masterLabel>
-        <translation></translation>
+        <translation><!-- Maximum attempts reached --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Order canceled by customer</masterLabel>
-        <translation></translation>
+        <translation><!-- Order canceled by customer --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>The consignee refused to accept</masterLabel>
-        <translation></translation>
+        <translation><!-- The consignee refused to accept --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>WhatsApp verified cancellation</masterLabel>
-        <translation></translation>
+        <translation><!-- WhatsApp verified cancellation --></translation>
     </picklistValues>
 </CustomFieldTranslation>

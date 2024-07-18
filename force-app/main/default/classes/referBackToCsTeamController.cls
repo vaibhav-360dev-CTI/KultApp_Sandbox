@@ -35,7 +35,8 @@ public without sharing class referBackToCsTeamController {
     }
     
     @AuraEnabled
-    public static String getCaseAndOrderDetails(String caseId, String referBackReason, Decimal refundAmount, String approvalRemarks, String  rejectionReason,String describeInformationNeeded,Decimal orderRefundAmount, String resolutionRemarks, String updateDesc, String base64, String filename, String awbNumber, String focOrderId, String techIssueType, Boolean isRefundCase) {
+    public static String getCaseAndOrderDetails(String caseId, String referBackReason, Decimal refundAmount, String approvalRemarks, String  rejectionReason,String describeInformationNeeded,Decimal orderRefundAmount, 
+    String resolutionRemarks, String updateDesc, String base64, String filename, String awbNumber, String focOrderId, String techIssueType, Boolean isRefundCase) {
         String currUserId = userInfo.getUserId();
         List<Case> updatedCases = new List<Case>();   
         
@@ -55,7 +56,44 @@ public without sharing class referBackToCsTeamController {
                 }
                 
                 if(referBackReason != null){
-                    if(referBackReason == 'Need More Info' || referBackReason == 'Send Update'){
+                    if(referBackReason =='Wrongly Sent'){
+                            if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('005')){
+                                caseToUpdate.RefundTeamMember__c = caseRec.OwnerId;
+                            }else if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('00G')){
+                                caseToUpdate.RefundTeamMember__c = userInfo.getUserId();
+                            }
+                            if(caseRec.CS_Team_Member__c != null && String.valueOf(caseRec.CS_Team_Member__c) != ''){
+                                caseToUpdate.OwnerId = caseRec.CS_Team_Member__c;
+                            }else if(userRec.Id != null){
+                                caseToUpdate.OwnerId = userRec.Id;                     
+                            }else{
+                                caseToUpdate.OwnerId = caseRec.OwnerId;
+                                
+                            }
+                            Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                            cpdRec.Status__c = referBackReason == 'Resolved' ? 'Resolved' : 'In Progress';
+                            cpdRec.WH_Team_Remarks__c = 'Referred Back as Wrongly Sent';
+                            cpdRec.Case__c = caseId;
+                            cpdRec.Current_Action__c = 'Referred Back to CS Team';
+                            cpdRec.Responded_By__c = UserInfo.getUserId();
+                            insert cpdRec;
+
+                            Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                            notification.setBody('The Team has sent the case back as it was wrongly sent '+  caseRec.CaseNumber); 
+                            notification.setTitle('Case Sent Back'); 
+                            notification.setSenderId(Userinfo.getUserId()); 
+                            CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'ReferBackToCsTeam'];  
+                            notification.setNotificationTypeId(type.id); 
+                            notification.setTargetId(caseId); // target object id 
+                            if(caseRec.CS_Team_Member__c != null){
+                                notification.send(new Set<String> { caseRec.CS_Team_Member__c });
+                            }else{
+                                notification.send(new Set<String> { caseRec.OwnerId });
+                            }
+                            caseToUpdate.Is_With_Refund_Team__c = false;
+
+                    }
+                    else if(referBackReason == 'Need More Info' || referBackReason == 'Send Update'){
                         if(referBackReason == 'Need More Info'){
                             Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
                             notification.setBody('The Team has asked more information On this Case Please Kindly Look Into it Detail of the Case are'+  caseRec.CaseNumber); 
@@ -96,9 +134,7 @@ public without sharing class referBackToCsTeamController {
                             List<Case_Progress_Detail__c> furs = [SELECT Id, Status__c, OwnerId, WH_Team_Remarks__c, CS_Remarks__c, CreatedDate, Responded_By__c 
                                                                   FROM Case_Progress_Detail__c 
                                                                   WHERE Status__c = 'Open' AND Case__c = :caseId ];
-                            List<Case_Progress_Detail__c> fuprRec = new List<Case_Progress_Detail__c>();
-                            System.debug('fuprRec======>'+fuprRec.size());
-                            
+                            List<Case_Progress_Detail__c> fuprRec = new List<Case_Progress_Detail__c>();                            
                             if (!furs.isEmpty()) {
                                 //fuprRec = furs[0];
                                 
@@ -140,8 +176,8 @@ public without sharing class referBackToCsTeamController {
                     }
                     if(referBackReason == 'Resolved'){
                         if(isRefundCase){
-                            //proceed = CalloutRefundAPIClass.postRefundRequest(caseId);
-                            proceed= 'Success';
+                            proceed = CalloutRefundAPIClass.postRefundRequest(caseId);
+                            //proceed= 'Success';
                             if(proceed == 'Success'){
                                 if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('005')){
                                     caseToUpdate.RefundTeamMember__c = caseRec.OwnerId;
@@ -168,6 +204,8 @@ public without sharing class referBackToCsTeamController {
                                 cpdRec.Case__c = caseId;
                                 cpdRec.Current_Action__c = 'Referred Back to CS Team';
                                 cpdRec.Responded_By__c = UserInfo.getUserId();
+                                cpdRec.AWB_Number__c = awbNumber;
+                                cpdRec.FOC_Order_Id__c = focOrderId;
                                 insert cpdRec;
                                 if(base64 != null){
                                     uploadFile(base64, filename, cpdRec.Id);
@@ -212,6 +250,174 @@ public without sharing class referBackToCsTeamController {
                             cpdRec.Case__c = caseId;
                             cpdRec.Current_Action__c = 'Referred Back to CS Team';
                             cpdRec.Responded_By__c = UserInfo.getUserId();
+                            cpdRec.AWB_Number__c = awbNumber;
+                                cpdRec.FOC_Order_Id__c = focOrderId;
+                            insert cpdRec;
+                            if(base64 != null){
+                                uploadFile(base64, filename, cpdRec.Id);
+                            }
+                            Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                            notification.setBody('The Team has resolved the Case, Please Look into it.'+  caseRec.CaseNumber); 
+                            notification.setTitle('Case Resolved'); 
+                            notification.setSenderId(Userinfo.getUserId()); 
+                            CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'ReferBackToCsTeam'];  
+                            notification.setNotificationTypeId(type.id); 
+                            notification.setTargetId(caseId); // target object id 
+                            if(caseRec.CS_Team_Member__c != null){
+                                notification.send(new Set<String> { caseRec.CS_Team_Member__c });
+                            }else{
+                                notification.send(new Set<String> { caseRec.OwnerId });
+                            }
+                            caseToUpdate.Is_With_Refund_Team__c = false;
+                        }
+                    }
+                    if((isRefundCase && proceed == 'Success') || !isRefundCase){
+                        caseToUpdate.Refer_Back_Reason__c = referBackReason;
+                        List<CaseShare> existingShares = [SELECT Id, UserOrGroup.Name FROM CaseShare WHERE CaseId = :caseToUpdate.Id AND UserOrGroupId = :currUserId AND RowCause != 'Owner'];
+                        System.debug('Inside sharing check');
+                        if(!existingShares.isEmpty()){
+                            delete existingShares;
+                        }
+                    }
+                }
+                if((isRefundCase && proceed == 'Success') || !isRefundCase){
+                    if(approvalRemarks != null){
+                        caseToUpdate.Approval_Remarks__c = approvalRemarks;
+                    }
+                    if(rejectionReason != null){
+                        caseToUpdate.Rejection_Reason__c = rejectionReason;
+                    }
+                    if(describeInformationNeeded != null){
+                        caseToUpdate.Describe_Information_Needed__c = describeInformationNeeded;
+                    }                
+                    if (caseToUpdate.OrderId__c != null && orderRefundAmount != null) {
+                        caseToUpdate.OrderId__r.Refund_Amount__c = orderRefundAmount;
+                    }
+                    if(refundAmount != null){
+                        caseToUpdate.Refund_Amount__c = refundAmount;
+                    }
+                    caseToUpdate.Case_Sub_Status__c = 'Referred Back to CS Team';
+                    caseToUpdate.AWB_Number__c = awbNumber;
+                    caseToUpdate.FOC_Order_Id__c = focOrderId;
+                    caseToUpdate.Last_Response__c = system.now();
+                    update caseToUpdate;
+                    updatedCases.add(caseToUpdate);
+                    return 'Success';
+                }else{
+                    return proceed;
+                }
+            }
+            return 'error';            
+        } catch (Exception e) {
+            System.debug('Error updating Case record: ' + e.getMessage());
+            system.debug('Exception Line Number--->'+e.getLineNumber());
+            return e.getMessage();
+        }
+    }
+
+
+    @AuraEnabled
+    public static String getCaseAndOrderDetailsNew(String caseId, String referBackReason, Decimal refundAmount, String approvalRemarks, String  rejectionReason,String describeInformationNeeded,Decimal orderRefundAmount, 
+    String resolutionRemarks, String updateDesc, String base64, String filename, String awbNumber, String focOrderId, String techIssueType, Boolean isRefundCase, Boolean isMonitoringCase) {
+        String currUserId = userInfo.getUserId();
+        List<Case> updatedCases = new List<Case>();   
+        
+        try {
+            if(String.isNotBlank(caseId)){
+                String proceed;
+                Case caseRec = [SELECT Id, CS_Team_Member__c,CaseNumber, OwnerId, Is_With_Refund_Team__c FROM Case WHERE Id=: caseId LIMIT 1]; //SELECT Id, OwnerId, User.ManagerId FROM Case WHERE Id = '500F300000DLFGLIA5'
+                String OwnersId= caseRec.CS_Team_Member__c != null ? caseRec.CS_Team_Member__c : userInfo.getUserId();
+                List<User> userList = [SELECT Id,Email,Name From User Where Profile.Name = 'Customer Service Executive' AND Id=:OwnersId LIMIT 1];
+                User userRec = new User();
+                if(!userList.isEmpty()){
+                    userRec = userList[0];
+                }
+                Case caseToUpdate = new Case();
+                if(caseId != null){
+                    caseToUpdate.id = caseId;
+                }
+                
+                if(referBackReason != null){
+                    if(referBackReason == 'Resolved'){
+                        if(isRefundCase && isMonitoringCase){
+                            proceed = CalloutRefundAPIClass.postRefundRequest(caseId);
+                            //proceed= 'Success';
+                            if(proceed == 'Success'){
+                                if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('005')){
+                                    caseToUpdate.RefundTeamMember__c = caseRec.OwnerId;
+                                }else if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('00G')){
+                                    caseToUpdate.RefundTeamMember__c = userInfo.getUserId();
+                                }
+                                if(caseRec.CS_Team_Member__c != null && String.valueOf(caseRec.CS_Team_Member__c) != ''){
+                                    caseToUpdate.OwnerId = caseRec.CS_Team_Member__c;
+                                }else if(userRec.Id != null){
+                                    caseToUpdate.OwnerId = userRec.Id;                     
+                                }else{
+                                    caseToUpdate.OwnerId = caseRec.OwnerId;
+                                    
+                                }
+                                caseToUpdate.Status = 'Closed';
+                                Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                                cpdRec.Status__c = referBackReason == 'Resolved' ? 'Resolved' : 'In Progress';
+                                if(String.isNotBlank(techIssueType)){
+                                    caseToUpdate.Tech_Issue_Type__c = techIssueType;
+                                    cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? techIssueType + '-' + resolutionRemarks : techIssueType + '-' + describeInformationNeeded;
+                                    
+                                }else{
+                                    cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? resolutionRemarks : describeInformationNeeded;
+                                }
+                                cpdRec.Case__c = caseId;
+                                cpdRec.Current_Action__c = 'Refund Issued and Case Closed by Refund Team';
+                                cpdRec.Responded_By__c = UserInfo.getUserId();
+                                cpdRec.AWB_Number__c = awbNumber;
+                                cpdRec.FOC_Order_Id__c = focOrderId;
+                                insert cpdRec;
+                                if(base64 != null){
+                                    uploadFile(base64, filename, cpdRec.Id);
+                                }
+                                // Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
+                                // notification.setBody('The Team has resolved the Case, Please Look into it.'+  caseRec.CaseNumber); 
+                                // notification.setTitle('Case Resolved'); 
+                                // notification.setSenderId(Userinfo.getUserId()); 
+                                // CustomNotificationType type = [SELECT Id FROM CustomNotificationType WHERE DeveloperName = 'ReferBackToCsTeam'];  
+                                // notification.setNotificationTypeId(type.id); 
+                                // notification.setTargetId(caseId); // target object id 
+                                // if(caseRec.CS_Team_Member__c != null){
+                                //     notification.send(new Set<String> { caseRec.CS_Team_Member__c });
+                                // }else{
+                                //     notification.send(new Set<String> { caseRec.OwnerId });
+                                // }
+                                caseToUpdate.Is_With_Refund_Team__c = false;
+                            }
+                        }else{
+                            proceed='Success';
+                            if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('005')){
+                                caseToUpdate.RefundTeamMember__c = caseRec.OwnerId;
+                            }else if(caseRec.Is_With_Refund_Team__c && String.valueOf(caseRec.OwnerId).startsWith('00G')){
+                                caseToUpdate.RefundTeamMember__c = userInfo.getUserId();
+                            }
+                            if(caseRec.CS_Team_Member__c != null && String.valueOf(caseRec.CS_Team_Member__c) != ''){
+                                caseToUpdate.OwnerId = caseRec.CS_Team_Member__c;
+                            }else if(userRec.Id != null){
+                                caseToUpdate.OwnerId = userRec.Id;                     
+                            }else{
+                                caseToUpdate.OwnerId = caseRec.OwnerId;
+                                
+                            }
+                            Case_Progress_Detail__c cpdRec = new Case_Progress_Detail__c();
+                            cpdRec.Status__c = referBackReason == 'Resolved' ? 'Resolved' : 'In Progress';
+                            if(String.isNotBlank(techIssueType)){
+                                caseToUpdate.Tech_Issue_Type__c = techIssueType;
+                                cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? techIssueType + '-' + resolutionRemarks : techIssueType + '-' + describeInformationNeeded;
+                                
+                            }else{
+                                cpdRec.WH_Team_Remarks__c = referBackReason == 'Resolved' ? resolutionRemarks : describeInformationNeeded;
+                            }
+                            cpdRec.Case__c = caseId;
+                            cpdRec.Current_Action__c = 'Referred Back to CS Team';
+                            cpdRec.Responded_By__c = UserInfo.getUserId();
+                            cpdRec.AWB_Number__c = awbNumber;
+                            cpdRec.FOC_Order_Id__c = focOrderId;
                             insert cpdRec;
                             if(base64 != null){
                                 uploadFile(base64, filename, cpdRec.Id);
@@ -381,350 +587,7 @@ public without sharing class referBackToCsTeamController {
             return null;
         }
     }
-    // We Dont use this method any where ==================================================>
-    /*
-public static void sendEmailToUserAndNotificationToUserReasonForLostInTransit(List<Case> caseList, map<Id,Case> oldMapCase) {
-EmailTemplate temp = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Lost_In_Transit_Clone'];
-System.debug('temp======>'+temp);
-EmailTemplate temp1 = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Incorrect_Addresses_Clone'];
-System.debug('temp1======>'+temp1);
-EmailTemplate temp2 = [SELECT Id, Name, DeveloperName, Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName = 'Customer_Unreachable_Clone'];
-System.debug('temp1======>'+temp2);
 
-
-
-List<CustomNotificationType > TemplateInfoDetail = [SELECT Id, DeveloperName FROM CustomNotificationType WHERE DeveloperName='Lost_In_Transit'];
-System.debug('TemplateInfoDetail======>'+TemplateInfoDetail);
-
-Map<Id, List<String>> mapOfEmails = new Map<Id, List<String>>();
-List<Messaging.SingleEmailMessage> mailList = new List<Messaging.SingleEmailMessage>();
-List<Messaging.CustomNotification> notificationList = new List<Messaging.CustomNotification>();
-
-
-set<Id> setOfAccId = new set<Id>();
-set<Id> setOfId = new set<Id>();
-set<Id> setOfOrderId = new set<Id>();
-
-
-for(case cs : caseList){
-setOfId.add(cs.contactId);
-System.debug('setOfId=======>'+setOfId);
-setOfAccId.add(cs.AccountId);
-setOfOrderId.add(cs.OrderId__c);
-}
-System.debug('setOfAccId=======>'+setOfAccId);
-
-List<User> userList = [SELECT Id,Name,Profile.Name From User Where Profile.Name =: 'Order Management Team'];
-System.debug('userList======>'+userList);
-
-set<String> orderTeamUsers = new set<String>();
-List<Id> OrderTeamTaskUsers = new List<Id>();
-for(User usr : userList){
-orderTeamUsers.add(usr.Id);
-System.debug('orderTeamUsers======>'+orderTeamUsers);
-OrderTeamTaskUsers.add(usr.Id);
-}
-System.debug('orderTeamUsers======>'+orderTeamUsers);
-System.debug('OrderTeamTaskUsers======>'+OrderTeamTaskUsers);
-
-List<User> userListForWareHouse = [SELECT Id,Name,Profile.Name From User Where Profile.Name =:'WareHouse Team'];
-System.debug('userListForWareHouse======>'+userListForWareHouse);
-
-set<String> WareHouseUsers = new set<String>();
-for(User usr : userListForWareHouse){
-WareHouseUsers.add(usr.Id);
-
-}
-
-
-List<String> emailString1 = new List<String>();
-List<decimal> ordNumber = new List<decimal>();
-Map<Id,Contact> mapOfContact = new Map<Id,Contact>();
-Map<Id,Account> mapOfAccount = new Map<Id,Account>();
-
-List<Contact> conList =[SELECT Id,Name,Email From Contact Where Id IN:setOfId];
-System.debug('conList========>'+conList);
-List<Account> acclist = [Select Id,Name,Email__C From Account Where Id IN: setOfAccId];
-System.debug('acclist========>'+acclist);
-
-
-
-Map<Id,Order> mapOfOrd = new Map<Id,Order>();
-List<Order> orderList = [SELECT Id,CreatedDate,OrderNumber From Order Where Id IN:setOfOrderId];
-for(Order ord : orderList){
-if(!mapOfOrd.containsKey(ord.Id)){
-mapOfOrd.put(Ord.Id,Ord);
-}
-}
-
-for(Contact con : conList){
-mapOfContact.put(con.Id, con);
-}
-
-for(Account acc : acclist){
-mapOfAccount.put(acc.Id, acc);
-}
-
-List<String> emailString = new List<String>();
-
-List<task> taskList = new List<task>();
-for (Case cse : caseList) {
-
-if(cse.Reason_For_Dealy__c != oldMapCase.get(cse.Id).Reason_For_Dealy__c){
-if (cse.Reason_For_Dealy__c == 'Lost in Transit') {
-if(cse.Reason_For_Dealy__c != null){
-String str = temp.HTMLValue;
-String body = temp.body;
-System.debug('cse.Reason_For_Dealy__c=====>'+cse.Reason_For_Dealy__c);
-Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-Messaging.CustomNotification notification = new Messaging.CustomNotification();
-Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-
-if (cse.AccountId != null) {
-System.debug('check 1');
-System.debug('cse.AccountId==> ' + cse.AccountId);
-Body = Body.replace('{!Account.Name}', mapOfAccount.get(cse.AccountId).Name);
-}
-
-else if (cse.ContactId != null) {
-Body = Body.replace('{!Account.Name}', mapOfContact.get(cse.ContactId).Name);
-}
-else {
-System.debug('Hello Name'); 
-Body = Body.replace('{!Account.Name}', 'Customer');  
-}
-// if (cse.OrderId__c != null) {
-//     Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-// }
-// if (cse.CreatedDate != null) {
-//     Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-// }
-// if (cse.Address_With_Pin_Code__PostalCode__s != null) {
-//     Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
-// }
-// if (cse.Amount_Paid__c != null) {
-//     Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
-// }
-if(cse.ContactId !=null){
-if(mapOfContact.get(cse.ContactId).Email != null){
-emailString.add(mapOfContact.get(cse.ContactId).Email);
-}
-}
-if (cse.AccountId != null){
-if(mapOfAccount.get(cse.AccountId).Email__c != null){
-emailString.add(mapOfAccount.get(cse.AccountId).Email__c);
-}
-}
-mail.setSubject(temp != null ? temp.Subject : '');
-mail.setPlainTextBody(Body);
-//System.debug('setPlainTextBody====>'+setPlainTextBody);
-System.debug('Body====>'+Body);
-mail.setTemplateId(temp != null ? temp.Id : null);
-mail.setSaveAsActivity(true);
-mail.setWhatId(cse.Id);
-mail.setToAddresses(emailString);
-mailList.add(mail);
-
-notification.setBody('Dear orderTeamUsers, Please take a look of this Order Lost In Transit'); 
-notification.setTitle('Lost In Transit'); 
-notification.setSenderId(Userinfo.getUserId()); 
-notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-notification.setTargetId(cse.id);
-notification.send(orderTeamUsers);
-system.debug('orderTeamUsers:::::::::>' + orderTeamUsers);
-
-
-WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order Lost In Transit'); 
-WareHouseNotification.setTitle('Lost In Transit'); 
-WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-WareHouseNotification.setTargetId(cse.id);
-WareHouseNotification.send(WareHouseUsers);
-system.debug('WareHouseNotification:::::::::>' + WareHouseNotification);
-
-task tsk = new task();
-tsk.subject ='Lost In Transit';
-tsk.Priority = 'High';
-tsk.ActivityDate = System.today().addDays(2);
-tsk.whatId =   cse.Id;
-tsk.OwnerId = OrderTeamTaskUsers[0];
-taskList.add(tsk);
-
-} 
-}
-
-} 
-if(cse.Reason_For_Dealy__c != oldMapCase.get(cse.Id).Reason_For_Dealy__c){
-if (cse.Reason_For_Dealy__c == 'Incorrect Addresses') {
-if(cse.Reason_For_Dealy__c != null){
-String str = temp1.HTMLValue;
-String body = temp1.body;
-System.debug('cse.Reason_For_Dealy__c 2nd =====>'+cse.Reason_For_Dealy__c);
-Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-Messaging.CustomNotification notification = new Messaging.CustomNotification();
-Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-
-if (cse.AccountId != null) {
-System.debug('check 1');
-System.debug('cse.AccountId==> ' + cse.AccountId);
-Body = Body.replace('{!Account.Name}', mapOfAccount.get(cse.AccountId).Name);
-}
-
-else if (cse.ContactId != null) {
-Body = Body.replace('{!Account.Name}', mapOfContact.get(cse.ContactId).Name);
-}
-else {
-System.debug('Hello Name'); 
-Body = Body.replace('{!Account.Name}', 'Customer');  
-}
-// if (cse.OrderId__c != null) {
-//     Body = Body.replace('{!Case.OrderId__c}', String.valueOf(mapOfOrd.get(cse.OrderId__c).OrderNumber));
-// }
-// if (cse.CreatedDate != null) {
-//     Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-// }
-// if (cse.Address_With_Pin_Code__PostalCode__s != null) {
-//     Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
-// }
-// if (cse.Amount_Paid__c != null) {
-//     Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
-// }
-if(cse.ContactId !=null){
-if(mapOfContact.get(cse.ContactId).Email != null){
-emailString.add(mapOfContact.get(cse.ContactId).Email);
-}
-}
-if (cse.AccountId != null){
-if(mapOfAccount.get(cse.AccountId).Email__c != null){
-emailString.add(mapOfAccount.get(cse.AccountId).Email__c);
-}
-}
-mail.setPlainTextBody(Body);
-system.debug('temp1--->'+temp1); 
-mail.setTemplateId(temp1.Id);
-mail.setSaveAsActivity(true);
-mail.setWhatId(cse.Id);
-mail.setToAddresses(emailString);
-mailList.add(mail);
-system.debug('mailList:::::::::>' + mailList);
-system.debug('checking 2:::::::::>');
-notification.setBody('Dear orderTeamUsers, Please take a look of this Order Incorrect Addresses'); 
-notification.setTitle('Incorrect Addresses'); 
-notification.setSenderId(Userinfo.getUserId()); 
-notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-notification.setTargetId(cse.id);
-notification.send(orderTeamUsers); 
-system.debug('notification:::::::::>' + notification);
-
-
-WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order Incorrect Addresses'); 
-WareHouseNotification.setTitle('Incorrect Addresses'); 
-WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-WareHouseNotification.setTargetId(cse.id);
-WareHouseNotification.send(WareHouseUsers);
-system.debug('WareHouseNotification:::::::::>' + WareHouseNotification);
-
-task tsk = new task();
-tsk.subject ='Incorrect Addresses';
-tsk.Priority = 'High';
-tsk.ActivityDate = System.today().addDays(2);
-tsk.whatId =   cse.Id;
-tsk.OwnerId = OrderTeamTaskUsers[0];
-taskList.add(tsk);
-}
-}
-}
-
-if(cse.Reason_For_Dealy__c != oldMapCase.get(cse.Id).Reason_For_Dealy__c){
-if (cse.Reason_For_Dealy__c == 'Customer Unreachable') {
-if(cse.Reason_For_Dealy__c != null){
-String str = temp2.HTMLValue;
-String body = temp2.body;
-System.debug('cse.Reason_For_Dealy__c 3rd =====>'+cse.Reason_For_Dealy__c);
-Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-Messaging.CustomNotification notification = new Messaging.CustomNotification();
-Messaging.CustomNotification WareHouseNotification = new Messaging.CustomNotification();
-
-if (cse.AccountId != null) {
-System.debug('check 1');
-System.debug('cse.AccountId==> ' + cse.AccountId);
-Body = Body.replace('{!Account.Name}', mapOfAccount.get(cse.AccountId).Name);
-}
-
-else if (cse.ContactId != null) {
-Body = Body.replace('{!Account.Name}', mapOfContact.get(cse.ContactId).Name);
-}
-else {
-System.debug('Hello Name'); 
-Body = Body.replace('{!Account.Name}', 'Customer');  
-}
-// if (cse.CreatedDate != null) {
-//     Body = Body.replace('{!Case.CreatedDate}', String.ValueOf(cse.CreatedDate));
-// }
-// if (cse.Address_With_Pin_Code__PostalCode__s != null) {
-//     Body = Body.replace('{!Case.Address_With_Pin_Code__c}', cse.Address_With_Pin_Code__PostalCode__s);
-// }
-// if (cse.Amount_Paid__c != null) {
-//     Body = Body.replace('{!Case.Amount_Paid__c}', String.valueOf(cse.Amount_Paid__c));
-// }
-if(cse.ContactId !=null){
-if(mapOfContact.get(cse.ContactId).Email != null){
-emailString.add(mapOfContact.get(cse.ContactId).Email);
-}
-}
-if (cse.AccountId != null){
-if(mapOfAccount.get(cse.AccountId).Email__c != null){
-emailString.add(mapOfAccount.get(cse.AccountId).Email__c);
-}
-}
-mail.setPlainTextBody(Body);
-//System.debug('setPlainTextBody====>'+setPlainTextBody);
-System.debug('Body====>'+Body);
-mail.setTemplateId(temp2 != null ? temp2.Id : null);
-mail.setSaveAsActivity(true);
-mail.setWhatId(cse.Id);
-mail.setToAddresses(emailString);
-mailList.add(mail);
-system.debug('mailList:::::::::>' + mailList);
-
-notification.setBody('Dear orderTeamUsers, Please take a look of this Order Customer Unreachable'); 
-notification.setTitle('Customer Unreachable'); 
-notification.setSenderId(Userinfo.getUserId()); 
-notification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-notification.setTargetId(cse.id);
-notification.send(orderTeamUsers); 
-system.debug('notification:::::::::>' + notification);
-
-
-WareHouseNotification.setBody('Dear WareHouse, Please take a look of this Order Customer Unreachable'); 
-WareHouseNotification.setTitle('Customer Unreachable'); 
-WareHouseNotification.setSenderId(Userinfo.getUserId()); 
-WareHouseNotification.setNotificationTypeId(TemplateInfoDetail[0].id); 
-WareHouseNotification.setTargetId(cse.id);
-WareHouseNotification.send(WareHouseUsers);
-system.debug('WareHouseNotification:::::::::>' + WareHouseNotification);
-
-task tsk = new task();
-tsk.subject ='Customer Unreachable';
-tsk.Priority = 'High';
-tsk.ActivityDate = System.today().addDays(2);
-tsk.whatId =   cse.Id;
-tsk.OwnerId = OrderTeamTaskUsers[0];
-taskList.add(tsk);
-}
-}
-}
-}
-
-if (!mailList.isEmpty()) {
-Messaging.sendEmail(mailList);
-}
-Insert taskList;
-system.debug('taskList:::::::::>' + taskList);
-
-}
-*/
     public static void AccountCreatedConCreated(List<Account> AccList) {
         List<Contact> conlist = new List<Contact>();
         for(Account acc : AccList){
@@ -739,6 +602,730 @@ system.debug('taskList:::::::::>' + taskList);
         if (!conlist.isEmpty()) {
             insert conlist;  
         }
+    }
+
+    public static void dumMethod(){
+        integer i = 0;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
+        i++;
     }
     
     

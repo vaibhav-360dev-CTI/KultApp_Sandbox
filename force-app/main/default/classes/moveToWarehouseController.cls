@@ -99,11 +99,17 @@ public without sharing class moveToWarehouseController {
             }
             if(queueId != null){
                 String body = et.HTMLValue;
-                body = body.replace('<CaseNumber>', caseRec.CaseNumber);
-                body = body.replace('<CaseType>', caseRec.Type);
-                body = body.replace('<CaseSubType>', caseRec.Sub_Type__c);
-                body = body.replace('<CaseSubSubType>', caseRec.Sub_Sub_Type__c);
-                body = body.replace('<CSremarks>', CSremarks);
+                body = body.replace('<CaseNumber>', caseRec.CaseNumber);               
+                
+                if(caseRec.Type != null)
+                    body = body.replace('<CaseType>', caseRec.Type);
+                if(caseRec.Sub_Type__c != null)
+                    body = body.replace('<CaseSubType>', caseRec.Sub_Type__c);
+                if(caseRec.Sub_Sub_Type__c != null)
+                    body = body.replace('<CaseSubSubType>', caseRec.Sub_Sub_Type__c);
+                if(CSremarks != null)
+                    body = body.replace('<CSremarks>', CSremarks);
+                
                 mail.setHTMLBody(body);
                 //caseRec.Warehouse_Team_Member__c = userLists[0].Id;
                 if(caseRec.CS_Team_Member__c == null){
@@ -336,6 +342,7 @@ public without sharing class moveToWarehouseController {
                         cse.Warehouse_Team_Member__c = usrId;
                         cse.Is_With_Refund_Team__c = false;
                         cse.Assigned_to_WH_Team__c = true;
+                        cse.Assigned_to_Dropshipping__c = false;
                         cse.Status = 'Re Assigned';
                         cse.Case_Reassigned_DateTime__c = System.Now();
                         Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
@@ -371,8 +378,26 @@ public without sharing class moveToWarehouseController {
     public static string reAssignCaseToDropshippingTeam(string recId, String reAssignmnetReason, Id usrId){
         try {
             if(recId != null){
-                
-                List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,CS_Team_Member__c,OwnerId,Is_With_Refund_Team__c, Warehouse_Team_Member__c, Case_Reassigned_DateTime__c, Status, Dropshipping_User__c From Case Where Id =: recId Limit 1];
+                List<Case> csList = [SELECT Id,CaseNumber,MT_Assignment_Reason__c,CS_Team_Member__c,OwnerId,Is_With_Refund_Team__c, Warehouse_Team_Member__c, Case_Reassigned_DateTime__c, Status, Dropshipping_User__c, Type, Sub_Type__c, Sub_Sub_Type__c From Case Where Id =: recId Limit 1];
+                List<EmailTemplate> etList = [SELECT Id,Subject, Body, HTMLValue FROM EmailTemplate WHERE DeveloperName ='WH_Team_Notification'];
+                EmailTemplate et = new EmailTemplate();
+                List<string> toAddress = new List<string>();
+                List<Messaging.SingleEmailMessage> allmsg = new List<Messaging.SingleEmailMessage>();
+                // List<Dropshipping_User__mdt> dropshippingUsers = [SELECT Id, Username__c, Name, Email_Id__c FROM Dropshipping_User__mdt];
+                // for(Dropshipping_User__mdt drUser : dropshippingUsers){
+                //     toAddress.add(drUser.Email_Id__c);
+                // }    
+                Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                mail.setTemplateId(et.Id);
+                mail.setToAddresses(toAddress);
+                mail.setSubject(et.subject);
+               // mail.setHTMLBody(et.Body);
+                mail.setSaveAsActivity(false);
+                mail.setUseSignature(false);
+            
+                if(!etList.isEmpty()){
+                    et = etList[0];
+                }
                 for(Case cse : csList){
                     if(reAssignmnetReason != null){
                         cse.MT_Assignment_Reason__c = reAssignmnetReason;
@@ -381,6 +406,18 @@ public without sharing class moveToWarehouseController {
                         cse.Assigned_to_Dropshipping__c = true;
                         cse.Status = 'Re Assigned';
                         cse.Case_Reassigned_DateTime__c = System.Now();
+
+                        mail.setWhatId(cse.Id);
+                        mail.setTargetObjectId(usrId);
+                        String body = et.HTMLValue;
+                        body = cse.CaseNumber != null ? body.replace('<CaseNumber>', cse.CaseNumber) : body.replace('<CaseNumber>', 'NA');
+                        body = cse.Type != null ? body.replace('<CaseType>', cse.Type) : body.replace('<CaseType>', 'NA');
+                        body = cse.Sub_Type__c != null ? body.replace('<CaseSubType>', cse.Sub_Type__c) : body.replace('<CaseSubType>', 'NA');
+                        body = cse.Sub_Sub_Type__c != null ? body.replace('<CaseSubSubType>', cse.Sub_Sub_Type__c) : body.replace('<CaseSubSubType>', 'NA');
+                        body = body.replace('<b>CS Remarks:</b> <CSremarks><br><br>', '');
+                        mail.setHTMLBody(body);
+                        allmsg.add(mail);
+
                         Messaging.CustomNotification notification = new Messaging.CustomNotification(); 
                         notification.setBody('A New Case Has Been Assigned To You'); 
                         notification.setTitle('New Case Assignment'); 
@@ -401,7 +438,12 @@ public without sharing class moveToWarehouseController {
 
                 }
                 
-                update csList;                
+                update csList;  
+                try {
+                    Messaging.sendEmail(allmsg,false);
+                } catch (Exception e) {
+                    System.debug(e.getMessage());
+                }              
                 return 'SUCCESS';
             }
         } catch (Exception e) {

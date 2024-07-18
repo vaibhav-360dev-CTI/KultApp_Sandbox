@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Status --></label>
     <name>Status__c</name>
     <picklistValues>
         <masterLabel>Busy</masterLabel>
-        <translation></translation>
+        <translation><!-- Busy --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Completed</masterLabel>
-        <translation></translation>
+        <translation><!-- Completed --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Failed</masterLabel>
-        <translation></translation>
+        <translation><!-- Failed --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>In-progress</masterLabel>
-        <translation></translation>
+        <translation><!-- In-progress --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Missed</masterLabel>
-        <translation></translation>
+        <translation><!-- Missed --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>No-answer</masterLabel>
-        <translation></translation>
+        <translation><!-- No-answer --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Queued</masterLabel>
-        <translation></translation>
+        <translation><!-- Queued --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Ringing</masterLabel>
-        <translation></translation>
+        <translation><!-- Ringing --></translation>
     </picklistValues>
 </CustomFieldTranslation>

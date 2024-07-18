@@ -7,6 +7,9 @@
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
+                            <value>Case.Assign_to_Dropshipping</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Case.Refer_Back_To_CS_Team</value>
                         </valueListItems>
                         <valueListItems>
@@ -133,6 +136,12 @@
             <fieldInstance>
                 <fieldItem>Record.OrderId__r.Paid_Amount__c</fieldItem>
                 <identifier>RecordOrderId_rPaid_Amount_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Case_Reason__c</fieldItem>
+                <identifier>RecordCase_Reason__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-18fe451a-49da-460b-9de5-6ec9089ac90e</name>

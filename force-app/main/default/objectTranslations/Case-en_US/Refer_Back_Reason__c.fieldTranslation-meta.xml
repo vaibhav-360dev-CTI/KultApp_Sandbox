@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Refer Back Reason --></label>
     <name>Refer_Back_Reason__c</name>
     <picklistValues>
         <masterLabel>Need More Info</masterLabel>
-        <translation></translation>
+        <translation><!-- Need More Info --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Resolved</masterLabel>
-        <translation></translation>
+        <translation><!-- Resolved --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Send Update</masterLabel>
-        <translation></translation>
+        <translation><!-- Send Update --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Wrongly Sent</masterLabel>
+        <translation><!-- Wrongly Sent --></translation>
     </picklistValues>
 </CustomFieldTranslation>

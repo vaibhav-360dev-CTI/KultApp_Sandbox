@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Tech Issue Type --></label>
     <name>Tech_Issue_Type__c</name>
     <picklistValues>
         <masterLabel>Compatibility Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Compatibility Issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Crash Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Crash Issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Functionality Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Functionality Issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Network Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Network Issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Performance Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Performance Issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Security Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Security Issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>UI/UX Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- UI/UX Issues --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Update Issues</masterLabel>
-        <translation></translation>
+        <translation><!-- Update Issues --></translation>
     </picklistValues>
 </CustomFieldTranslation>

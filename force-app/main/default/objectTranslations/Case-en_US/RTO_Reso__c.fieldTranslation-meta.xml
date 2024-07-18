@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- RTO Resolution --></label>
     <name>RTO_Reso__c</name>
     <picklistValues>
         <masterLabel>Create Duplicate Order</masterLabel>
-        <translation></translation>
+        <translation><!-- Create Duplicate Order --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Initiate Refund</masterLabel>
-        <translation></translation>
+        <translation><!-- Initiate Refund --></translation>
     </picklistValues>
 </CustomFieldTranslation>

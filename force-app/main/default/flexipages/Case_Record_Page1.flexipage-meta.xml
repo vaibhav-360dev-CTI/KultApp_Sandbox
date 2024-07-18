@@ -7,6 +7,12 @@
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
+                            <value>Case.Assign_to_Dropshipping</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Case.Tag_A_Call_Log</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Case.Re_Assign_Case_To_CS_Team</value>
                         </valueListItems>
                         <valueListItems>

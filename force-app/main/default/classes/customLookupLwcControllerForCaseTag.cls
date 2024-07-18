@@ -11,9 +11,9 @@ public class customLookupLwcControllerForCaseTag {
                 sQuery += ','+fieldNames;
             }
             if(String.isNotBlank(whereCondition) && whereCondition != null){
-                sQuery +=  ' FROM ' +objectAPIName + ' WHERE ' + fieldNames + ' LIKE \''+searchKey+'\' AND ' + whereCondition + ' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
+                sQuery +=  ' FROM ' +objectAPIName + ' WHERE ' + fieldNames + ' LIKE \''+searchKey+'\' OR CaseNumber LIKE \'' + searchKey + '\'' + whereCondition + ' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
             } else {
-                sQuery +=  ' FROM ' +objectAPIName + ' WHERE ' + fieldNames + ' LIKE \''+searchKey+'\' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
+                sQuery +=  ' FROM ' +objectAPIName + ' WHERE ' + fieldNames + ' LIKE \''+searchKey+'\' OR CaseNumber LIKE \'' + searchKey + '\' ORDER BY CreatedDate DESC limit ' + String.valueOf(customLimit);
             }
             system.debug('sQuery === >'+sQuery);
             List<sObject> lstOfRecords = Database.query(sQuery);

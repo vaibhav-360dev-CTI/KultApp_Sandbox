@@ -374,6 +374,12 @@
                 <identifier>RecordIs_Sub_Order_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Billing_Name__c</fieldItem>
+                <identifier>RecordBilling_Name__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-9aacbc2e-bdcd-4d96-81c9-1b549ab6ca53</name>
         <type>Facet</type>
     </flexiPageRegions>

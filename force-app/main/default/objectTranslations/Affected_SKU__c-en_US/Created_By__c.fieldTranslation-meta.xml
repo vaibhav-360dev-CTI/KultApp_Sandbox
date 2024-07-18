@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label></label>
+    <label><!-- Created By --></label>
     <name>Created_By__c</name>
     <picklistValues>
         <masterLabel>CS Team</masterLabel>
-        <translation></translation>
+        <translation><!-- CS Team --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>Refund Team</masterLabel>
-        <translation></translation>
+        <translation><!-- Refund Team --></translation>
     </picklistValues>
     <picklistValues>
         <masterLabel>WH Team</masterLabel>
-        <translation></translation>
+        <translation><!-- WH Team --></translation>
     </picklistValues>
 </CustomFieldTranslation>

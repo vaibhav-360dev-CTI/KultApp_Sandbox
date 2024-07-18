@@ -8,7 +8,6 @@ global class WS_OrderCreationv1 {
         RestResponse response = RestContext.response;
         Blob body = req.requestBody;
         String requestString = body.toString();
-        System.debug('--- requestString' + requestString);
         String responseBody;
         Id integrationLogId;
         integrationLogId = HttpUtility.getInstance().createServiceLogger(null, requestString, null, '/OrderCreation', 'POST', null, processingStartTime, System.now(), null,'SERVICE');
@@ -89,13 +88,12 @@ global class WS_OrderCreationv1 {
                                 //res.orderId = upsertedOrder.Id;
                                 respBodyList.add(res);
                                 RestContext.response.statusCode = 400;
-
                                 integrationLogId = HttpUtility.getInstance().createServiceLogger(integrationLogId,requestString, res.toString(), '/OrderCreation', 'POST', 400, processingStartTime, System.now(), null, 'SERVICE');
-
                                 return respBodyList;
                         }
 
                     }
+                    System.debug('mapOfPhoneNumberByRecDetails==> ' + mapOfPhoneNumberByRecDetails);
                     for(String mapKey : mapOrderDetailsByOrderId.keySet()){
                         Map<String, WS_OrderCreation.OrderDetails> tempMap = new Map<String, WS_OrderCreation.OrderDetails>();
                         for(WS_OrderCreation.OrderDetails listrec : mapOrderDetailsByOrderId.get(mapKey)){
@@ -110,18 +108,23 @@ global class WS_OrderCreationv1 {
                         List<Account> existingAccountList = new List<Account>();
                         Set<String> accountTobeCreate = new Set<String>();
                         Map<String,Id> mapOfPhoneNoByAccId = new Map<String,Id>();
-                        existingAccountList = [SELECT Id,Email__c,Phone, UUID__c From Account WHERE UUID__c in: phone_numberSet AND Is_Deleted__c = false];
+                        Map<String,String> mapOfAccNameByUUID = new Map<String,String>();
+                        existingAccountList = [SELECT Id,Email__c,Phone, UUID__c, Name From Account WHERE UUID__c in: phone_numberSet AND Is_Deleted__c = false];
                         Set<String> existingRecIdSet = new Set<String>();
                         If(!existingAccountList.isEmpty()){
                             for(Account acc : existingAccountList){
                                     existingRecIdSet.add(acc.UUID__c);
                                     mapOfPhoneNoByAccId.put(acc.UUID__c,acc.Id);
+                                    mapOfAccNameByUUID.put(acc.UUID__C, acc.Name);
                             }
                         }
+                        System.debug('mapOfPhoneNoByAccId==> ' + mapOfPhoneNoByAccId);
                             for(String mapKey : mapOfPhoneNumberByRecDetails.keySet()){
                                 Account accRec = new Account();
                                 if(mapOfPhoneNumberByRecDetails.get(mapKey).name != null){
                                     accRec.Name = mapOfPhoneNumberByRecDetails.get(mapKey).name;
+                                }else{
+                                    accRec.Name = mapOfAccNameByUUID.get(mapKey) != null ? mapOfAccNameByUUID.get(mapKey) : 'New - ' + mapOfPhoneNumberByRecDetails.get(mapKey).phone_number;
                                 }
                                 if(mapOfPhoneNumberByRecDetails.get(mapKey).email != null){
                                     accRec.Email__c = mapOfPhoneNumberByRecDetails.get(mapKey).email;
@@ -132,6 +135,7 @@ global class WS_OrderCreationv1 {
                                 accRec.Phone = mapOfPhoneNumberByRecDetails.get(mapKey).phone_number;
                                 if(existingRecIdSet.contains(mapKey)){
                                     accRec.Id = mapOfPhoneNoByAccId.get(mapKey);
+                                    System.debug('mapOfPhoneNoByAccId.get(mapKey)==> ' + mapOfPhoneNoByAccId.get(mapKey));
                                 }
 
                                 accountListTobeUpsert.add(accRec);
@@ -208,11 +212,13 @@ global class WS_OrderCreationv1 {
                                     ord.BillingState = ordRecords.address_details.billing_address.state != null ? ordRecords.address_details.billing_address.state : '';
                                     ord.BillingCity = ordRecords.address_details.billing_address.city != null ? ordRecords.address_details.billing_address.city : '';
                                     ord.BillingCountry = ordRecords.address_details.billing_address.country_code != null ? ordRecords.address_details.billing_address.country_code : '';
+                                    ord.Billing_Name__c = ordRecords.address_details.billing_address.name != null ? ordRecords.address_details.billing_address.name : '';
                                     ord.ShippingStreet = ordRecords.address_details.shipping_address.street != null ? ordRecords.address_details.shipping_address.street.left(255) : '';
                                     ord.ShippingPostalCode = ordRecords.address_details.shipping_address.pin_code != null ? ordRecords.address_details.shipping_address.pin_code : '';
                                     ord.ShippingState = ordRecords.address_details.shipping_address.state != null ? ordRecords.address_details.shipping_address.state : '';
                                     ord.ShippingCity = ordRecords.address_details.shipping_address.city != null ? ordRecords.address_details.shipping_address.city : '';
                                     ord.ShippingCountry = ordRecords.address_details.shipping_address.country_code != null ? ordRecords.address_details.shipping_address.country_code : '';
+                                    ord.Shipping_Name__c = ordRecords.address_details.shipping_address.name != null ? ordRecords.address_details.shipping_address.name : '';
                                     ord.Delivery_Mobile_Number__c = ordRecords.address_details.shipping_address.phone_number != null ? ordRecords.address_details.shipping_address.phone_number : '';
                                     ord.ContractId = null;
                                     if(existingOrderIdSet.contains(ordRecords.order_id)){
@@ -407,7 +413,7 @@ global class WS_OrderCreationv1 {
                 System.debug('Error Message==>' + e.getMessage() + ' at Line Number==> ' + e.getLineNumber());
                 ResponseBody res = new ResponseBody();
                             res.status = 'Error';
-                            res.message = e.getMessage();
+                            res.message = e.getMessage() + ' at Line ' + e.getLineNumber();
                             //res.orderId = upsertedOrder.Id;
                             respBodyList.add(res);
                             RestContext.response.statusCode = 400;

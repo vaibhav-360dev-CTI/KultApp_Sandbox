@@ -160,6 +160,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Closed as Duplicate Case</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Referred Back to CS Team</fullName>
             <default>false</default>
         </values>
@@ -695,6 +699,10 @@
         </values>
         <values>
             <fullName>Send Update</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Wrongly Sent</fullName>
             <default>false</default>
         </values>
     </picklistValues>
